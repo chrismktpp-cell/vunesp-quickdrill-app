@@ -243,4 +243,19 @@ describe('SRS Engine (Leitner com regras explícitas de certeza)', () => {
     expect(resumo.pendentesHoje).toBe(1); // q-2
     expect(resumo.pontosCegosComLapse).toBe(1); // q-2
   });
+
+  describe('formatarDataCivilLocal', () => {
+    it('deve formatar Date e timestamp com zero-padding para YYYY-MM-DD usando calendário local', () => {
+      const data = new Date(2026, 2, 5, 23, 45, 0); // 5 de março de 2026, 23h45 local
+      expect(formatarDataCivilLocal(data)).toBe('2026-03-05');
+      expect(formatarDataCivilLocal(data.getTime())).toBe('2026-03-05');
+    });
+
+    it('mantém o dia civil local correto mesmo em horários noturnos (ex: 22h no Brasil)', () => {
+      // Cria uma data às 22h local do dia 19
+      const dataNoite = new Date(2026, 9, 19, 22, 0, 0); // 19 de outubro de 2026, 22h local
+      const formatado = formatarDataCivilLocal(dataNoite);
+      expect(formatado).toBe('2026-10-19');
+    });
+  });
 });

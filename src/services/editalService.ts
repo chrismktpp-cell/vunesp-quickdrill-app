@@ -24,11 +24,30 @@ export function calcularProgressoPorTopico(
     }
   }
 
+  // Indexa questões antecipadamente em Map para lookup O(1)
+  const questoesPorCategoria = new Map<string, Question[]>();
+  const questoesPorTopicoId = new Map<string, Question[]>();
+  for (const q of questoes) {
+    if (q.category) {
+      const list = questoesPorCategoria.get(q.category) || [];
+      list.push(q);
+      questoesPorCategoria.set(q.category, list);
+    }
+    if (q.editalTopicoId) {
+      const list = questoesPorTopicoId.get(q.editalTopicoId) || [];
+      list.push(q);
+      questoesPorTopicoId.set(q.editalTopicoId, list);
+    }
+  }
+
   return topicos.map((topico) => {
-    // Filtra questões do banco pertencentes a este tópico do edital
-    const questoesDoTopico = questoes.filter(
-      (q) => q.category === topico.category || q.editalTopicoId === topico.id
-    );
+    // Lookup O(1) combinando por categoria e id do tópico sem varredura completa
+    const porCat = questoesPorCategoria.get(topico.category) || [];
+    const porId = questoesPorTopicoId.get(topico.id) || [];
+    const questoesDoTopicoMap = new Map<string, Question>();
+    for (const q of porCat) questoesDoTopicoMap.set(q.id, q);
+    for (const q of porId) questoesDoTopicoMap.set(q.id, q);
+    const questoesDoTopico = Array.from(questoesDoTopicoMap.values());
 
     const totalQuestoes = questoesDoTopico.length;
     let questoesRespondidas = 0;
@@ -130,21 +149,30 @@ export function calcularCoberturaGeral(
     else porMateria[materiaKey].pendentes += 1;
   }
 
+  // Agrupa previamente os tópicos por matéria via Map para lookup O(1)
+  const topicosPorMateria = new Map<string, EditalTopico[]>();
+  for (const topico of topicos) {
+    const list = topicosPorMateria.get(topico.materia) || [];
+    list.push(topico);
+    topicosPorMateria.set(topico.materia, list);
+  }
+
   const totalTopicos = topicos.length;
   const percentualGeralCobertura =
     totalTopicos > 0 ? Math.round(somaCoberturas / totalTopicos) : 0;
   const taxaGeralAcerto =
     totalRespondidas > 0 ? Math.round((somaAcertos / totalRespondidas) * 100) : 0;
 
-  // Calcula % de cobertura individual de cada matéria
-  for (const materiaKey of Object.keys(porMateria)) {
-    const topicosDaMateria = topicos.filter((t) => t.materia === materiaKey);
+  // Calcula % de cobertura individual de cada matéria sem varreduras repetidas
+  for (const [materiaKey, topicosDaMateria] of topicosPorMateria.entries()) {
     const somaCobMat = topicosDaMateria.reduce(
       (acc, t) => acc + (mapaProgresso.get(t.id)?.percentualCobertura || 0),
       0
     );
-    porMateria[materiaKey].percentualCobertura =
-      topicosDaMateria.length > 0 ? Math.round(somaCobMat / topicosDaMateria.length) : 0;
+    if (porMateria[materiaKey]) {
+      porMateria[materiaKey].percentualCobertura =
+        topicosDaMateria.length > 0 ? Math.round(somaCobMat / topicosDaMateria.length) : 0;
+    }
   }
 
   return {

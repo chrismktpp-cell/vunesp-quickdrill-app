@@ -41,6 +41,7 @@ import { DrillScreen } from './src/components/DrillScreen';
 import { FiltrosModal } from './src/components/FiltrosModal';
 import { gerarFilaDoDia, resumirSRS } from './src/services/srsEngine';
 import { filtrarQuestoes, QuestionFilters } from './src/services/filterEngine';
+import { converterErrosSimuladoParaSRS } from './src/services/simuladoService';
 
 const CATEGORIES: CategoryType[] = [
   'Crase (VUNESP)',
@@ -194,7 +195,7 @@ export default function App() {
   }, []);
 
   const handleAnswer = useCallback(
-    (optionIndex: number) => {
+    (optionIndex: number, tempoGastoMs?: number) => {
       if (isAnswered || !currentQuestion) return;
 
       const isCorrect = optionIndex === currentQuestion.correctIndex;
@@ -204,6 +205,7 @@ export default function App() {
         selectedOptionIndex: optionIndex,
         isCorrect,
         certainty: selectedCertainty,
+        tempoGastoMs,
       });
 
       // 1. Atualização otimista imediata antes de qualquer I/O assíncrono
@@ -249,6 +251,17 @@ export default function App() {
       saveSimuladoToStorage(stats, resultado)
         .then((updated) => setStats(updated))
         .catch((e) => console.error('Falha ao salvar simulado em background', e));
+    },
+    [stats]
+  );
+
+  const handleEnviarErrosSimuladoParaSRS = useCallback(
+    (resultado: SimuladoResultado) => {
+      const { newStats, totalConvertidos } = converterErrosSimuladoParaSRS(resultado, stats);
+      if (totalConvertidos > 0) {
+        setStats(newStats);
+        void saveAttemptToStorage(newStats).catch(console.error);
+      }
     },
     [stats]
   );
@@ -450,6 +463,7 @@ export default function App() {
             questions={questionsData as Question[]}
             simuladosHistorico={stats.simuladosHistorico}
             onSalvarResultado={handleSaveSimulado}
+            onEnviarErrosParaSRS={handleEnviarErrosSimuladoParaSRS}
             colors={legacyColors}
             isDark={isDark}
             getCategoryColor={getCategoryColor}
@@ -683,7 +697,7 @@ export default function App() {
         visible={filtrosModalOpen}
         onClose={() => setFiltrosModalOpen(false)}
         filtros={filtros}
-        onChangeFiltros={(novos) => setFiltros(novos)}
+        onChangeFiltros={(novos: QuestionFilters) => setFiltros(novos)}
         onLimparFiltros={() =>
           setFiltros({
             category: 'all',

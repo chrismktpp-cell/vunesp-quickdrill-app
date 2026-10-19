@@ -4,7 +4,9 @@ import type {
   SimuladoResposta,
   SimuladoResultado,
   CategoryType,
+  UserStats,
 } from '../types/schema';
+import { processarRespostaSRS } from './srsEngine';
 
 export const CONFIGURACOES_PADRAO_SIMULADO: SimuladoConfig[] = [
   {
@@ -186,4 +188,48 @@ export function obterDiagnosticoSimulado(pontuacaoPercentual: number): {
     cor: '#EF4444',
   };
 }
+
+/**
+ * Converte as questões erradas ou em branco de um simulado em atualizações
+ * para a errorQueue e para a Caixa 1 do SRS (status: 'pendente', intervaloDias: 1).
+ */
+export function converterErrosSimuladoParaSRS(
+  resultado: SimuladoResultado,
+  stats: UserStats,
+  timestamp: number = Date.now()
+): { newStats: UserStats; totalConvertidos: number } {
+  const falhas = (resultado.respostas || []).filter(
+    (r) => !r.isCorrect || r.selectedOptionIndex === null
+  );
+
+  if (falhas.length === 0) {
+    return { newStats: stats, totalConvertidos: 0 };
+  }
+
+  const errorSet = new Set(stats.errorQueue || []);
+  const srsMap = { ...(stats.revisoesSRS || {}) };
+
+  for (const item of falhas) {
+    const pId = item.perguntaId;
+    if (!pId) continue;
+    errorSet.add(pId);
+    const srsAtual = srsMap[pId];
+    srsMap[pId] = processarRespostaSRS(
+      srsAtual,
+      pId,
+      false, // isCorrect = false
+      1,     // CertaintyLevel = 1 (Chute/Erro)
+      timestamp
+    );
+  }
+
+  const newStats: UserStats = {
+    ...stats,
+    errorQueue: Array.from(errorSet),
+    revisoesSRS: srsMap,
+  };
+
+  return { newStats, totalConvertidos: falhas.length };
+}
+
 

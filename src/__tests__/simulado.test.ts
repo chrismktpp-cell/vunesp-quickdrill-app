@@ -3,9 +3,10 @@ import {
   gerarQuestoesSimulado,
   calcularResultadoSimulado,
   obterDiagnosticoSimulado,
+  converterErrosSimuladoParaSRS,
   CONFIGURACOES_PADRAO_SIMULADO,
 } from '../services/simuladoService';
-import type { Question, SimuladoResposta } from '../types/schema';
+import type { Question, SimuladoResposta, UserStats, SimuladoResultado } from '../types/schema';
 
 const mockQuestoes: Question[] = [
   {
@@ -111,6 +112,73 @@ describe('Simulado Service', () => {
 
     const d40 = obterDiagnosticoSimulado(40);
     expect(d40.classificacao).toBe('Crítico');
+  });
+
+  it('deve converter erros e questões em branco do simulado para a errorQueue e Caixa 1 do SRS', () => {
+    const timestampTeste = 1760880000000;
+    const initialStats: UserStats = {
+      attempts: [],
+      streak: 5,
+      bestStreak: 10,
+      blindSpotQueue: [],
+      errorQueue: ['s-99'],
+      revisoesSRS: {
+        's-2': {
+          perguntaId: 's-2',
+          caixa: 3,
+          intervaloDias: 7,
+          proximaRevisao: timestampTeste + 7 * 86400000,
+          historicoRepeticoes: 3,
+          lapses: 0,
+          status: 'em_revisao',
+          ultimaRevisao: timestampTeste - 86400000,
+        },
+      },
+    };
+
+    const resultado: SimuladoResultado = {
+      id: 'sim-test-1',
+      titulo: 'Simulado Teste',
+      dataHora: timestampTeste,
+      tempoTotalGastoSegundos: 600,
+      duracaoTotalSegundos: 900,
+      totalQuestoes: 3,
+      acertos: 1,
+      erros: 1,
+      emBranco: 1,
+      pontuacaoPercentual: 33,
+      detalhesPorCategoria: {} as any,
+      respostas: [
+        { perguntaId: 's-1', selectedOptionIndex: 0, isCorrect: true }, // Acerto
+        { perguntaId: 's-2', selectedOptionIndex: 0, isCorrect: false }, // Erro
+        { perguntaId: 's-3', selectedOptionIndex: null, isCorrect: false }, // Em branco
+      ],
+    };
+
+    const { newStats, totalConvertidos } = converterErrosSimuladoParaSRS(
+      resultado,
+      initialStats,
+      timestampTeste
+    );
+
+    expect(totalConvertidos).toBe(2);
+    expect(newStats.errorQueue).toContain('s-2');
+    expect(newStats.errorQueue).toContain('s-3');
+    expect(newStats.errorQueue).toContain('s-99'); // manteve pré-existente sem duplicar
+    expect(newStats.errorQueue).not.toContain('s-1');
+
+    // s-2 foi resetada para caixa 1 e pendente
+    const srs2 = newStats.revisoesSRS!['s-2'];
+    expect(srs2.caixa).toBe(1);
+    expect(srs2.intervaloDias).toBe(1);
+    expect(srs2.status).toBe('pendente');
+    expect(srs2.lapses).toBe(1);
+
+    // s-3 foi inserida no SRS na caixa 1 e pendente
+    const srs3 = newStats.revisoesSRS!['s-3'];
+    expect(srs3.caixa).toBe(1);
+    expect(srs3.intervaloDias).toBe(1);
+    expect(srs3.status).toBe('pendente');
   });
 });
 

@@ -27,6 +27,7 @@ interface SimuladoScreenProps {
   questions: Question[];
   simuladosHistorico?: SimuladoResultado[];
   onSalvarResultado: (resultado: SimuladoResultado) => void;
+  onEnviarErrosParaSRS?: (resultado: SimuladoResultado) => void;
   colors: {
     bg: string;
     cardBg: string;
@@ -51,6 +52,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   questions,
   simuladosHistorico = [],
   onSalvarResultado,
+  onEnviarErrosParaSRS,
   colors,
   isDark,
   getCategoryColor,
@@ -76,6 +78,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   const [respostas, setRespostas] = useState<Record<string, SimuladoResposta>>({});
   const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
   const [ultimoResultado, setUltimoResultado] = useState<SimuladoResultado | null>(null);
+  const [errosEnviadosParaSRS, setErrosEnviadosParaSRS] = useState<boolean>(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -113,6 +116,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
     setExamQuestions(selecionadas);
     setCurrentIndex(0);
     setRespostas({});
+    setErrosEnviadosParaSRS(false);
     setSecondsRemaining(selectedConfig.duracaoMinutos * 60);
     startTimeRef.current = Date.now();
     setStage('running');
@@ -753,13 +757,51 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
           );
         })}
 
+        {/* Ação: Enviar erros para Revisão SRS */}
+        {ultimoResultado.erros + ultimoResultado.emBranco > 0 && onEnviarErrosParaSRS && (
+          <TouchableOpacity
+            onPress={() => {
+              if (errosEnviadosParaSRS) return;
+              triggerLightHaptic();
+              onEnviarErrosParaSRS(ultimoResultado);
+              setErrosEnviadosParaSRS(true);
+            }}
+            disabled={errosEnviadosParaSRS}
+            style={[
+              styles.startButton,
+              {
+                backgroundColor: errosEnviadosParaSRS ? colors.emeraldSoft : colors.amber,
+                borderColor: errosEnviadosParaSRS ? colors.emerald : colors.amber,
+                borderWidth: 1,
+                marginTop: 20,
+              },
+            ]}
+          >
+            <Ionicons
+              name={errosEnviadosParaSRS ? 'checkmark-circle' : 'repeat'}
+              size={18}
+              color={errosEnviadosParaSRS ? colors.emerald : '#ffffff'}
+            />
+            <Text
+              style={[
+                styles.startButtonText,
+                { color: errosEnviadosParaSRS ? colors.emerald : '#ffffff' },
+              ]}
+            >
+              {errosEnviadosParaSRS
+                ? '✓ Erros enviados para a Fila do Dia (SRS)!'
+                : `Enviar ${ultimoResultado.erros + ultimoResultado.emBranco} erro(s) para Revisão SRS`}
+            </Text>
+          </TouchableOpacity>
+        )}
+
         {/* Botão Novo Simulado */}
         <TouchableOpacity
           onPress={() => {
             triggerLightHaptic();
             setStage('menu');
           }}
-          style={[styles.startButton, { backgroundColor: colors.primary, marginTop: 24, marginBottom: 40 }]}
+          style={[styles.startButton, { backgroundColor: colors.primary, marginTop: 14, marginBottom: 40 }]}
         >
           <Ionicons name="refresh" size={18} color="#ffffff" />
           <Text style={styles.startButtonText}>Fazer Novo Simulado</Text>

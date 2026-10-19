@@ -38,6 +38,9 @@ export interface Question {
   materia?: Materia | string;
   ano?: number;
   editalTopicoId?: string;
+  supportText?: string;
+  trapAlert?: string;
+  questionFormat?: 'lacuna' | 'multipla_escolha' | 'assertivas';
 }
 
 export type Pergunta = Question;
@@ -150,6 +153,8 @@ export interface SimuladoResultado {
     perguntaId: string;
     selectedOptionIndex: number | null;
     isCorrect: boolean;
+    marcadaParaRevisao?: boolean;
+    tempoGastoMs?: number;
   }>;
 }
 

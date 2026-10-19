@@ -151,9 +151,10 @@ export function aplicarResposta(
     selectedOptionIndex: number;
     isCorrect: boolean;
     certainty: CertaintyLevel;
+    tempoGastoMs?: number;
   }
 ): { newStats: UserStats; classification: PerformanceClassification } {
-  const { questionId, category, selectedOptionIndex, isCorrect, certainty } = input;
+  const { questionId, category, selectedOptionIndex, isCorrect, certainty, tempoGastoMs } = input;
 
   let classification: PerformanceClassification;
 
@@ -190,6 +191,7 @@ export function aplicarResposta(
     isCorrect,
     certainty,
     classification,
+    tempoGastoMs,
     timestamp: now,
   };
 

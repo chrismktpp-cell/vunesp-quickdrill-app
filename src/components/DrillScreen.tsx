@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -40,7 +40,7 @@ export interface DrillScreenProps {
   stats: UserStats;
   sessionStats: { attempts: number; correct: number };
   favorites: string[];
-  onAnswer: (optionIndex: number) => void;
+  onAnswer: (optionIndex: number, tempoGastoMs?: number) => void;
   onNext: () => void;
   onSkip: () => void;
   onToggleFavorite: (questionId: string) => void;
@@ -114,6 +114,18 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
   const progressRatio =
     filteredQuestions.length > 0 ? (currentIndex + 1) / filteredQuestions.length : 0;
+
+  // Cronômetro de tempo gasto na questão
+  const questionStartTimeRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    questionStartTimeRef.current = Date.now();
+  }, [currentQuestion?.id, currentIndex]);
+
+  const handleSelectOption = (idx: number) => {
+    const tempoGastoMs = Math.max(0, Date.now() - questionStartTimeRef.current);
+    onAnswer(idx, tempoGastoMs);
+  };
 
   // Render text statement with lacuna badge
   const renderStatement = (text: string, accentColor: string, softBg: string) => {
@@ -446,9 +458,28 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             <View style={styles.statementTypeBadge}>
               <Ionicons name="flash" size={12} color={currentCatColors.accent} />
               <Text style={[styles.statementTypeBadgeText, { color: currentCatColors.accent }]}>
-                PREENCHA A LACUNA (VUNESP)
+                {currentQuestion!.questionFormat === 'assertivas'
+                  ? 'JULGAMENTO DE ASSERTIVAS (VUNESP)'
+                  : currentQuestion!.questionFormat === 'multipla_escolha'
+                  ? 'MÚLTIPLA ESCOLHA (VUNESP)'
+                  : 'PREENCHA A LACUNA (VUNESP)'}
               </Text>
             </View>
+
+            {currentQuestion!.supportText && (
+              <View
+                style={[
+                  styles.supportTextBox,
+                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                ]}
+              >
+                <Ionicons name="document-text-outline" size={14} color={tokens.textMuted} />
+                <Text style={[styles.supportTextContent, { color: tokens.textMuted }]}>
+                  {currentQuestion!.supportText}
+                </Text>
+              </View>
+            )}
+
             {renderStatement(
               currentQuestion!.statement,
               currentCatColors.accent,
@@ -593,7 +624,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 return (
                   <TouchableOpacity
                     key={option}
-                    onPress={() => onAnswer(idx)}
+                    onPress={() => handleSelectOption(idx)}
                     activeOpacity={0.7}
                     style={[
                       styles.optionButton,
@@ -741,19 +772,45 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             <View
               style={[
                 styles.classificationBox,
-                { backgroundColor: tokens.dangerSoft, borderColor: tokens.danger },
+                {
+                  backgroundColor: tokens.dangerSoft,
+                  borderColor: tokens.danger,
+                  borderWidth: 2,
+                },
               ]}
             >
-              <Ionicons name="warning" size={18} color={tokens.danger} />
+              <Ionicons name="warning" size={24} color={tokens.danger} />
               <View style={{ flex: 1 }}>
-                <Text style={[styles.classificationTitle, { color: tokens.danger }]}>
-                  🚨 PONTO CEGO DETECTADO! (Ilusão de Competência)
+                <Text style={[styles.classificationTitle, { color: tokens.danger, fontSize: 13, fontWeight: '900' }]}>
+                  ⚠️ Ponto Cego Detectado: Cuidado com a pegadinha da VUNESP!
                 </Text>
-                <Text style={[styles.classificationDesc, { color: tokens.textPrimary }]}>
-                  Você marcou [3 - Certeza], mas caiu na pegadinha da VUNESP. Questão salva na
-                  sua Fila Prioritária de Repetição Espaçada!
+                <Text style={[styles.classificationDesc, { color: tokens.textPrimary, marginTop: 4 }]}>
+                  Você selecionou [3 - Certeza] e errou a questão. Esta ilusão de competência foi adicionada à sua Fila Prioritária do SRS para repetição intensiva!
                 </Text>
               </View>
+            </View>
+          )}
+
+          {/* Alerta de Pegadinha VUNESP específica (se configurado na questão) */}
+          {currentQuestion!.trapAlert && (
+            <View
+              style={[
+                styles.trapAlertBox,
+                {
+                  backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
+                  borderColor: tokens.danger,
+                },
+              ]}
+            >
+              <View style={styles.trapAlertHeader}>
+                <Ionicons name="alert-circle" size={16} color={tokens.danger} />
+                <Text style={[styles.trapAlertTitle, { color: tokens.danger }]}>
+                  PEGADINHA ESPECÍFICA DA VUNESP:
+                </Text>
+              </View>
+              <Text style={[styles.trapAlertText, { color: tokens.textPrimary }]}>
+                {currentQuestion!.trapAlert}
+              </Text>
             </View>
           )}
 
@@ -777,19 +834,30 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             </View>
           )}
 
-          {/* RAIO-X DA PEGADINHA */}
+          {/* RAIO-X DA PEGADINHA (com ênfase visual em caso de Ponto Cego) */}
           <View
             style={[
               styles.raioXBox,
-              {
-                backgroundColor: currentCatColors.soft,
-                borderColor: currentCatColors.border,
-              },
+              lastClassification === 'blind_spot'
+                ? {
+                    backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+                    borderColor: tokens.warning,
+                    borderWidth: 2,
+                  }
+                : {
+                    backgroundColor: currentCatColors.soft,
+                    borderColor: currentCatColors.border,
+                  },
             ]}
           >
             <View style={styles.raioXHeader}>
               <Ionicons name="bulb" size={16} color={tokens.warning} />
-              <Text style={[styles.raioXTitle, { color: currentCatColors.accent }]}>
+              <Text
+                style={[
+                  styles.raioXTitle,
+                  { color: lastClassification === 'blind_spot' ? tokens.warning : currentCatColors.accent },
+                ]}
+              >
                 RAIO-X DA PEGADINHA (MACETE VUNESP):
               </Text>
             </View>
@@ -798,16 +866,30 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             </Text>
           </View>
 
-          {/* Fundamentação Legal / Gramatical */}
+          {/* Fundamentação Legal / Gramatical (com ênfase visual em caso de Ponto Cego) */}
           {currentQuestion!.legalBasis && (
             <View
               style={[
                 styles.legalBasisBox,
-                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                lastClassification === 'blind_spot'
+                  ? {
+                      backgroundColor: tokens.surface,
+                      borderColor: tokens.danger,
+                      borderWidth: 1.5,
+                    }
+                  : {
+                      backgroundColor: tokens.surface,
+                      borderColor: tokens.cardBorder,
+                    },
               ]}
             >
-              <Text style={[styles.legalBasisTitle, { color: tokens.textMuted }]}>
-                📜 Fundamentação:
+              <Text
+                style={[
+                  styles.legalBasisTitle,
+                  { color: lastClassification === 'blind_spot' ? tokens.danger : tokens.textMuted },
+                ]}
+              >
+                📜 Fundamentação:{lastClassification === 'blind_spot' ? ' (Regra Crítica para o Concurso)' : ''}
               </Text>
               <Text style={[styles.legalBasisContent, { color: tokens.textPrimary }]}>
                 {currentQuestion!.legalBasis}
@@ -1211,6 +1293,43 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '800',
+  },
+  supportTextBox: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-start',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  supportTextContent: {
+    fontSize: 12,
+    lineHeight: 17,
+    flex: 1,
+    fontStyle: 'italic',
+  },
+  trapAlertBox: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    marginBottom: 10,
+  },
+  trapAlertHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  trapAlertTitle: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  trapAlertText: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: '600',
   },
   sessionFooter: {
     alignItems: 'center',

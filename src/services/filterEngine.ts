@@ -19,6 +19,10 @@ export function filtrarQuestoes(
   srsMap: Record<string, RevisaoSRS> = {},
   dataReferencia: number = Date.now()
 ): Question[] {
+  // Cria Sets para lookup O(1) se filtrando por erros ou pontos cegos
+  const errorSet = filtros.statusEstudo === 'erros' ? new Set(stats.errorQueue || []) : null;
+  const blindSpotSet = filtros.statusEstudo === 'pontos_cegos' ? new Set(stats.blindSpotQueue || []) : null;
+
   return questoes.filter((q) => {
     // 1. Categoria
     if (filtros.category && filtros.category !== 'all') {
@@ -55,9 +59,9 @@ export function filtrarQuestoes(
     // 6. Status de Estudo (Banco de Erros, Pontos Cegos, SRS)
     if (filtros.statusEstudo && filtros.statusEstudo !== 'todas') {
       if (filtros.statusEstudo === 'erros') {
-        if (!stats.errorQueue.includes(q.id)) return false;
+        if (!errorSet?.has(q.id)) return false;
       } else if (filtros.statusEstudo === 'pontos_cegos') {
-        if (!stats.blindSpotQueue.includes(q.id)) return false;
+        if (!blindSpotSet?.has(q.id)) return false;
       } else if (filtros.statusEstudo === 'pendentes_srs') {
         const srs = srsMap[q.id];
         if (!srs || srs.proximaRevisao > dataReferencia) return false;
