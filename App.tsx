@@ -22,6 +22,7 @@ import type {
 } from './src/types';
 import {
   loadInitialStats,
+  aplicarResposta,
   saveAttemptToStorage,
   saveSimuladoToStorage,
   clearUserStats,
@@ -193,19 +194,19 @@ export default function App() {
   }, []);
 
   const handleAnswer = useCallback(
-    async (optionIndex: number) => {
+    (optionIndex: number) => {
       if (isAnswered || !currentQuestion) return;
 
       const isCorrect = optionIndex === currentQuestion.correctIndex;
-      const { newStats, classification } = await saveAttemptToStorage(
-        stats,
-        currentQuestion.id,
-        currentQuestion.category,
-        optionIndex,
+      const { newStats, classification } = aplicarResposta(stats, {
+        questionId: currentQuestion.id,
+        category: currentQuestion.category,
+        selectedOptionIndex: optionIndex,
         isCorrect,
-        selectedCertainty
-      );
+        certainty: selectedCertainty,
+      });
 
+      // 1. Atualização otimista imediata antes de qualquer I/O assíncrono
       setStats(newStats);
       setSessionStats((prev) => ({
         attempts: prev.attempts + 1,
@@ -214,6 +215,11 @@ export default function App() {
       setSelectedOptionIndex(optionIndex);
       setLastClassification(classification);
       setIsAnswered(true);
+
+      // 2. Gravação em background sem bloquear a UI (não reverte tela em caso de falha)
+      saveAttemptToStorage(newStats).catch((e) => {
+        console.error('Falha ao persistir tentativa em background', e);
+      });
     },
     [isAnswered, currentQuestion, stats, selectedCertainty]
   );
@@ -241,9 +247,10 @@ export default function App() {
   }, [filteredQuestions.length]);
 
   const handleSaveSimulado = useCallback(
-    async (resultado: SimuladoResultado) => {
-      const updated = await saveSimuladoToStorage(stats, resultado);
-      setStats(updated);
+    (resultado: SimuladoResultado) => {
+      saveSimuladoToStorage(stats, resultado)
+        .then((updated) => setStats(updated))
+        .catch((e) => console.error('Falha ao salvar simulado em background', e));
     },
     [stats]
   );

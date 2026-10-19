@@ -120,7 +120,7 @@ export function calcularResultadoSimulado(
     }
 
     return {
-      pergunta: q,
+      perguntaId: q.id,
       selectedOptionIndex,
       isCorrect,
     };

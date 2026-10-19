@@ -64,18 +64,107 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   getCategoryColor,
 }) => {
   const attempts = stats.attempts || [];
-  const totalAttempts = attempts.length;
-  const correctCount = attempts.filter((a) => a.isCorrect).length;
-  const accuracyRate = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
+  const revisoesSRS = stats.revisoesSRS || {};
+  const simuladosHistorico = stats.simuladosHistorico || [];
+  const blindSpotQueue = stats.blindSpotQueue || [];
+  const simulados = simuladosHistorico;
+
+  // 1. Totais, taxa geral, contagem por classificação e dados por categoria em PASSO ÚNICO O(N)
+  const {
+    totalAttempts,
+    correctCount,
+    accuracyRate,
+    realMasteryCount,
+    luckyGuessCount,
+    consciousErrorCount,
+    doubtSuccessCount,
+    doubtFailureCount,
+    categoryStats,
+  } = useMemo(() => {
+    let correct = 0;
+    let realMastery = 0;
+    let luckyGuess = 0;
+    let consciousError = 0;
+    let doubtSuccess = 0;
+    let doubtFailure = 0;
+
+    const catAgg: Record<
+      CategoryType,
+      { total: number; correct: number; rate: number; blindSpots: number }
+    > = {} as any;
+
+    for (const cat of categories) {
+      catAgg[cat] = { total: 0, correct: 0, rate: 0, blindSpots: 0 };
+    }
+
+    const blindSpotSet = new Set(blindSpotQueue);
+    for (const q of questions) {
+      if (blindSpotSet.has(q.id) && catAgg[q.category]) {
+        catAgg[q.category].blindSpots += 1;
+      }
+    }
+
+    // Passo único sobre attempts em vez de múltiplos filters repetitivos no render
+    for (const a of attempts) {
+      if (a.isCorrect) correct += 1;
+
+      switch (a.classification) {
+        case 'real_mastery':
+          realMastery += 1;
+          break;
+        case 'lucky_guess':
+          luckyGuess += 1;
+          break;
+        case 'conscious_error':
+          consciousError += 1;
+          break;
+        case 'doubt_success':
+          doubtSuccess += 1;
+          break;
+        case 'doubt_failure':
+          doubtFailure += 1;
+          break;
+      }
+
+      if (catAgg[a.category]) {
+        catAgg[a.category].total += 1;
+        if (a.isCorrect) {
+          catAgg[a.category].correct += 1;
+        }
+      }
+    }
+
+    for (const cat of categories) {
+      const item = catAgg[cat];
+      if (item) {
+        item.rate = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+      }
+    }
+
+    const total = attempts.length;
+    const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    return {
+      totalAttempts: total,
+      correctCount: correct,
+      accuracyRate: rate,
+      realMasteryCount: realMastery,
+      luckyGuessCount: luckyGuess,
+      consciousErrorCount: consciousError,
+      doubtSuccessCount: doubtSuccess,
+      doubtFailureCount: doubtFailure,
+      categoryStats: catAgg,
+    };
+  }, [attempts, questions, categories, blindSpotQueue]);
 
   // SRS Summary
   const srsSummary = useMemo(() => {
-    return resumirSRS(questions, stats.revisoesSRS || {});
-  }, [questions, stats.revisoesSRS]);
+    return resumirSRS(questions, revisoesSRS);
+  }, [questions, revisoesSRS]);
 
   const filaDoDia = useMemo(() => {
-    return gerarFilaDoDia(questions, stats.revisoesSRS || {}, 10);
-  }, [questions, stats.revisoesSRS]);
+    return gerarFilaDoDia(questions, revisoesSRS, 10);
+  }, [questions, revisoesSRS]);
 
   // Edital Coverage
   const topicos = editalPadrao as EditalTopico[];
@@ -87,41 +176,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     return calcularCoberturaGeral(topicos, progressoTopicos);
   }, [topicos, progressoTopicos]);
 
-  // Performance by Category
-  const categoryStats = useMemo(() => {
-    const map: Record<
-      CategoryType,
-      { total: number; correct: number; rate: number; blindSpots: number }
-    > = {} as any;
-
-    for (const cat of categories) {
-      const catAttempts = attempts.filter((a) => a.category === cat);
-      const catCorrect = catAttempts.filter((a) => a.isCorrect).length;
-      const rate = catAttempts.length > 0 ? Math.round((catCorrect / catAttempts.length) * 100) : 0;
-
-      // Blind spots in this category
-      const catBlindSpots = questions.filter(
-        (q) => q.category === cat && stats.blindSpotQueue.includes(q.id)
-      ).length;
-
-      map[cat] = {
-        total: catAttempts.length,
-        correct: catCorrect,
-        rate,
-        blindSpots: catBlindSpots,
-      };
-    }
-    return map;
-  }, [categories, attempts, questions, stats.blindSpotQueue]);
-
-  // Metacognitive Matrix counts
-  const realMasteryCount = attempts.filter((a) => a.classification === 'real_mastery').length;
-  const luckyGuessCount = attempts.filter((a) => a.classification === 'lucky_guess').length;
-  const consciousErrorCount = attempts.filter((a) => a.classification === 'conscious_error').length;
-  const doubtSuccessCount = attempts.filter((a) => a.classification === 'doubt_success').length;
-  const doubtFailureCount = attempts.filter((a) => a.classification === 'doubt_failure').length;
-
-  // Weak Topics (topics with lowest accuracy rate or most errors)
+  // Tópicos Fracos
   const weakTopics = useMemo(() => {
     return progressoTopicos
       .filter((p) => p.questoesRespondidas > 0 && p.taxaAcerto < 75)
@@ -129,22 +184,20 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       .slice(0, 3);
   }, [progressoTopicos]);
 
-  // Simulado Evolution Comparison
-  const simulados = stats.simuladosHistorico || [];
-  const ultimoSimulado = simulados[0] || null;
-  const penultimoSimulado = simulados[1] || null;
+  // Comparativo de evolução de simulados
+  const evolucaoSimulado = useMemo(() => {
+    const ultimo = simuladosHistorico[0] || null;
+    const penultimo = simuladosHistorico[1] || null;
+    if (!ultimo || !penultimo) return null;
 
-  let evolucaoSimulado: { diff: number; text: string; color: string } | null = null;
-  if (ultimoSimulado && penultimoSimulado) {
-    const diff = ultimoSimulado.pontuacaoPercentual - penultimoSimulado.pontuacaoPercentual;
+    const diff = ultimo.pontuacaoPercentual - penultimo.pontuacaoPercentual;
     if (diff > 0) {
-      evolucaoSimulado = { diff, text: `+${diff}% vs anterior`, color: colors.emerald };
+      return { diff, text: `+${diff}% vs anterior`, color: colors.emerald };
     } else if (diff < 0) {
-      evolucaoSimulado = { diff, text: `${diff}% vs anterior`, color: colors.rose };
-    } else {
-      evolucaoSimulado = { diff: 0, text: 'Estável vs anterior', color: colors.textMuted };
+      return { diff, text: `${diff}% vs anterior`, color: colors.rose };
     }
-  }
+    return { diff: 0, text: 'Estável vs anterior', color: colors.textMuted };
+  }, [simuladosHistorico, colors.emerald, colors.rose, colors.textMuted]);
 
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -974,3 +1027,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+

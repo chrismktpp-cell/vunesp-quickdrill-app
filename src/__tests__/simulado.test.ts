@@ -89,6 +89,14 @@ describe('Simulado Service', () => {
     expect(resultado.detalhesPorCategoria['Crase (VUNESP)'].acertos).toBe(1);
     expect(resultado.detalhesPorCategoria['Crase (VUNESP)'].total).toBe(2);
     expect(resultado.detalhesPorCategoria['Crase (VUNESP)'].taxa).toBe(50);
+
+    // Formato leve de respostas (apenas perguntaId, sem duplicar o objeto Question)
+    expect(resultado.respostas[0]).toEqual({
+      perguntaId: 's-1',
+      selectedOptionIndex: 0,
+      isCorrect: true,
+    });
+    expect((resultado.respostas[0] as any).pergunta).toBeUndefined();
   });
 
   it('deve fornecer diagnóstico correto com base na faixa de pontuação', () => {

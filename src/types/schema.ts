@@ -148,7 +148,7 @@ export interface SimuladoResultado {
     taxa: number;
   }>;
   respostas: Array<{
-    pergunta: Question;
+    perguntaId: string;
     selectedOptionIndex: number | null;
     isCorrect: boolean;
   }>;

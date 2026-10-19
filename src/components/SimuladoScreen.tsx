@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -55,6 +55,15 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   isDark,
   getCategoryColor,
 }) => {
+  // Map id -> Question para resolução rápida sem buscar no array
+  const questionsMap = useMemo(() => {
+    const map = new Map<string, Question>();
+    for (const q of questions) {
+      map.set(q.id, q);
+    }
+    return map;
+  }, [questions]);
+
   // State: 'menu' | 'running' | 'result'
   const [stage, setStage] = useState<'menu' | 'running' | 'result'>('menu');
   const [selectedConfig, setSelectedConfig] = useState<SimuladoConfig>(
@@ -672,14 +681,18 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
           Gabarito Comentado & Raio-X
         </Text>
         {ultimoResultado.respostas.map((item, idx) => {
-          const { pergunta, selectedOptionIndex, isCorrect } = item;
+          const perguntaId = item.perguntaId || (item as any).pergunta?.id;
+          const pergunta = questionsMap.get(perguntaId) || (item as any).pergunta;
+          if (!pergunta) return null;
+
+          const { selectedOptionIndex, isCorrect } = item;
           const letterUser =
             selectedOptionIndex !== null ? String.fromCharCode(65 + selectedOptionIndex) : 'Em Branco';
           const letterGabarito = String.fromCharCode(65 + pergunta.correctIndex);
 
           return (
             <View
-              key={pergunta.id}
+              key={pergunta.id || idx}
               style={[
                 styles.reviewCard,
                 {
