@@ -4,7 +4,7 @@
     "materia": "Língua Portuguesa",
     "category": "Crase (VUNESP)",
     "nome": "Emprego do Sinal Indicativo de Crase",
-    "descricao": "Casos proibidos (diante de verbos, pronomes de tratamento, palavras masculinas), casos facultativos e casos obrigatórios (locuções femininas, horas exatas).",
+    "descricao": "Regras gerais, casos proibidos (diante de verbos, pronomes de tratamento, palavras masculinas), casos facultativos e casos obrigatórios (locuções femininas, horas exatas, pronomes demonstrativos).",
     "pesoOuRelevancia": "Alta",
     "artigosLei": "Gramática Normativa / Padrão VUNESP"
   },
@@ -13,45 +13,62 @@
     "materia": "Língua Portuguesa",
     "category": "Sujeito Oracional e Transitividade",
     "nome": "Concordância Verbal & Sujeito Oracional",
-    "descricao": "Concordância com orações subordinadas substantivas subjetivas (verbo no singular), verbos impessoais (haver/fazer) e regência com partícula 'se'.",
+    "descricao": "Concordância com orações subordinadas subjetivas (verbo no singular), verbos impessoais (haver existencial, fazer temporal) e partícula apassivadora 'se'.",
     "pesoOuRelevancia": "Alta",
     "artigosLei": "Gramática Normativa / Sintaxe de Concordância"
+  },
+  {
+    "id": "edital-lp-03",
+    "materia": "Língua Portuguesa",
+    "category": "Sujeito Oracional e Transitividade",
+    "nome": "Regência Verbal, Ortografia & Acentuação",
+    "descricao": "Regência de verbos de alta incidência (aspirar, assistir, obedecer, preferir, implicar), emprego de onde/aonde, porquês e acentuação gráfica.",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Gramática Normativa / Padrão Culto VUNESP"
   },
   {
     "id": "edital-adm-01",
     "materia": "Direito Administrativo",
     "category": "Gestão de Patrimônio e Bens Públicos",
     "nome": "Regime Jurídico dos Bens Públicos",
-    "descricao": "Bens de uso comum, especial e dominicais; afetação e desafetação; imprescritibilidade, impenhorabilidade e não onerabilidade.",
+    "descricao": "Classificação (bens de uso comum, uso especial e dominicais), afetação e desafetação, regime de imprescritibilidade, impenhorabilidade e não onerabilidade.",
     "pesoOuRelevancia": "Alta",
-    "artigosLei": "Código Civil arts. 98 a 103"
+    "artigosLei": "Código Civil arts. 98 a 103 / CF art. 100"
   },
   {
     "id": "edital-adm-02",
     "materia": "Administração Pública e Patrimônio",
     "category": "Gestão de Patrimônio e Bens Públicos",
-    "nome": "Controle Patrimonial e Inventário",
-    "descricao": "Bens móveis permanentes vs de consumo, tombamento, depreciação, cessão, permissão de uso e descarte/alienação de inservíveis.",
+    "nome": "Controle Patrimonial, Inventário & Descarte",
+    "descricao": "Bens móveis permanentes vs de consumo, tombamento patrimonial, depreciação acumulada, cessão, permissão, concessão e alienação de inservíveis.",
     "pesoOuRelevancia": "Média",
-    "artigosLei": "Normas de Contabilidade Aplicada ao Setor Público (MCASP)"
+    "artigosLei": "Manual de Contabilidade Aplicada ao Setor Público (MCASP)"
+  },
+  {
+    "id": "edital-adm-03",
+    "materia": "Direito Administrativo",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "nome": "Atos Administrativos, Princípios & Ética Pública",
+    "descricao": "Atributos do ato (presunção de legitimidade, autoexecutoriedade), anulação vs revogação, princípios constitucionais (LIMPE) e conflito de interesses.",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "CF/88 art. 37 / Lei 12.813/2013 / Súmula 473 STF"
   },
   {
     "id": "edital-lic-01",
     "materia": "Direito Administrativo",
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
-    "nome": "Modalidades e Princípios Licitatórios",
-    "descricao": "Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo. Extinção de Tomada de Preços e Convite. Princípios e fases.",
+    "nome": "Modalidades, Fases & Planejamento Licitatório",
+    "descricao": "Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo. Inversão de fases, ETP, Termo de Referência, PNCP e segregação de funções.",
     "pesoOuRelevancia": "Alta",
-    "artigosLei": "Lei 14.133/2021 arts. 5º e 28"
+    "artigosLei": "Lei 14.133/2021 arts. 5º, 17, 18, 28 e 94"
   },
   {
     "id": "edital-lic-02",
     "materia": "Direito Administrativo",
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
-    "nome": "Contratação Direta (Dispensa e Inexigibilidade)",
-    "descricao": "Hipóteses taxativas e exemplificativas: inviabilidade de competição (art. 74) vs dispensa por valor e emergência (art. 75).",
+    "nome": "Contratação Direta, Contratos & Limites da LRF",
+    "descricao": "Inexigibilidade (art. 74) e Dispensa (art. 75). Vigência de contratos contínuos (5 a 10 anos), matriz de riscos e limites de pessoal da Câmara na LRF (6% da RCL).",
     "pesoOuRelevancia": "Alta",
-    "artigosLei": "Lei 14.133/2021 arts. 74 e 75"
+    "artigosLei": "Lei 14.133/2021 arts. 74, 75, 106 / LRF arts. 20 e 42 / CF art. 29-A"
   }
 ]
-

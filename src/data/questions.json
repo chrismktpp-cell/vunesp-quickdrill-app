@@ -4,7 +4,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Pronomes de tratamento",
     "statement": "O ofício foi encaminhado _____ Vossa Excelência pelo presidente da Câmara de Itanhaém.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "Pronomes de tratamento repelem artigo, logo nunca levam crase — 'a Vossa Excelência' é só preposição.",
     "legalBasis": "Regra gramatical: crase = preposição 'a' + artigo 'a'; pronomes de tratamento não admitem artigo.",
@@ -15,7 +18,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Verbo no infinitivo",
     "statement": "Os vereadores de Itanhaém começaram _____ analisar o projeto de lei.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "Antes de verbo no infinitivo não existe artigo, então jamais ocorre crase.",
     "legalBasis": "Regra gramatical: verbos não admitem artigo definido; o 'a' é apenas preposição.",
@@ -26,7 +32,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Horas exatas",
     "statement": "A sessão ordinária da Câmara de Itanhaém terá início _____ 19 horas.",
-    "options": ["às", "as"],
+    "options": [
+      "às",
+      "as"
+    ],
     "correctIndex": 0,
     "raioX": "Horas exatas determinadas sempre pedem crase — substitua por 'ao meio-dia' para confirmar.",
     "legalBasis": "Regra gramatical: indicação de horas determinadas exige preposição 'a' + artigo 'as' = às.",
@@ -37,7 +46,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Locuções femininas (à medida que)",
     "statement": "_____ que os servidores da Câmara de Itanhaém concluíam o inventário, os bens eram registrados.",
-    "options": ["À medida", "Na medida"],
+    "options": [
+      "À medida",
+      "Na medida"
+    ],
     "correctIndex": 0,
     "raioX": "'À medida que' indica proporção (= conforme); 'na medida em que' indica causa (= porque).",
     "legalBasis": "Regra gramatical: locução conjuntiva proporcional 'à medida que' vs. causal 'na medida em que'.",
@@ -48,7 +60,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Palavras repetidas",
     "statement": "A Câmara de Itanhaém analisou os requerimentos um _____ um.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "Em expressões com palavras repetidas (cara a cara, um a um), o 'a' é só preposição — sem crase.",
     "legalBasis": "Regra gramatical: locuções formadas por palavras repetidas não admitem crase.",
@@ -59,7 +74,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "À moda de",
     "statement": "No almoço de confraternização da Câmara, serviram bife _____ milanesa.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "Sempre que houver 'à moda de' implícito (à milanesa, à italiana), a crase é obrigatória.",
     "legalBasis": "Regra gramatical: crase obrigatória em locuções adverbiais femininas com 'à moda de' subentendido.",
@@ -70,7 +88,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Nomes de cidades",
     "statement": "O vereador viajou _____ Itanhaém para participar do congresso municipal.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "Cidade sem determinante não aceita artigo — diga 'voltou DE Itanhaém' (sem 'da') para confirmar.",
     "legalBasis": "Regra gramatical: nomes de cidades sem especificador não admitem artigo; truque: trocar por 'voltou de/da'.",
@@ -81,7 +102,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "A distância vs à distância de",
     "statement": "O servidor observou a sessão _____ distância de cinco metros do plenário.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "Quando 'distância' vem determinada (de cinco metros), a locução é feminina e leva crase.",
     "legalBasis": "Regra gramatical: 'a distância' (indeterminada) vs. 'à distância de…' (determinada, com crase).",
@@ -92,7 +116,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Diante de 'casa'",
     "statement": "Após a sessão, o vereador retornou _____ casa para revisar o parecer.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "'Casa' sem adjunto (= lar próprio) dispensa artigo e crase; só com especificador leva crase (à casa do colega).",
     "legalBasis": "Regra gramatical: 'casa' e 'terra', sem modificador, não admitem artigo.",
@@ -103,7 +130,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Crase antes de numeral",
     "statement": "A Câmara de Itanhaém funciona de segunda _____ sexta-feira.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "Dias da semana são femininos com artigo; se há 'de segunda', o paralelismo exige 'à sexta-feira'.",
     "legalBasis": "Regra gramatical: crase em intervalos de dias da semana (de … à …) quando ambos admitem artigo.",
@@ -114,7 +144,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Crase facultativa (pronome possessivo sua)",
     "statement": "O presidente entregou o relatório _____ sua assessora na Câmara de Itanhaém.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "Diante de possessivo feminino singular a crase é facultativa — ambas as formas estão corretas, mas a banca marca a com acento quando o enunciado pede 'com crase'.",
     "legalBasis": "Regra gramatical: crase facultativa diante de pronome possessivo feminino singular (sua, minha).",
@@ -125,7 +158,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Artigo antes de nome próprio feminino",
     "statement": "O ofício foi dirigido _____ Maria, servidora da Câmara de Itanhaém.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "Nomes próprios femininos de pessoas admitem artigo no uso coloquial brasileiro; com preposição, a crase é facultativa, mas a banca costuma cobrar com acento.",
     "legalBasis": "Regra gramatical: crase facultativa diante de nomes próprios femininos de pessoa.",
@@ -136,7 +172,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Pronomes demonstrativos àquela/àquele",
     "statement": "O parecer fez referência _____ projeto aprovado na legislatura anterior.",
-    "options": ["àquele", "aquele"],
+    "options": [
+      "àquele",
+      "aquele"
+    ],
     "correctIndex": 0,
     "raioX": "'Fazer referência a' + 'aquele' = àquele — a crase aparece na fusão da preposição com o demonstrativo.",
     "legalBasis": "Regra gramatical: crase obrigatória na contração de preposição 'a' com demonstrativos aquele(a/s), aquilo.",
@@ -147,7 +186,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Diante de 'terra' (oposto de bordo)",
     "statement": "Após a inspeção fluvial, a comitiva da Câmara voltou _____ terra.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 1,
     "raioX": "'Terra' como oposto de 'bordo/mar' dispensa artigo e crase — só ganha crase se tiver adjunto (à terra natal).",
     "legalBasis": "Regra gramatical: 'terra' em sentido de chão firme (oposição a bordo) não admite artigo.",
@@ -158,7 +200,10 @@
     "category": "Crase (VUNESP)",
     "subtopic": "Na medida em que (causal)",
     "statement": "O orçamento foi reajustado, _____ que os custos das obras aumentaram consideravelmente.",
-    "options": ["à medida", "na medida em"],
+    "options": [
+      "à medida",
+      "na medida em"
+    ],
     "correctIndex": 1,
     "raioX": "'Na medida em que' expressa causa (= porque/já que); 'à medida que' expressa proporção (= conforme).",
     "legalBasis": "Regra gramatical: locução conjuntiva causal 'na medida em que' vs. proporcional 'à medida que'.",
@@ -169,7 +214,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Sujeito oracional com verbo no singular",
     "statement": "_____ que os servidores da Câmara de Itanhaém participem do treinamento obrigatório.",
-    "options": ["Convém", "Convêm"],
+    "options": [
+      "Convém",
+      "Convêm"
+    ],
     "correctIndex": 0,
     "raioX": "Oração subordinada como sujeito = sujeito oracional → verbo sempre na 3ª pessoa do singular.",
     "legalBasis": "Regra gramatical: sujeito oracional exige verbo no singular.",
@@ -180,7 +228,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Convém vs convêm",
     "statement": "_____ aos vereadores observar os prazos regimentais.",
-    "options": ["Convêm", "Convém"],
+    "options": [
+      "Convêm",
+      "Convém"
+    ],
     "correctIndex": 1,
     "raioX": "O sujeito de 'convém' é a oração 'observar os prazos' (singular), não 'aos vereadores' (objeto indireto).",
     "legalBasis": "Regra gramatical: verbo impessoal-like com sujeito oracional fica no singular; OI não determina concordância.",
@@ -191,7 +242,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Fazer impessoal (tempo decorrido)",
     "statement": "_____ dois anos que a Câmara de Itanhaém aprovou o Plano Diretor.",
-    "options": ["Fazem", "Faz"],
+    "options": [
+      "Fazem",
+      "Faz"
+    ],
     "correctIndex": 1,
     "raioX": "'Fazer' indicando tempo decorrido é impessoal — fica sempre no singular, sem sujeito.",
     "legalBasis": "Regra gramatical: verbo 'fazer' indicando tempo transcorrido é impessoal (invariável).",
@@ -202,7 +256,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Haver impessoal (existir)",
     "statement": "_____ irregularidades nos contratos analisados pela comissão da Câmara.",
-    "options": ["Haviam", "Havia"],
+    "options": [
+      "Haviam",
+      "Havia"
+    ],
     "correctIndex": 1,
     "raioX": "'Haver' no sentido de existir é impessoal — o complemento é objeto direto, não sujeito.",
     "legalBasis": "Regra gramatical: 'haver' = existir → impessoal, invariável na 3ª pessoa do singular.",
@@ -213,7 +270,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Voz passiva sintética com VTD",
     "statement": "_____ os pareceres jurídicos sobre o novo regimento da Câmara de Itanhaém.",
-    "options": ["Aprovaram-se", "Aprovou-se"],
+    "options": [
+      "Aprovaram-se",
+      "Aprovou-se"
+    ],
     "correctIndex": 0,
     "raioX": "Com VTD + 'se' (voz passiva sintética), o verbo concorda com o sujeito paciente: 'os pareceres foram aprovados'.",
     "legalBasis": "Regra gramatical: VTD + SE = voz passiva sintética; sujeito paciente determina a concordância.",
@@ -224,7 +284,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Índice de indeterminação com VTI/VI",
     "statement": "_____ de novos investimentos para a Câmara Municipal de Itanhaém.",
-    "options": ["Necessitam-se", "Necessita-se"],
+    "options": [
+      "Necessitam-se",
+      "Necessita-se"
+    ],
     "correctIndex": 1,
     "raioX": "VTI + 'se' = índice de indeterminação do sujeito → verbo trava no singular, sempre.",
     "legalBasis": "Regra gramatical: com VTI, VI ou VL + SE, o 'se' é índice de indeterminação, verbo no singular.",
@@ -235,7 +298,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Regência de visar (pretender)",
     "statement": "O projeto de lei visa _____ melhoria dos serviços prestados pela Câmara.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "'Visar' no sentido de pretender/objetivar é VTI (regência: visar a algo) — admite crase diante de substantivo feminino.",
     "legalBasis": "Regra gramatical: visar (= pretender) é VTI com preposição 'a'; visar (= mirar) é VTD.",
@@ -246,7 +312,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Regência de assistir (presenciar)",
     "statement": "Os servidores assistiram _____ sessão solene na Câmara de Itanhaém.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "'Assistir' no sentido de presenciar/ver é VTI (assistir a algo) — exige preposição 'a'.",
     "legalBasis": "Regra gramatical: assistir (= ver/presenciar) é VTI; assistir (= prestar assistência) é VTD.",
@@ -257,7 +326,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Concordância com sujeito posposto",
     "statement": "_____ no plenário da Câmara de Itanhaém as novas regras de protocolo.",
-    "options": ["Vigoram", "Vigora"],
+    "options": [
+      "Vigoram",
+      "Vigora"
+    ],
     "correctIndex": 0,
     "raioX": "Sujeito posposto continua sendo sujeito — o verbo concorda com ele: 'as novas regras vigoram'.",
     "legalBasis": "Regra gramatical: sujeito posposto não altera a concordância; o verbo flexiona normalmente.",
@@ -268,7 +340,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Expressões partitivas (a maioria de)",
     "statement": "A maioria dos vereadores _____ o projeto de resolução na Câmara de Itanhaém.",
-    "options": ["aprovou", "aprovaram"],
+    "options": [
+      "aprovou",
+      "aprovaram"
+    ],
     "correctIndex": 0,
     "raioX": "Com expressões partitivas (a maioria de), a concordância com o núcleo singular é a preferida em provas — ambas aceitas, mas VUNESP prefere o singular.",
     "legalBasis": "Regra gramatical: concordância com expressões partitivas admite singular (núcleo) ou plural (especificador).",
@@ -279,7 +354,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Verbo ser na indicação de horas",
     "statement": "_____ treze horas quando a sessão da Câmara de Itanhaém foi suspensa.",
-    "options": ["Era", "Eram"],
+    "options": [
+      "Era",
+      "Eram"
+    ],
     "correctIndex": 1,
     "raioX": "Na indicação de horas, o verbo 'ser' concorda com o numeral: 'eram treze horas', 'era uma hora'.",
     "legalBasis": "Regra gramatical: verbo 'ser' impessoal em indicação de horas concorda com o predicativo numérico.",
@@ -290,7 +368,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Concordância com porcentagem",
     "statement": "Cerca de 60% do orçamento _____ destinado às obras de acessibilidade da Câmara.",
-    "options": ["foi", "foram"],
+    "options": [
+      "foi",
+      "foram"
+    ],
     "correctIndex": 0,
     "raioX": "Quando o especificador da porcentagem é singular ('do orçamento'), a concordância preferencial é com ele — singular.",
     "legalBasis": "Regra gramatical: % + de + nome → concordância pode ser com o % ou com o especificador; com especificador singular, prefere-se singular.",
@@ -301,7 +382,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Oração subordinada subjetiva",
     "statement": "É necessário que os servidores da Câmara _____ o treinamento de compliance.",
-    "options": ["concluam", "conclua"],
+    "options": [
+      "concluam",
+      "conclua"
+    ],
     "correctIndex": 0,
     "raioX": "Na subordinada subjetiva, o verbo da oração principal (é necessário) fica no singular, mas o da subordinada concorda com seu próprio sujeito ('os servidores').",
     "legalBasis": "Regra gramatical: oração subordinada substantiva subjetiva — verbo da principal no singular; verbo da subordinada concorda com seu sujeito interno.",
@@ -312,7 +396,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Concordância com pronome relativo 'que' e 'quem'",
     "statement": "Fui eu que _____ a ata da sessão da Câmara de Itanhaém.",
-    "options": ["redigiu", "redigi"],
+    "options": [
+      "redigiu",
+      "redigi"
+    ],
     "correctIndex": 1,
     "raioX": "Com o pronome relativo 'que', o verbo concorda com o antecedente: 'eu que redigi' (1ª pessoa).",
     "legalBasis": "Regra gramatical: pronome relativo 'que' → verbo concorda com o antecedente; 'quem' → verbo na 3ª pessoa.",
@@ -323,7 +410,10 @@
     "category": "Sujeito Oracional e Transitividade",
     "subtopic": "Regência de aspirar (desejar)",
     "statement": "O servidor da Câmara aspirava _____ promoção no plano de carreira.",
-    "options": ["à", "a"],
+    "options": [
+      "à",
+      "a"
+    ],
     "correctIndex": 0,
     "raioX": "'Aspirar' no sentido de desejar/almejar é VTI (aspirar a algo) — o 'a' é preposição, e com feminino leva crase.",
     "legalBasis": "Regra gramatical: aspirar (= desejar) é VTI com preposição 'a'; aspirar (= respirar) é VTD.",
@@ -334,7 +424,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Bens de uso comum do povo",
     "statement": "A praça localizada em frente à Câmara de Itanhaém é classificada como bem de uso _____.",
-    "options": ["comum do povo", "especial"],
+    "options": [
+      "comum do povo",
+      "especial"
+    ],
     "correctIndex": 0,
     "raioX": "Praças, ruas e praias são bens de uso comum do povo — qualquer pessoa pode usá-los sem permissão especial.",
     "legalBasis": "Código Civil, art. 99, I — bens de uso comum do povo: rios, mares, estradas, ruas e praças.",
@@ -345,7 +438,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Bens de uso especial",
     "statement": "O prédio onde funciona a Câmara Municipal de Itanhaém é classificado como bem de uso _____.",
-    "options": ["comum do povo", "especial"],
+    "options": [
+      "comum do povo",
+      "especial"
+    ],
     "correctIndex": 1,
     "raioX": "Prédios onde funcionam repartições públicas são bens de uso especial — afetados ao serviço público.",
     "legalBasis": "Código Civil, art. 99, II — bens de uso especial: edifícios destinados a serviço ou estabelecimento público.",
@@ -356,7 +452,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Bens dominicais",
     "statement": "Terrenos sem destinação pública pertencentes ao município de Itanhaém são classificados como bens _____.",
-    "options": ["de uso especial", "dominicais"],
+    "options": [
+      "de uso especial",
+      "dominicais"
+    ],
     "correctIndex": 1,
     "raioX": "Bens dominicais compõem o patrimônio disponível do ente — não estão afetados a nenhum uso público.",
     "legalBasis": "Código Civil, art. 99, III — bens dominicais: patrimônio das pessoas jurídicas de direito público sem destinação.",
@@ -367,7 +466,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Desafetação para alienar",
     "statement": "Para que um bem de uso especial da Câmara de Itanhaém possa ser alienado, é necessária prévia _____.",
-    "options": ["afetação", "desafetação"],
+    "options": [
+      "afetação",
+      "desafetação"
+    ],
     "correctIndex": 1,
     "raioX": "Só bens dominicais podem ser alienados — um bem afetado precisa ser desafetado (perder a destinação) antes da venda.",
     "legalBasis": "Código Civil, art. 100 e art. 101 — bens de uso comum e especial são inalienáveis enquanto afetados.",
@@ -378,7 +480,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Imprescritibilidade (usucapião vedado)",
     "statement": "Um particular que ocupe por 20 anos um imóvel pertencente à Câmara de Itanhaém _____ adquiri-lo por usucapião.",
-    "options": ["poderá", "não poderá"],
+    "options": [
+      "poderá",
+      "não poderá"
+    ],
     "correctIndex": 1,
     "raioX": "Bens públicos são imprescritíveis — não podem ser adquiridos por usucapião, independentemente do tempo de ocupação.",
     "legalBasis": "CF/88, art. 183, §3º e art. 191, parágrafo único; Código Civil, art. 102.",
@@ -389,7 +494,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Impenhorabilidade",
     "statement": "Em execução judicial contra o município de Itanhaém, os bens públicos da Câmara _____ ser penhorados.",
-    "options": ["podem", "não podem"],
+    "options": [
+      "podem",
+      "não podem"
+    ],
     "correctIndex": 1,
     "raioX": "Bens públicos são impenhoráveis — o pagamento de dívidas judiciais do poder público se faz por precatório, não por penhora.",
     "legalBasis": "CF/88, art. 100 — pagamentos devidos pela Fazenda Pública se fazem por precatórios; bens públicos são impenhoráveis.",
@@ -400,7 +508,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Tombamento",
     "statement": "O tombamento de um imóvel histórico da Câmara de Itanhaém _____ a transferência da propriedade ao poder público.",
-    "options": ["implica", "não implica"],
+    "options": [
+      "implica",
+      "não implica"
+    ],
     "correctIndex": 1,
     "raioX": "Tombamento é restrição administrativa que preserva o bem, mas não transfere a propriedade — o titular continua dono.",
     "legalBasis": "Decreto-Lei nº 25/1937 — tombamento impõe restrições ao uso, sem transferência dominial.",
@@ -411,7 +522,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Concessão de uso",
     "statement": "A concessão de uso de bem público da Câmara de Itanhaém exige, em regra, _____.",
-    "options": ["autorização legislativa e licitação", "apenas despacho do presidente"],
+    "options": [
+      "autorização legislativa e licitação",
+      "apenas despacho do presidente"
+    ],
     "correctIndex": 0,
     "raioX": "Concessão de uso é contrato administrativo formal — exige autorização legislativa e licitação, salvo hipóteses de dispensa.",
     "legalBasis": "Lei 14.133/2021, art. 2º e Lei Orgânica Municipal — concessão de uso de bens públicos requer licitação prévia.",
@@ -422,7 +536,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Permissão de uso",
     "statement": "A permissão de uso de espaço no saguão da Câmara de Itanhaém é ato administrativo _____.",
-    "options": ["precário e discricionário", "vinculado e definitivo"],
+    "options": [
+      "precário e discricionário",
+      "vinculado e definitivo"
+    ],
     "correctIndex": 0,
     "raioX": "Permissão de uso é ato unilateral, precário e discricionário — pode ser revogada a qualquer tempo sem indenização.",
     "legalBasis": "Doutrina administrativa (Hely Lopes Meirelles) — permissão de uso: ato precário, discricionário, revogável.",
@@ -433,7 +550,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Cessão de uso",
     "statement": "A cessão de uso de um imóvel entre a Câmara de Itanhaém e a Prefeitura é forma de transferência _____ do bem.",
-    "options": ["da propriedade", "da posse e do uso"],
+    "options": [
+      "da propriedade",
+      "da posse e do uso"
+    ],
     "correctIndex": 1,
     "raioX": "Cessão de uso transfere posse/uso entre órgãos públicos — a propriedade permanece com o ente cedente.",
     "legalBasis": "Doutrina administrativa — cessão de uso: transferência de uso entre entidades públicas, sem alienação.",
@@ -444,7 +564,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Inventário patrimonial",
     "statement": "O inventário patrimonial da Câmara de Itanhaém deve ser realizado, no mínimo, _____.",
-    "options": ["anualmente", "a cada cinco anos"],
+    "options": [
+      "anualmente",
+      "a cada cinco anos"
+    ],
     "correctIndex": 0,
     "raioX": "O inventário anual é obrigatório para confrontar registros contábeis com bens físicos existentes.",
     "legalBasis": "Lei 4.320/1964, art. 96 — levantamento geral dos bens móveis e imóveis ao menos anualmente.",
@@ -455,7 +578,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Depreciação contábil",
     "statement": "A depreciação de um veículo da Câmara de Itanhaém representa a redução do valor contábil decorrente do _____.",
-    "options": ["uso, ação da natureza ou obsolescência", "aumento de preço de mercado"],
+    "options": [
+      "uso, ação da natureza ou obsolescência",
+      "aumento de preço de mercado"
+    ],
     "correctIndex": 0,
     "raioX": "Depreciação registra a perda de valor de bens tangíveis pelo uso, tempo ou obsolescência — nunca reflete valorização.",
     "legalBasis": "MCASP / NBC TSP 07 — depreciação: alocação sistemática do valor depreciável ao longo da vida útil.",
@@ -466,7 +592,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Bens permanentes vs consumo",
     "statement": "Um computador adquirido pela Câmara de Itanhaém com vida útil superior a dois anos é classificado como material _____.",
-    "options": ["de consumo", "permanente"],
+    "options": [
+      "de consumo",
+      "permanente"
+    ],
     "correctIndex": 1,
     "raioX": "Material permanente tem durabilidade superior a 2 anos e não perde identidade com o uso — tombado e inventariado.",
     "legalBasis": "Lei 4.320/1964, art. 15, §2º — material permanente: duração superior a dois anos.",
@@ -477,7 +606,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Termo de responsabilidade",
     "statement": "O servidor que recebe um bem permanente na Câmara de Itanhaém deve assinar um _____.",
-    "options": ["termo de responsabilidade", "contrato de comodato"],
+    "options": [
+      "termo de responsabilidade",
+      "contrato de comodato"
+    ],
     "correctIndex": 0,
     "raioX": "O Termo de Responsabilidade vincula o servidor à guarda e conservação do bem — é instrumento interno de controle patrimonial.",
     "legalBasis": "Decreto 99.658/1990 (âmbito federal, aplicável por analogia) e normas internas de controle patrimonial.",
@@ -488,7 +620,10 @@
     "category": "Gestão de Patrimônio e Bens Públicos",
     "subtopic": "Alienação de bens móveis inservíveis",
     "statement": "Bens móveis inservíveis da Câmara de Itanhaém podem ser alienados por meio de _____.",
-    "options": ["leilão", "concorrência exclusivamente"],
+    "options": [
+      "leilão",
+      "concorrência exclusivamente"
+    ],
     "correctIndex": 0,
     "raioX": "Bens inservíveis (ociosos, antieconômicos, irrecuperáveis) são alienados preferencialmente por leilão — forma mais ágil.",
     "legalBasis": "Lei 14.133/2021, art. 76, §2º — alienação de bens móveis inservíveis mediante leilão.",
@@ -499,7 +634,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Inexigibilidade para artista consagrado",
     "statement": "A contratação de artista consagrado pela crítica para evento da Câmara de Itanhaém configura hipótese de _____.",
-    "options": ["dispensa de licitação", "inexigibilidade de licitação"],
+    "options": [
+      "dispensa de licitação",
+      "inexigibilidade de licitação"
+    ],
     "correctIndex": 1,
     "raioX": "Artista consagrado torna a competição inviável — é inexigibilidade (art. 74, II), não dispensa.",
     "legalBasis": "Lei 14.133/2021, art. 74, II — inexigibilidade para contratação de profissional artístico consagrado.",
@@ -510,7 +648,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Inexigibilidade por notória especialização",
     "statement": "A contratação de advogado de notória especialização para causa de alta complexidade pela Câmara de Itanhaém é caso de _____.",
-    "options": ["inexigibilidade (art. 74, III)", "dispensa (art. 75, II)"],
+    "options": [
+      "inexigibilidade (art. 74, III)",
+      "dispensa (art. 75, II)"
+    ],
     "correctIndex": 0,
     "raioX": "Notória especialização + serviço singular = competição inviável → inexigibilidade, não dispensa por valor.",
     "legalBasis": "Lei 14.133/2021, art. 74, III — inexigibilidade para serviços técnicos de natureza singular com notória especialização.",
@@ -521,7 +662,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Dispensa por valor (art. 75, II)",
     "statement": "A Câmara de Itanhaém pode dispensar a licitação para serviços comuns de engenharia de valor até _____.",
-    "options": ["R$ 100.000,00", "R$ 50.000,00"],
+    "options": [
+      "R$ 100.000,00",
+      "R$ 50.000,00"
+    ],
     "correctIndex": 0,
     "raioX": "A Lei 14.133 fixa dispensa por valor para serviços comuns de engenharia em até R$ 100.000,00 (art. 75, I).",
     "legalBasis": "Lei 14.133/2021, art. 75, I — dispensa para obras e serviços comuns de engenharia até R$ 100.000,00.",
@@ -532,7 +676,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Dispensa por emergência (art. 75, VIII)",
     "statement": "Em caso de emergência que possa causar prejuízo à segurança da Câmara de Itanhaém, a licitação pode ser _____.",
-    "options": ["inexigível", "dispensada"],
+    "options": [
+      "inexigível",
+      "dispensada"
+    ],
     "correctIndex": 1,
     "raioX": "Emergência gera dispensa (art. 75, VIII), não inexigibilidade — a competição é possível, mas o tempo não permite.",
     "legalBasis": "Lei 14.133/2021, art. 75, VIII — dispensa em caso de emergência ou calamidade pública.",
@@ -543,7 +690,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Modalidades extintas",
     "statement": "A modalidade Tomada de Preços, antes utilizada pela Câmara de Itanhaém, _____ pela Lei 14.133/2021.",
-    "options": ["foi mantida", "foi extinta"],
+    "options": [
+      "foi mantida",
+      "foi extinta"
+    ],
     "correctIndex": 1,
     "raioX": "A Lei 14.133 extinguiu Tomada de Preços e Convite — restam 5 modalidades: pregão, concorrência, concurso, leilão e diálogo competitivo.",
     "legalBasis": "Lei 14.133/2021, art. 28 — modalidades: pregão, concorrência, concurso, leilão e diálogo competitivo.",
@@ -554,7 +704,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Modalidades vigentes (5 modalidades)",
     "statement": "A Lei 14.133/2021 prevê _____ modalidades de licitação.",
-    "options": ["cinco", "seis"],
+    "options": [
+      "cinco",
+      "seis"
+    ],
     "correctIndex": 0,
     "raioX": "São 5 modalidades: Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo — decore 'Pre-Con-Con-Lei-Di'.",
     "legalBasis": "Lei 14.133/2021, art. 28, I a V.",
@@ -565,7 +718,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Critérios do Pregão",
     "statement": "O pregão, na Lei 14.133/2021, é utilizado para aquisição de bens e serviços _____ pela Câmara de Itanhaém.",
-    "options": ["comuns", "de engenharia especializados"],
+    "options": [
+      "comuns",
+      "de engenharia especializados"
+    ],
     "correctIndex": 0,
     "raioX": "Pregão é exclusivo para bens e serviços comuns (padrões objetivos no edital) — vedado para obras e serviços especiais de engenharia.",
     "legalBasis": "Lei 14.133/2021, art. 29 — pregão para bens e serviços comuns, inclusive de engenharia comum.",
@@ -576,7 +732,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Diálogo Competitivo",
     "statement": "O diálogo competitivo é cabível quando a Câmara de Itanhaém necessita de _____ e a solução técnica é desconhecida.",
-    "options": ["inovação tecnológica ou técnica", "aquisição de bens comuns"],
+    "options": [
+      "inovação tecnológica ou técnica",
+      "aquisição de bens comuns"
+    ],
     "correctIndex": 0,
     "raioX": "Diálogo competitivo é para objetos complexos ou inovadores — a Administração dialoga com licitantes para encontrar a solução.",
     "legalBasis": "Lei 14.133/2021, art. 32 — diálogo competitivo para inovação tecnológica/técnica ou impossibilidade de definir o objeto.",
@@ -587,7 +746,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Concurso vs Leilão",
     "statement": "Para alienar bens móveis inservíveis, a Câmara de Itanhaém deve utilizar a modalidade _____.",
-    "options": ["concurso", "leilão"],
+    "options": [
+      "concurso",
+      "leilão"
+    ],
     "correctIndex": 1,
     "raioX": "Leilão aliena bens; concurso seleciona trabalho técnico/artístico — não confunda alienação com premiação.",
     "legalBasis": "Lei 14.133/2021, art. 31 — leilão para alienação de bens; art. 30 — concurso para trabalho técnico ou artístico.",
@@ -598,7 +760,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Princípio da publicidade",
     "statement": "Na Lei 14.133/2021, a publicidade dos atos licitatórios da Câmara de Itanhaém é feita preferencialmente por meio do _____.",
-    "options": ["Portal Nacional de Contratações Públicas (PNCP)", "Diário Oficial da União exclusivamente"],
+    "options": [
+      "Portal Nacional de Contratações Públicas (PNCP)",
+      "Diário Oficial da União exclusivamente"
+    ],
     "correctIndex": 0,
     "raioX": "O PNCP é o portal centralizado obrigatório de divulgação da Lei 14.133 — substituindo a fragmentação por diários oficiais.",
     "legalBasis": "Lei 14.133/2021, art. 174 — Portal Nacional de Contratações Públicas (PNCP) como sítio oficial de publicidade.",
@@ -609,7 +774,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Fase preparatória",
     "statement": "O Estudo Técnico Preliminar (ETP) é documento elaborado na fase _____ da licitação.",
-    "options": ["preparatória", "externa (publicação do edital)"],
+    "options": [
+      "preparatória",
+      "externa (publicação do edital)"
+    ],
     "correctIndex": 0,
     "raioX": "O ETP antecede o edital — é peça-chave da fase preparatória (planejamento), antes de qualquer publicação.",
     "legalBasis": "Lei 14.133/2021, art. 18, §1º — fase preparatória compreende ETP, termo de referência, análise de riscos etc.",
@@ -620,7 +788,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "ETP (Estudo Técnico Preliminar)",
     "statement": "O ETP para contratação pela Câmara de Itanhaém deve conter, entre outros elementos, a descrição da necessidade e a estimativa _____.",
-    "options": ["das quantidades necessárias", "do prazo de mandato do vereador"],
+    "options": [
+      "das quantidades necessárias",
+      "do prazo de mandato do vereador"
+    ],
     "correctIndex": 0,
     "raioX": "O ETP documenta a necessidade, os requisitos e a estimativa de quantidades e custos — é o alicerce do planejamento.",
     "legalBasis": "Lei 14.133/2021, art. 18, §1º, I a XII — elementos obrigatórios do ETP.",
@@ -631,7 +802,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Seguro-garantia",
     "statement": "Na Lei 14.133/2021, o seguro-garantia com cláusula de retomada pode cobrir até _____ do valor do contrato.",
-    "options": ["30%", "5%"],
+    "options": [
+      "30%",
+      "5%"
+    ],
     "correctIndex": 0,
     "raioX": "Seguro-garantia com cláusula de retomada (step-in) pode alcançar 30% do valor do contrato — sem essa cláusula, o limite é 5%.",
     "legalBasis": "Lei 14.133/2021, art. 98, §3º — garantia de até 30% para seguro-garantia com cláusula de retomada.",
@@ -642,7 +816,10 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Matriz de riscos",
     "statement": "A matriz de riscos no contrato da Câmara de Itanhaém define a repartição objetiva de responsabilidades entre _____.",
-    "options": ["contratante e contratado", "Legislativo e Judiciário"],
+    "options": [
+      "contratante e contratado",
+      "Legislativo e Judiciário"
+    ],
     "correctIndex": 0,
     "raioX": "A matriz de riscos distribui encargos entre Administração e contratado — define quem assume cada risco do contrato.",
     "legalBasis": "Lei 14.133/2021, art. 6º, XXVII — matriz de riscos: cláusula contratual de repartição de riscos.",
@@ -653,10 +830,1203 @@
     "category": "Nova Lei de Licitações (Lei 14.133/2021)",
     "subtopic": "Registro de preços",
     "statement": "O sistema de registro de preços, utilizado pela Câmara de Itanhaém, é adotado preferencialmente nas modalidades pregão ou _____.",
-    "options": ["concorrência", "diálogo competitivo"],
+    "options": [
+      "concorrência",
+      "diálogo competitivo"
+    ],
     "correctIndex": 0,
     "raioX": "Registro de preços funciona com pregão ou concorrência — são as duas modalidades compatíveis com o SRP na Lei 14.133.",
     "legalBasis": "Lei 14.133/2021, art. 82, §2º — registro de preços por pregão ou concorrência.",
     "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-16",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronomes indefinidos",
+    "statement": "O presidente da Câmara não concedeu a palavra _____ nenhuma vereadora sem inscrição prévia.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Pronomes indefinidos (nenhuma, qualquer, toda) repelem artigo feminino; portanto, o 'a' é apenas preposição sem crase.",
+    "legalBasis": "Regra gramatical: pronomes indefinidos não admitem artigo definido diante de si.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-17",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome possessivo feminino singular",
+    "statement": "O servidor da Câmara entregou o relatório _____ sua coordenadora de gabinete.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 1,
+    "raioX": "Antes de pronome possessivo feminino no singular ('sua'), o artigo é facultativo, tornando o acento grave de crase facultativo.",
+    "legalBasis": "Regra gramatical: crase facultativa antes de pronome possessivo feminino singular adjetivo.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-18",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome possessivo no plural com preposição 'a' simples",
+    "statement": "O vereador dirigiu elogios _____ suas assessoras pela elaboração do projeto.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Se o pronome está no plural ('suas') e o 'a' está no singular, há apenas preposição simples — crase proibida!",
+    "legalBasis": "Regra VUNESP: 'A' no singular diante de palavra no plural = crase nem a pau.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-19",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Locução 'à moda de' com palavra masculina",
+    "statement": "O plenário foi decorado _____ Cláudio Manoel da Costa para a sessão solene em Itanhaém.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Ocorre crase antes de nome masculino quando está subentendida a locução 'à moda de' ou 'à maneira de'.",
+    "legalBasis": "Regra gramatical: elipse da locução prepositiva feminina 'à moda de'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-20",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Nomes de cidades e toponímia",
+    "statement": "A comitiva de vereadores retornará amanhã _____ Itanhaém.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Macete VUNESP: 'Vou a, volto de, crase pra quê? Vou a, volto da, crase no A' (Volto de Itanhaém = sem crase).",
+    "legalBasis": "Regra toponímica: nomes de localidades que não aceitam artigo feminino não admitem crase.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-21",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Nomes de cidades com modificador restritivo",
+    "statement": "A comitiva retornou _____ histórica Itanhaém dos primeiros colonizadores.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quando o nome da localidade vem especificado por adjetivo ou locução restritiva ('histórica Itanhaém'), a crase torna-se obrigatória.",
+    "legalBasis": "Regra gramatical: nomes de cidade determinados/especificados exigem artigo e aceitam crase.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-22",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'casa' sem qualificador",
+    "statement": "Após o término da sessão legislativa, os servidores voltaram _____ casa.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "A palavra 'casa' no sentido de lar próprio, desacompanhada de modificador, rejeita crase.",
+    "legalBasis": "Regra gramatical: 'casa' própria sem determinante não admite artigo.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-23",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'casa' com qualificador",
+    "statement": "O oficial de gabinete dirigiu-se _____ Casa das Leis de Itanhaém.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quando a palavra 'casa' vier determinada ou qualificada ('Casa das Leis'), o uso da crase é obrigatório.",
+    "legalBasis": "Regra gramatical: 'casa' especificada admite artigo definido e exige crase.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-24",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'terra' no sentido de chão firme",
+    "statement": "Os marinheiros da capitania desceram _____ terra após atracarem em Itanhaém.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "'Terra' em oposição a bordo/mar, sem modificador, não admite artigo e não leva crase.",
+    "legalBasis": "Regra gramatical: 'terra' em oposição a bordo não aceita artigo.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-25",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'terra' no sentido de solo natal",
+    "statement": "O ilustre cidadão prestou juramento e retornou _____ terra de seus antepassados.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quando 'terra' significa terra natal ou vem determinada ('terra de seus antepassados'), a crase é obrigatória.",
+    "legalBasis": "Regra gramatical: palavra 'terra' com adjunto adnominal restritivo admite artigo definido.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-26",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'distância' especificada",
+    "statement": "A guarda municipal postou-se _____ distância de cinquenta metros do plenário.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Diante de 'distância' determinada numericamente ('de 50 metros'), a crase é obrigatória segundo o padrão VUNESP.",
+    "legalBasis": "Padrão VUNESP: 'à distância de [X metros]' exige acento indicativo de crase.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-27",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Palavra 'distância' indeterminada",
+    "statement": "Os vereadores acompanharam o tumulto _____ distância, sem intervir.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Diante da expressão 'a distância' sem especificação numérica, predomina na banca VUNESP o uso sem crase.",
+    "legalBasis": "Regra gramatical: 'a distância' indeterminada funciona como locução adverbial sem artigo definido.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-28",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Preposição 'até' antes de substantivo feminino",
+    "statement": "O presidente da sessão caminhou até _____ tribuna de honra.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Após a preposição 'até', o uso da crase diante de substantivo feminino é facultativo ('até a' ou 'até à').",
+    "legalBasis": "Regra gramatical: preposição 'até' permite preposição acidental gerando crase facultativa.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-29",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome demonstrativo 'aquele'",
+    "statement": "Os servidores públicos fizeram referência _____ projeto de resolução já arquivado.",
+    "options": [
+      "àquele",
+      "aquele"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quem faz referência faz referência 'a'; somando com a letra inicial de 'aquele', temos 'àquele'.",
+    "legalBasis": "Regra gramatical: regência nominal exige preposição 'a' + pronome demonstrativo 'aquele' = àquele.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-30",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome demonstrativo 'aquilo'",
+    "statement": "O vereador relator opôs-se expressamente _____ que fora deliberado pela comissão.",
+    "options": [
+      "àquilo",
+      "aquilo"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'opor-se' exige a preposição 'a' (opor-se a algo); unindo com 'aquilo', obtém-se 'àquilo'.",
+    "legalBasis": "Regra gramatical: VTI 'opor-se a' + 'aquilo' = crase obrigatória no 'A' inicial.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-31",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome demonstrativo 'a' (= aquela)",
+    "statement": "Esta proposta de lei é idêntica _____ que foi rejeitada na legislatura passada.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "O 'a' antes do pronome 'que' equivale a 'aquela' (idêntica àquela que foi rejeitada), ocorrendo crase.",
+    "legalBasis": "Regra gramatical: fusão de preposição 'a' exigida por 'idêntica' com pronome demonstrativo 'a'.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-32",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome relativo 'a qual'",
+    "statement": "A emenda parlamentar _____ qual o prefeito se opôs gerou amplo debate.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'opor-se' exige preposição 'a' ('opôs-se a'); com o pronome 'a qual', ocorre crase obrigatória: 'à qual'.",
+    "legalBasis": "Regra gramatical: regência verbal rege preposição 'a' que se funde ao artigo de 'a qual'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-33",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Pronome relativo 'quem'",
+    "statement": "A servidora _____ quem solicitei certidão de tempo de serviço atendeu prontamente.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "O pronome relativo 'quem' rejeita artigo; portanto, diante dele jamais haverá crase.",
+    "legalBasis": "Regra gramatical: 'quem' não admite artigo feminino anteposto.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-34",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Paralelismo com correlação 'de... a...'",
+    "statement": "O expediente do arquivo geral da Câmara funciona de segunda _____ sexta-feira.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Paralelismo sintático: se começou com preposição simples ('de segunda'), termina com preposição simples ('a sexta').",
+    "legalBasis": "Regra gramatical: paralelismo sintático 'de X a Y' vs. 'da X à Y'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-35",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Paralelismo com correlação 'da... à...'",
+    "statement": "O recesso parlamentar estender-se-á da segunda _____ sexta-feira da próxima semana.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Havendo artigo no primeiro termo ('da' = de + a), deve haver crase no segundo termo ('à' = a + a) por paralelismo.",
+    "legalBasis": "Regra gramatical: correlação de artigos definidos no paralelismo sintático temporal.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-36",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Locução conjuntiva 'à proporção que'",
+    "statement": "_____ que os debates avançavam, a mesa diretora esclarecia os pontos polêmicos.",
+    "options": [
+      "À proporção",
+      "A proporção"
+    ],
+    "correctIndex": 0,
+    "raioX": "Locução conjuntiva proporcional feminina 'à proporção que' sempre recebe acento grave indicativo de crase.",
+    "legalBasis": "Regra gramatical: locuções conjuntivas com núcleo feminino exigem crase.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-37",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Locução adverbial instrumental/meio",
+    "statement": "A ata da sessão extraordinária foi lavrada _____ mão pelo primeiro secretário.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Expressões de instrumento (escrever a mão, pintar a óleo) não levam crase segundo a jurisprudência da VUNESP.",
+    "legalBasis": "Padrão VUNESP: locuções instrumentais femininas não admitem crase quando denotam mero instrumento.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "crase-38",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Locução adverbial de modo 'à revelia'",
+    "statement": "A comissão processante julgou a matéria _____ revelia do vereador ausente.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Locução adverbial feminina de modo ('à revelia', 'às pressas', 'às claras') sempre leva crase.",
+    "legalBasis": "Regra gramatical: locuções adverbiais femininas são grafadas com acento grave.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-39",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Crase antes de numeral cardinal de intervalo",
+    "statement": "A audiência pública sobre o orçamento municipal ocorrerá das 14 _____ 16 horas.",
+    "options": [
+      "às",
+      "as"
+    ],
+    "correctIndex": 0,
+    "raioX": "A correlação 'das [hora] às [hora]' exige crase porque há contração da preposição com o artigo feminino plural.",
+    "legalBasis": "Regra gramatical: indicação de horário delimitado (das X às Y) exige crase.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-40",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Crase antes de numeral ordinal feminino",
+    "statement": "O presidente convocou os vereadores _____ primeira chamada da sessão de posse.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Numerais ordinais femininos ('primeira', 'segunda') admitem artigo definido; com a preposição 'a', ocorre crase.",
+    "legalBasis": "Regra gramatical: ordinais femininos admitem artigo definido.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-41",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Expressão 'cara a cara' / expressões repetidas",
+    "statement": "O corregedor e o denunciado ficaram frente _____ frente na oitiva da CPI.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "Expressões com palavras femininas repetidas ('frente a frente', 'gota a gota') não admitem crase.",
+    "legalBasis": "Regra gramatical: ausência de artigo entre vocábulos repetidos idênticos.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-42",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Crase diante de palavra feminina genérica",
+    "statement": "O regimento da Câmara não dá direito de voto _____ pessoas sem título eleitoral regularizado.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 0,
+    "raioX": "'A' no singular antes de palavra feminina plural tomada em sentido geral ('pessoas') é preposição pura — sem crase.",
+    "legalBasis": "Regra gramatical: substantivo no plural em sentido indeterminado rejeita crase com 'a' singular.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-43",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Nome próprio feminino histórico célebre",
+    "statement": "O discurso prestou homenagem _____ Princesa Isabel pela libertação dos escravizados.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "Nomes de personalidades históricas célebres ou com títulos honoríficos formais recebem artigo e exigem crase.",
+    "legalBasis": "Regra gramatical: títulos nobres e personalidades de destaque recebem artigo determinado.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "crase-44",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Crase facultativa com nome de mulher familiar",
+    "statement": "O secretário enviou a ata aprovada _____ Maria, chefe de seção.",
+    "options": [
+      "a",
+      "à"
+    ],
+    "correctIndex": 1,
+    "raioX": "Antes de nomes próprios femininos comuns, o uso do artigo é facultativo no português do Brasil, tornando a crase facultativa.",
+    "legalBasis": "Regra gramatical: crase facultativa diante de antropônimos femininos simples.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "crase-45",
+    "category": "Crase (VUNESP)",
+    "subtopic": "Locução prepositiva 'à custa de'",
+    "statement": "O projeto de lei não pode ser aprovado _____ custa de prejuízo aos cofres de Itanhaém.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "A locução prepositiva feminina 'à custa de' exige acento indicativo de crase obrigatório.",
+    "legalBasis": "Regra gramatical: locuções prepositivas femininas (à custa de, à sombra de) são acentuadas.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-16",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Verbo 'Haver' indicando tempo decorrido",
+    "statement": "_____ cinco anos que a Lei Orgânica de Itanhaém foi reformulada pela Câmara.",
+    "options": [
+      "Faz",
+      "Fazem"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'fazer' na indicação de tempo transcorrido é impessoal e deve permanecer invariavelmente no singular.",
+    "legalBasis": "Gramática Normativa: impessoalidade do verbo 'fazer' temporal.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-17",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Verbo 'Haver' em locução verbal",
+    "statement": "No orçamento vigente, _____ de haver recursos suficientes para a nova sede legislativa.",
+    "options": [
+      "há",
+      "hão"
+    ],
+    "correctIndex": 0,
+    "raioX": "Na locução verbal com 'haver' existencial, o verbo principal transfere sua impessoalidade para o verbo auxiliar ('há de haver').",
+    "legalBasis": "Regra de concordância: contaminação da impessoalidade pelo verbo principal 'haver'.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "sujeito-18",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Partícula 'SE' apassivadora com sujeito composto",
+    "statement": "_____ o parecer técnico e a ata da sessão plenária de ontem.",
+    "options": [
+      "Aprovou-se",
+      "Aprovaram-se"
+    ],
+    "correctIndex": 1,
+    "raioX": "Na voz passiva sintética com sujeito composto posposto ('o parecer e a ata'), o verbo transita no plural: 'aprovaram-se'.",
+    "legalBasis": "Sintaxe de concordância: voz passiva sintética concorda com o sujeito paciente.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-19",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Índice de indeterminação com verbo transitivo indireto",
+    "statement": "Naquela comissão parlamentar, _____ de servidores concursados para auditoria.",
+    "options": [
+      "precisa-se",
+      "precisam-se"
+    ],
+    "correctIndex": 0,
+    "raioX": "Com verbo transitivo indireto ('precisar de') + SE, temos índice de indeterminação; o verbo fica obrigatoriamente no singular.",
+    "legalBasis": "Sintaxe de regência: índice de indeterminação do sujeito veda flexão plural.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-20",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Regência do verbo 'Aspirar'",
+    "statement": "Muitos cidadãos de Itanhaém aspiravam _____ cargo de procurador da Câmara.",
+    "options": [
+      "ao",
+      "o"
+    ],
+    "correctIndex": 0,
+    "raioX": "No sentido de almejar/desejar pretensão, 'aspirar' é transitivo indireto e exige a preposição 'a' ('aspiravam ao cargo').",
+    "legalBasis": "Regência verbal: 'aspirar' com sentido de almejar é VTI com regência em 'a'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-21",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Regência do verbo 'Assistir'",
+    "statement": "Os vereadores assistiram _____ posse do novo prefeito no plenário.",
+    "options": [
+      "à",
+      "a"
+    ],
+    "correctIndex": 0,
+    "raioX": "No sentido de presenciar/ver, o verbo 'assistir' é transitivo indireto e rege preposição 'a', ocorrendo crase antes de 'posse'.",
+    "legalBasis": "Regência verbal: 'assistir' (presenciar) = VTI com preposição 'a'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-22",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Regência do verbo 'Obedecer'",
+    "statement": "Todos os servidores públicos devem obedecer _____ normas do estatuto funcional.",
+    "options": [
+      "às",
+      "as"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'obedecer' é transitivo indireto e rege a preposição 'a'; antes de 'normas', ocorre crase obrigatória ('às normas').",
+    "legalBasis": "Regência verbal: 'obedecer' e 'desobedecer' são VTI regidos pela preposição 'a'.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-23",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Regência do verbo 'Preferir'",
+    "statement": "O relator preferiu adiar a votação _____ rejeitar o substitutivo sumariamente.",
+    "options": [
+      "a",
+      "do que"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'preferir' rege a preposição 'a' ('preferir X a Y'); a norma culta e a VUNESP condenam 'do que' ou 'mais que'.",
+    "legalBasis": "Regência verbal: 'preferir' é VTDI com segundo termo regido pela preposição 'a'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-24",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância com porcentagens e substantivo singular",
+    "statement": "Cerca de 10% da verba legislativa _____ destinada à modernização tecnológica.",
+    "options": [
+      "foi",
+      "foram"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quando a porcentagem é seguida de termo singular ('da verba'), a concordância atrativa com o substantivo no singular é amplamente aceita.",
+    "legalBasis": "Sintaxe de concordância: concordância partitiva/percentual com especificador no singular.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-25",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância com porcentagens e substantivo plural",
+    "statement": "Mais de 25% dos requerimentos parlamentares _____ deferidos pela mesa.",
+    "options": [
+      "foram",
+      "foi"
+    ],
+    "correctIndex": 0,
+    "raioX": "Com numeral percentual plural ('25%') e especificador no plural ('dos requerimentos'), o verbo vai obrigatoriamente para o plural.",
+    "legalBasis": "Regra de concordância: número percentual plural concordando com termo determinante plural.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-26",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância de 'anexo' e 'incluso'",
+    "statement": "Seguem _____ as minutas do projeto de lei orçamentária de Itanhaém.",
+    "options": [
+      "anexas",
+      "anexo"
+    ],
+    "correctIndex": 0,
+    "raioX": "O adjetivo 'anexo' concorda em gênero e número com o substantivo a que se refere ('as minutas anexas'); apenas 'em anexo' é invariável.",
+    "legalBasis": "Concordância nominal: 'anexo', 'incluso' e 'apenso' flexionam como adjetivos.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-27",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância de 'bastante' (adjetivo vs advérbio)",
+    "statement": "Os vereadores apresentaram _____ argumentos em favor da aprovação do plano diretor.",
+    "options": [
+      "bastantes",
+      "bastante"
+    ],
+    "correctIndex": 0,
+    "raioX": "Quando 'bastante' equivale a 'muitos' e modifica um substantivo ('argumentos'), ele funciona como pronome adjetivo e vai para o plural.",
+    "legalBasis": "Concordância nominal: 'bastante' flexiona no plural quando acompanha substantivo.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-28",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Emprego de 'onde' vs 'aonde'",
+    "statement": "O plenário é o local _____ os representantes do povo exercem seus mandatos.",
+    "options": [
+      "onde",
+      "aonde"
+    ],
+    "correctIndex": 0,
+    "raioX": "'Onde' indica lugar físico fixo ou permanência; 'aonde' exige verbos de movimento que regem preposição 'a' (ir, chegar, dirigir-se).",
+    "legalBasis": "Semântica e sintaxe: distinção de advérbios de lugar com e sem movimento.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-29",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Emprego de 'aonde' com verbo de movimento",
+    "statement": "O presidente da Câmara perguntou _____ os auditores se dirigiam.",
+    "options": [
+      "aonde",
+      "onde"
+    ],
+    "correctIndex": 0,
+    "raioX": "O verbo 'dirigir-se' exige a preposição 'a' (dirigir-se a algum lugar); a união gera 'aonde'.",
+    "legalBasis": "Regência do advérbio de lugar com verbos transitivos que regem preposição de movimento.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-30",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Emprego dos porquês (por que interrogativo/motivo)",
+    "statement": "Não foi esclarecido o motivo _____ o processo administrativo foi suspenso.",
+    "options": [
+      "por que",
+      "porque"
+    ],
+    "correctIndex": 0,
+    "raioX": "Equivalendo a 'pelo qual' ou após a palavra 'motivo', grafa-se separado e sem acento: 'por que'.",
+    "legalBasis": "Ortografia oficial: 'por que' relativo ou com palavra 'motivo' subentendida.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "sujeito-31",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Emprego dos porquês (porquê substantivado)",
+    "statement": "O procurador da Câmara não compreendeu o _____ de tanta demora no laudo pericial.",
+    "options": [
+      "porquê",
+      "porque"
+    ],
+    "correctIndex": 0,
+    "raioX": "Precedido de artigo ou determinante ('o'), funciona como substantivo masculino e grafa-se junto e com acento circunflexo: 'o porquê'.",
+    "legalBasis": "Ortografia oficial: substantivação do pronome interrogativo.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-32",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância do verbo 'Ser' temporal",
+    "statement": "No relógio oficial da Câmara, já _____ duas horas da tarde.",
+    "options": [
+      "eram",
+      "era"
+    ],
+    "correctIndex": 0,
+    "raioX": "Na indicação de horas, o verbo 'ser' concorda obrigatoriamente com o número de horas expressas ('eram duas horas').",
+    "legalBasis": "Sintaxe de concordância: verbo 'ser' temporal concorda com o predicativo numérico.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-33",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Concordância com sujeito oracional no singular",
+    "statement": "Aos membros da Mesa Diretora _____ publicar os atos no diário oficial.",
+    "options": [
+      "cumpre",
+      "cumprem"
+    ],
+    "correctIndex": 0,
+    "raioX": "O sujeito é a oração subordinada 'publicar os atos no diário oficial'; verbos com sujeito oracional ficam estritamente no singular.",
+    "legalBasis": "Gramática Normativa: sujeito oracional impõe terceira pessoa do singular ao verbo principal.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "sujeito-34",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Acentuação gráfica (Paroxítonas terminadas em ditongo)",
+    "statement": "A emissão do laudo pericial era uma medida de urgência daquela _____ legislativa.",
+    "options": [
+      "comissão",
+      "comissao"
+    ],
+    "correctIndex": 0,
+    "raioX": "Oxítonas e paroxítonas recebem acento conforme as regras gerais da ortografia oficial da Língua Portuguesa.",
+    "legalBasis": "Novo Acordo Ortográfico: regras de acentuação gráfica na banca VUNESP.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "sujeito-35",
+    "category": "Sujeito Oracional e Transitividade",
+    "subtopic": "Regência do verbo 'Implicar' (sentido de acarretar)",
+    "statement": "O descumprimento do regimento interno da Câmara implicará _____ penalidade administrativa.",
+    "options": [
+      "em",
+      "a"
+    ],
+    "correctIndex": 1,
+    "raioX": "No sentido de acarretar/produzir como consequência, o verbo 'implicar' é transitivo direto (não rege a preposição 'em').",
+    "legalBasis": "Regência verbal clássica da VUNESP: 'implicar' = VTD no sentido de acarretar.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "patrimonio-16",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Classificação de bens dominicais",
+    "statement": "O prédio da antiga delegacia desativada pertence à categoria de bens públicos _____.",
+    "options": [
+      "dominicais",
+      "de uso especial"
+    ],
+    "correctIndex": 0,
+    "raioX": "Bens desafetados ou sem destinação pública específica integram o patrimônio disponível do Estado como bens dominicais.",
+    "legalBasis": "Código Civil, art. 99, III: bens dominicais constituem o patrimônio das pessoas jurídicas de direito público.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-17",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Afetação tácita",
+    "statement": "A abertura e pavimentação espontânea de rua em terreno municipal configura afetação _____ do bem.",
+    "options": [
+      "tácita",
+      "expressa"
+    ],
+    "correctIndex": 0,
+    "raioX": "A afetação é tácita quando decorre da destinação fática e uso público contínuo do bem, sem lei formal específica.",
+    "legalBasis": "Doutrina Administrativista: afetação expressa (por lei/ato) vs. afetação tácita (por fato administrativo).",
+    "difficulty": "Média"
+  },
+  {
+    "id": "patrimonio-18",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Impossibilidade jurídica de usucapião",
+    "statement": "Os bens públicos municipais, independentemente de sua classificação, são protegidos pelo princípio da _____.",
+    "options": [
+      "imprescritibilidade",
+      "impenhorabilidade"
+    ],
+    "correctIndex": 0,
+    "raioX": "A imprescritibilidade veda peremptoriamente a aquisição de qualquer bem público por usucapião, conforme súmula do STF.",
+    "legalBasis": "CF/88, art. 183, § 3º e Súmula 340 do STF: bens públicos não se adquirem por usucapião.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-19",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Regime de precatórios e penhora",
+    "statement": "Em virtude da impenhorabilidade dos bens públicos, as dívidas judiciais da Câmara são satisfeitas pelo regime de _____.",
+    "options": [
+      "precatórios",
+      "execução fiscal direta"
+    ],
+    "correctIndex": 0,
+    "raioX": "Bens públicos não sofrem penhora judicial; as condenações transitadas em julgado são pagas pela ordem de precatórios ou RPV.",
+    "legalBasis": "CF/88, art. 100: pagamentos devidos pelas Fazendas Públicas em virtude de sentenças judiciais.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-20",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Permissão de uso de bem público",
+    "statement": "A permissão de uso de espaço para cantina na Câmara Municipal é ato administrativo unilateral, discricionário e _____.",
+    "options": [
+      "precário",
+      "irrevogável"
+    ],
+    "correctIndex": 0,
+    "raioX": "A permissão de uso é outorgada a título precário, podendo ser revogada pela administração a qualquer tempo por conveniência pública.",
+    "legalBasis": "Direito Administrativo: permissão de uso como ato discricionário e precário.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "patrimonio-21",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Concessão de uso de bem público",
+    "statement": "A concessão de uso de bem público é formalizada mediante _____ administrativo precedido de licitação.",
+    "options": [
+      "contrato",
+      "decreto unilateral"
+    ],
+    "correctIndex": 0,
+    "raioX": "Diferente da autorização e permissão, a concessão de uso é um contrato administrativo bilateral de direito público.",
+    "legalBasis": "Doutrina de Hely Lopes Meirelles: concessão de uso como ajuste contratual com prazo resolutivo.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "patrimonio-22",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Alienação de bens imóveis públicos",
+    "statement": "A alienação de imóvel dominical da Câmara de Itanhaém exige prévia avaliação, interesse público e _____.",
+    "options": [
+      "autorização legislativa",
+      "consulta plebiscitária"
+    ],
+    "correctIndex": 0,
+    "raioX": "A venda de imóveis da administração direta depende de prévia autorização em lei, avaliação e licitação (art. 76, I da Lei 14.133).",
+    "legalBasis": "Lei 14.133/2021, art. 76, I: alienação de bens imóveis depende de autorização legislativa.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-23",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Depreciação acumulada no setor público",
+    "statement": "O declínio do potencial de serviços de um computador da Câmara ao longo do tempo é registrado contabilmente como _____.",
+    "options": [
+      "depreciação",
+      "amortização"
+    ],
+    "correctIndex": 0,
+    "raioX": "Bens materiais e tangíveis sofrem depreciação; bens intangíveis com vida útil finita sofrem amortização contábil.",
+    "legalBasis": "Manual de Contabilidade Aplicada ao Setor Público (MCASP), Parte II.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "patrimonio-24",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Bens inservíveis (irrecuperáveis)",
+    "statement": "O bem patrimonial cuja manutenção for antieconômica ou cuja recuperação custar mais de 50% do seu valor é classificado como _____.",
+    "options": [
+      "antieconômico / irrecuperável",
+      "ocioso"
+    ],
+    "correctIndex": 0,
+    "raioX": "Bem inservível antieconômico ou irrecuperável é aquele cujo custo de reparo ultrapassa a relação de benefício econômico.",
+    "legalBasis": "Decreto Federal 9.373/2018 (referência geral para descarte e desfazimento de bens públicos).",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "patrimonio-25",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Atributos do ato administrativo (Autoexecutoriedade)",
+    "statement": "A prerrogativa da Câmara de interditar imediatamente uma obra clandestina sem ordem judicial fundamenta-se na _____.",
+    "options": [
+      "autoexecutoriedade",
+      "tipicidade"
+    ],
+    "correctIndex": 0,
+    "raioX": "A autoexecutoriedade autoriza a Administração a executar diretamente seus atos e medidas sem intervenção judicial prévia.",
+    "legalBasis": "Direito Administrativo: atributos do ato administrativo (PATI).",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-26",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Atributos do ato administrativo (Presunção de Legitimidade)",
+    "statement": "Os atos praticados pela mesa diretora presumem-se conformes à lei até prova em contrário, em decorrência da presunção de _____.",
+    "options": [
+      "legitimidade e veracidade",
+      "imperatividade absoluta"
+    ],
+    "correctIndex": 0,
+    "raioX": "A presunção de legitimidade opera juris tantum (relativa), transferindo o ônus da prova de ilegalidade para quem a alega.",
+    "legalBasis": "Doutrina de Direito Administrativo: presunção de legitimidade e veracidade dos atos públicos.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-27",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Princípio da Impessoalidade",
+    "statement": "A vedação de que constem nomes e símbolos individuais de vereadores em publicidade da Câmara deriva do princípio da _____.",
+    "options": [
+      "impessoalidade",
+      "eficiência"
+    ],
+    "correctIndex": 0,
+    "raioX": "A publicidade dos atos municipais deve ter caráter educativo e informativo, sendo vedada promoção pessoal pelo princípio da impessoalidade.",
+    "legalBasis": "CF/88, art. 37, § 1º: vedação à promoção pessoal em obras e serviços públicos.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-28",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Princípio da Moralidade Administrativa",
+    "statement": "O agente público municipal que atua estritamente dentro da lei, mas desrespeita a lealdade e a boa-fé, viola o princípio da _____.",
+    "options": [
+      "moralidade",
+      "legalidade estrita"
+    ],
+    "correctIndex": 0,
+    "raioX": "A moralidade administrativa não se confunde com mera legalidade; exige conduta pautada pela ética, honestidade e lealdade institucional.",
+    "legalBasis": "CF/88, art. 37, caput: princípio da moralidade administrativa e dever de probidade.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "patrimonio-29",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Ética no serviço público (Conflito de Interesses)",
+    "statement": "O servidor que participar de deliberação que envolva interesse particular de cônjuge incorre em situação vedada de _____.",
+    "options": [
+      "conflito de interesses",
+      "infração funcional culposa"
+    ],
+    "correctIndex": 0,
+    "raioX": "O conflito de interesses fere o dever ético de imparcialidade e impessoalidade, impondo o dever legal de abstenção ou suspeição.",
+    "legalBasis": "Lei 12.813/2013 (Lei de Conflito de Interesses) e estatutos funcionais municipais.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "patrimonio-30",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "subtopic": "Revogação vs Anulação de atos administrativos",
+    "statement": "A extinção de um ato administrativo válido, mas que se tornou inoportuno e inconveniente para a Câmara, é chamada de _____.",
+    "options": [
+      "revogação",
+      "anulação"
+    ],
+    "correctIndex": 0,
+    "raioX": "Atos ilegais são anulados (efeito ex tunc); atos válidos que se tornaram inoportunos ou inconvenientes são revogados (efeito ex nunc).",
+    "legalBasis": "Súmula 473 do STF: a Administração pode anular seus próprios atos e revogá-los por conveniência.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-16",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Modalidades extintas",
+    "statement": "Na vigência da Nova Lei de Licitações (Lei 14.133/2021), a Tomada de Preços e o Convite foram _____ do ordenamento jurídico.",
+    "options": [
+      "extintos",
+      "mantidos como opcionais"
+    ],
+    "correctIndex": 0,
+    "raioX": "A Lei 14.133/2021 extinguiu expressamente as modalidades Convite e Tomada de Preços, restando apenas 5 modalidades formais.",
+    "legalBasis": "Lei 14.133/2021, art. 28: rol taxativo das modalidades licitatórias vigentes.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-17",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Diálogo Competitivo",
+    "statement": "A modalidade voltada à contratação de obras ou soluções inovadoras com debate prévio entre proponentes chama-se _____.",
+    "options": [
+      "Diálogo Competitivo",
+      "Concurso Técnico"
+    ],
+    "correctIndex": 0,
+    "raioX": "O Diálogo Competitivo foi criado pela Lei 14.133/2021 para inovações tecnológicas e situações onde a Administração não consegue definir a solução exata sozinha.",
+    "legalBasis": "Lei 14.133/2021, art. 32: disciplina e hipóteses de cabimento do Diálogo Competitivo.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-18",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Agente de contratação (servidor efetivo)",
+    "statement": "Em regra, o agente de contratação da Câmara Municipal deve ser servidor público _____ dos quadros permanentes.",
+    "options": [
+      "efetivo",
+      "comissionado"
+    ],
+    "correctIndex": 0,
+    "raioX": "O agente de contratação e a comissão de contratação devem ser preferencialmente servidores públicos efetivos (concursados).",
+    "legalBasis": "Lei 14.133/2021, art. 8º: designação do agente de contratação dentre os servidores efetivos.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-19",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Critério de julgamento obrigatório no Pregão",
+    "statement": "No Pregão para aquisição de materiais de expediente para a Câmara, é vedado utilizar o critério de julgamento por _____.",
+    "options": [
+      "melhor técnica ou conteúdo artístico",
+      "menor preço"
+    ],
+    "correctIndex": 0,
+    "raioX": "O Pregão adota exclusivamente menor preço ou maior desconto; não se aplica a julgamentos baseados em técnica ou arte.",
+    "legalBasis": "Lei 14.133/2021, art. 34: aplicação dos critérios de julgamento por modalidade.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-20",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Inversão de fases na Nova Lei",
+    "statement": "Na regra geral da Lei 14.133/2021, a fase de julgamento das propostas ocorre _____ da fase de habilitação documental.",
+    "options": [
+      "antes",
+      "depois"
+    ],
+    "correctIndex": 0,
+    "raioX": "A Nova Lei consolidou a inversão de fases como regra geral: primeiro julgam-se as propostas, habilitando apenas o vencedor.",
+    "legalBasis": "Lei 14.133/2021, art. 17: sequência regular de fases do processo licitatório.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-21",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Dispensa de licitação por valor",
+    "statement": "A contratação direta sem licitação fundamentada estritamente no baixo valor global da despesa é caso de _____.",
+    "options": [
+      "dispensa",
+      "inexigibilidade"
+    ],
+    "correctIndex": 0,
+    "raioX": "O baixo valor é hipótese clássica de dispensa de licitação (art. 75, I e II); inexigibilidade decorre de inviabilidade de competição.",
+    "legalBasis": "Lei 14.133/2021, art. 75, I e II: dispensa por valor.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-22",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Dispensa por emergência",
+    "statement": "Nos contratos por dispensa em situação de emergência, a vigência máxima improrrogável é de até _____.",
+    "options": [
+      "1 ano",
+      "180 dias"
+    ],
+    "correctIndex": 0,
+    "raioX": "Na Lei 14.133/2021, a contratação emergencial tem prazo máximo de até 1 ano (na lei antiga 8.666/93 era de 180 dias).",
+    "legalBasis": "Lei 14.133/2021, art. 75, VIII: contratação emergencial com prazo improrrogável de até 1 ano.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "licitacao-23",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Inexigibilidade de notória especialização",
+    "statement": "A contratação direta de parecer jurídico com jurista de notória especialização para caso singular da Câmara é hipótese de _____.",
+    "options": [
+      "inexigibilidade",
+      "dispensa"
+    ],
+    "correctIndex": 0,
+    "raioX": "Serviço técnico especializado de natureza predominantemente intelectual com notória especialização é inexigibilidade (art. 74, III).",
+    "legalBasis": "Lei 14.133/2021, art. 74, III: rol de inexigibilidade por notória especialização.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-24",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Vigência de contratos de serviços contínuos",
+    "statement": "Os contratos administrativos de serviços contínuos na Câmara podem ter vigência inicial de até _____ anos.",
+    "options": [
+      "5",
+      "2"
+    ],
+    "correctIndex": 0,
+    "raioX": "A Lei 14.133/2021 inovou permitindo contratos de prestação de serviços contínuos por até 5 anos, prorrogáveis até o limite de 10 anos.",
+    "legalBasis": "Lei 14.133/2021, art. 106: prazo de vigência dos contratos de serviços contínuos.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-25",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Portal Nacional de Contratações Públicas (PNCP)",
+    "statement": "A divulgação no PNCP é condição indispensável para a _____ dos contratos administrativos celebrados pela Câmara.",
+    "options": [
+      "eficácia",
+      "validade subjetiva"
+    ],
+    "correctIndex": 0,
+    "raioX": "A publicação de extrato no Portal Nacional de Contratações Públicas (PNCP) é condição legal indispensável para a eficácia do contrato.",
+    "legalBasis": "Lei 14.133/2021, art. 94: publicidade no PNCP como requisito de eficácia contratual.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-26",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Segregação de funções",
+    "statement": "O princípio que veda a concentração de atribuições de planejamento, execução e fiscalização na mesma pessoa é o da _____.",
+    "options": [
+      "segregação de funções",
+      "padronização funcional"
+    ],
+    "correctIndex": 0,
+    "raioX": "O princípio da segregação de funções evita fraudes e conflito de interesses na cadeia de contratações públicas.",
+    "legalBasis": "Lei 14.133/2021, art. 5º e art. 7º, § 1º: princípio da segregação de funções.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-27",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Matriz de riscos em contratos",
+    "statement": "A cláusula contratual que aloca objetivamente a responsabilidade por eventos supervenientes entre as partes é a _____.",
+    "options": [
+      "matriz de riscos",
+      "cláusula exorbitante simples"
+    ],
+    "correctIndex": 0,
+    "raioX": "A matriz de riscos define de antemão qual contratante responde por imprevistos econômicos, geológicos ou climáticos na obra.",
+    "legalBasis": "Lei 14.133/2021, art. 22 e art. 103: cláusula de matriz de riscos contratuais.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-28",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Estudo Técnico Preliminar (ETP)",
+    "statement": "O documento obrigatório da fase preparatória que demonstra a viabilidade técnica e fundamenta o plano de contratação é o _____.",
+    "options": [
+      "Estudo Técnico Preliminar (ETP)",
+      "Termo de Homologação"
+    ],
+    "correctIndex": 0,
+    "raioX": "O ETP é a peça central do planejamento que avalia as soluções disponíveis de mercado antes do termo de referência.",
+    "legalBasis": "Lei 14.133/2021, art. 18, § 1º: elementos constitutivos do Estudo Técnico Preliminar.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-29",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Garantia contratual com cláusula de retomada",
+    "statement": "Nas contratações de grande vulto, a seguradora pode assumir a execução do contrato inadimplido por meio da cláusula de _____.",
+    "options": [
+      "retomada (step-in rights)",
+      "sub-rogação financeira pura"
+    ],
+    "correctIndex": 0,
+    "raioX": "A cláusula de retomada do seguro-garantia permite que a seguradora conclua a obra caso a contratada dê causa à rescisão.",
+    "legalBasis": "Lei 14.133/2021, art. 102: seguro-garantia com previsão de cláusula de retomada.",
+    "difficulty": "Difícil"
+  },
+  {
+    "id": "licitacao-30",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Limites de despesa total com pessoal na LRF (Poder Legislativo)",
+    "statement": "De acordo com a Lei de Responsabilidade Fiscal, a despesa total com pessoal do Poder Legislativo Municipal não pode exceder _____ da RCL.",
+    "options": [
+      "6%",
+      "2%"
+    ],
+    "correctIndex": 0,
+    "raioX": "Na LRF (art. 20, III, 'a'), o limite de despesa de pessoal para o Legislativo Municipal (Câmara de Vereadores) é de 6% da Receita Corrente Líquida.",
+    "legalBasis": "Lei Complementar 101/2000 (LRF), art. 20, inciso III, alínea 'a'.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-31",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "LRF - Restos a Pagar nos últimos quadrimestres",
+    "statement": "Nos últimos _____ meses do mandato, é vedado ao presidente da Câmara contrair despesa sem disponibilidade de caixa para quitação.",
+    "options": [
+      "8",
+      "6"
+    ],
+    "correctIndex": 0,
+    "raioX": "O artigo 42 da LRF proíbe expressamente contrair obrigação de despesa nos últimos dois quadrimestres (8 meses) do mandato sem caixa correspondente.",
+    "legalBasis": "Lei Complementar 101/2000 (LRF), art. 42: proibição de restos a pagar sem lastro financeiro.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-32",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Limite constitucional do orçamento da Câmara (CF art. 29-A)",
+    "statement": "O total da despesa da Câmara de Itanhaém não pode ultrapassar o limite constitucional de repasse incidente sobre as receitas do _____.",
+    "options": [
+      "exercício anterior",
+      "exercício futuro projetado"
+    ],
+    "correctIndex": 0,
+    "raioX": "Os limites constitucionais de duodécimo do art. 29-A da CF incidem estritamente sobre a receita tributária e transferências do exercício anterior.",
+    "legalBasis": "CF/88, art. 29-A: limites máximos para os repasses às Câmaras Municipais.",
+    "difficulty": "Média"
+  },
+  {
+    "id": "licitacao-33",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Orçamento secreto e princípio da publicidade",
+    "statement": "No âmbito das contratações municipais, os atos do processo licitatório são públicos, ressalvadas hipóteses legais de _____.",
+    "options": [
+      "sigilo de segurança e segredo industrial",
+      "interesse exclusivo do vereador presidente"
+    ],
+    "correctIndex": 0,
+    "raioX": "A publicidade é a regra imperativa em licitações; apenas o conteúdo das propostas até a abertura e segredos resguardados por lei são sigilosos.",
+    "legalBasis": "Lei 14.133/2021, art. 13: publicidade e hipóteses de sigilo.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-34",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Margem de preferência para microempresas",
+    "statement": "Nas licitações da Câmara, o tratamento diferenciado e simplificado concedido a microempresas e EPPs decorre da _____.",
+    "options": [
+      "Lei Complementar 123/2006",
+      "Consolidação das Leis do Trabalho"
+    ],
+    "correctIndex": 0,
+    "raioX": "A preferência e exclusividade em lotes de até R$ 80 mil para microempresas e EPPs é regida pela LC 123/2006, recepcionada pela Lei 14.133.",
+    "legalBasis": "Lei Complementar 123/2006, arts. 42 a 49 e Lei 14.133/2021, art. 4º.",
+    "difficulty": "Fácil"
+  },
+  {
+    "id": "licitacao-35",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "subtopic": "Crime em licitações e contratações diretas",
+    "statement": "Admitir ou homologar contratação direta ilegal fora das hipóteses de dispensa ou inexigibilidade constitui _____.",
+    "options": [
+      "crime previsto no Código Penal",
+      "mera irregularidade formal atípica"
+    ],
+    "correctIndex": 0,
+    "raioX": "A Lei 14.133/2021 transferiu os crimes em licitações para o Código Penal (art. 337-E: pena de reclusão de 4 a 8 anos e multa).",
+    "legalBasis": "Código Penal Brasileiro, art. 337-E (incluído pela Lei 14.133/2021).",
+    "difficulty": "Média"
   }
 ]
