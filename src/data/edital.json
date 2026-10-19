@@ -1,0 +1,56 @@
+[
+  {
+    "id": "edital-lp-01",
+    "materia": "Língua Portuguesa",
+    "category": "Crase (VUNESP)",
+    "nome": "Emprego do Sinal Indicativo de Crase",
+    "descricao": "Casos proibidos (diante de verbos, pronomes de tratamento, palavras masculinas), casos facultativos e casos obrigatórios (locuções femininas, horas exatas).",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Gramática Normativa / Padrão VUNESP"
+  },
+  {
+    "id": "edital-lp-02",
+    "materia": "Língua Portuguesa",
+    "category": "Sujeito Oracional e Transitividade",
+    "nome": "Concordância Verbal & Sujeito Oracional",
+    "descricao": "Concordância com orações subordinadas substantivas subjetivas (verbo no singular), verbos impessoais (haver/fazer) e regência com partícula 'se'.",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Gramática Normativa / Sintaxe de Concordância"
+  },
+  {
+    "id": "edital-adm-01",
+    "materia": "Direito Administrativo",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "nome": "Regime Jurídico dos Bens Públicos",
+    "descricao": "Bens de uso comum, especial e dominicais; afetação e desafetação; imprescritibilidade, impenhorabilidade e não onerabilidade.",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Código Civil arts. 98 a 103"
+  },
+  {
+    "id": "edital-adm-02",
+    "materia": "Administração Pública e Patrimônio",
+    "category": "Gestão de Patrimônio e Bens Públicos",
+    "nome": "Controle Patrimonial e Inventário",
+    "descricao": "Bens móveis permanentes vs de consumo, tombamento, depreciação, cessão, permissão de uso e descarte/alienação de inservíveis.",
+    "pesoOuRelevancia": "Média",
+    "artigosLei": "Normas de Contabilidade Aplicada ao Setor Público (MCASP)"
+  },
+  {
+    "id": "edital-lic-01",
+    "materia": "Direito Administrativo",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "nome": "Modalidades e Princípios Licitatórios",
+    "descricao": "Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo. Extinção de Tomada de Preços e Convite. Princípios e fases.",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Lei 14.133/2021 arts. 5º e 28"
+  },
+  {
+    "id": "edital-lic-02",
+    "materia": "Direito Administrativo",
+    "category": "Nova Lei de Licitações (Lei 14.133/2021)",
+    "nome": "Contratação Direta (Dispensa e Inexigibilidade)",
+    "descricao": "Hipóteses taxativas e exemplificativas: inviabilidade de competição (art. 74) vs dispensa por valor e emergência (art. 75).",
+    "pesoOuRelevancia": "Alta",
+    "artigosLei": "Lei 14.133/2021 arts. 74 e 75"
+  }
+]
