@@ -3,6 +3,9 @@ import type { Question, CategoryType, Dificuldade, UserStats, RevisaoSRS } from 
 export interface QuestionFilters {
   category?: CategoryType | 'all';
   materia?: string | 'all';
+  banca?: string | 'all';
+  cargo?: string | 'all';
+  prova?: string | 'all';
   subtopic?: string | 'all';
   dificuldade?: Dificuldade | 'all';
   statusEstudo?: 'todas' | 'erros' | 'pontos_cegos' | 'pendentes_srs' | 'dominadas';
@@ -31,8 +34,13 @@ export function filtrarQuestoes(
 
     // 2. Matéria
     if (filtros.materia && filtros.materia !== 'all') {
-      if (q.materia && q.materia !== filtros.materia) return false;
+      if (q.materia !== filtros.materia) return false;
     }
+
+    // Registros sem o metadado não pertencem ao concurso/cargo/banca selecionado.
+    if (filtros.banca && filtros.banca !== 'all' && q.banca !== filtros.banca) return false;
+    if (filtros.cargo && filtros.cargo !== 'all' && q.cargo !== filtros.cargo) return false;
+    if (filtros.prova && filtros.prova !== 'all' && q.prova !== filtros.prova) return false;
 
     // 3. Subtópico
     if (filtros.subtopic && filtros.subtopic !== 'all') {
@@ -74,4 +82,3 @@ export function filtrarQuestoes(
     return true;
   });
 }
-
