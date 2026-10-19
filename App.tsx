@@ -350,7 +350,7 @@ export default function App() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: tokens.bg }]}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
 
-      {/* ================= HEADER SUPERIOR ELEGANTE ================= */}
+      {/* ================= HEADER SUPERIOR ================= */}
       <View
         style={[
           styles.header,
@@ -358,34 +358,11 @@ export default function App() {
         ]}
       >
         <View style={styles.headerLeft}>
-          <View
-            style={[
-              styles.headerLogoSquircle,
-              { backgroundColor: currentCatColors.soft, borderColor: currentCatColors.border },
-            ]}
-          >
-            <Ionicons name="sparkles" size={17} color={currentCatColors.accent} />
-          </View>
-          <View>
-            <View style={styles.titleRow}>
-              <Text style={[styles.headerTitle, { color: tokens.textPrimary }]}>
-                QuickDrill
-              </Text>
-              <View style={[styles.tagBadge, { backgroundColor: tokens.primarySoft }]}>
-                <Text style={[styles.tagBadgeText, { color: tokens.primary }]}>VUNESP</Text>
-              </View>
-              <View
-                style={[
-                  styles.tagBadge,
-                  { backgroundColor: isDark ? 'rgba(148, 163, 184, 0.15)' : '#e2e8f0' },
-                ]}
-              >
-                <Text style={[styles.tagBadgeText, { color: tokens.textMuted }]}>Itanhaém</Text>
-              </View>
-            </View>
-            <Text style={[styles.headerSub, { color: tokens.textMuted }]}>
-              {questionsData.length} questões táticas comentadas
-            </Text>
+          <Text style={[styles.headerTitle, { color: tokens.textPrimary }]}>
+            QuickDrill
+          </Text>
+          <View style={[styles.tagBadge, { backgroundColor: tokens.primarySoft }]}>
+            <Text style={[styles.tagBadgeText, { color: tokens.primary }]}>VUNESP</Text>
           </View>
         </View>
 
@@ -401,21 +378,11 @@ export default function App() {
             <Text style={[styles.streakText, { color: tokens.warning }]}>{stats.streak}</Text>
           </View>
 
-          {/* Shuffle (Treino) */}
-          {activeTab === 'drill' && (
-            <TouchableOpacity
-              onPress={handleShuffle}
-              style={[styles.headerIconBtn, { backgroundColor: tokens.surface }]}
-              accessibilityLabel="Embaralhar questões"
-            >
-              <Ionicons name="shuffle" size={16} color={tokens.textMuted} />
-            </TouchableOpacity>
-          )}
-
           {/* Theme Switcher */}
           <TouchableOpacity
             onPress={toggleTheme}
             style={[styles.headerIconBtn, { backgroundColor: tokens.surface }]}
+            activeOpacity={0.85}
           >
             <Ionicons
               name={isDark ? 'sunny' : 'moon'}
@@ -519,6 +486,8 @@ export default function App() {
             onAnswer={handleAnswer}
             onNext={handleNext}
             onSkip={handleSkip}
+            onShuffle={handleShuffle}
+            filtros={filtros}
             onToggleFavorite={handleToggleFavorite}
             onOpenFiltersModal={() => setFiltrosModalOpen(true)}
             onResetFilters={() => {
@@ -556,12 +525,13 @@ export default function App() {
             triggerLightHaptic();
             setActiveTab('drill');
           }}
+          activeOpacity={0.85}
           style={styles.tabBarItem}
         >
           <View style={styles.tabIconWrapper}>
             <Ionicons
               name={activeTab === 'drill' ? 'flash' : 'flash-outline'}
-              size={20}
+              size={22}
               color={activeTab === 'drill' ? tokens.primary : tokens.textMuted}
             />
             {filaDoDia.revisoesPendentes.length > 0 && (
@@ -571,8 +541,10 @@ export default function App() {
           <Text
             style={[
               styles.tabBarLabel,
-              { color: activeTab === 'drill' ? tokens.primary : tokens.textMuted },
-              activeTab === 'drill' && { fontWeight: '900' },
+              {
+                color: activeTab === 'drill' ? tokens.primary : tokens.textMuted,
+                fontWeight: activeTab === 'drill' ? '600' : '500',
+              },
             ]}
           >
             Treino
@@ -585,12 +557,13 @@ export default function App() {
             triggerLightHaptic();
             setActiveTab('dashboard');
           }}
+          activeOpacity={0.85}
           style={styles.tabBarItem}
         >
           <View style={styles.tabIconWrapper}>
             <Ionicons
               name={activeTab === 'dashboard' ? 'bar-chart' : 'bar-chart-outline'}
-              size={20}
+              size={22}
               color={activeTab === 'dashboard' ? tokens.primary : tokens.textMuted}
             />
             {stats.blindSpotQueue.length > 0 && (
@@ -600,8 +573,10 @@ export default function App() {
           <Text
             style={[
               styles.tabBarLabel,
-              { color: activeTab === 'dashboard' ? tokens.primary : tokens.textMuted },
-              activeTab === 'dashboard' && { fontWeight: '900' },
+              {
+                color: activeTab === 'dashboard' ? tokens.primary : tokens.textMuted,
+                fontWeight: activeTab === 'dashboard' ? '600' : '500',
+              },
             ]}
           >
             Métricas
@@ -614,20 +589,23 @@ export default function App() {
             triggerLightHaptic();
             setActiveTab('simulado');
           }}
+          activeOpacity={0.85}
           style={styles.tabBarItem}
         >
           <View style={styles.tabIconWrapper}>
             <Ionicons
               name={activeTab === 'simulado' ? 'stopwatch' : 'stopwatch-outline'}
-              size={20}
-              color={activeTab === 'simulado' ? tokens.danger : tokens.textMuted}
+              size={22}
+              color={activeTab === 'simulado' ? tokens.primary : tokens.textMuted}
             />
           </View>
           <Text
             style={[
               styles.tabBarLabel,
-              { color: activeTab === 'simulado' ? tokens.danger : tokens.textMuted },
-              activeTab === 'simulado' && { fontWeight: '900' },
+              {
+                color: activeTab === 'simulado' ? tokens.primary : tokens.textMuted,
+                fontWeight: activeTab === 'simulado' ? '600' : '500',
+              },
             ]}
           >
             Simulado
@@ -640,20 +618,23 @@ export default function App() {
             triggerLightHaptic();
             setActiveTab('edital');
           }}
+          activeOpacity={0.85}
           style={styles.tabBarItem}
         >
           <View style={styles.tabIconWrapper}>
             <Ionicons
               name={activeTab === 'edital' ? 'map' : 'map-outline'}
-              size={20}
-              color={activeTab === 'edital' ? tokens.success : tokens.textMuted}
+              size={22}
+              color={activeTab === 'edital' ? tokens.primary : tokens.textMuted}
             />
           </View>
           <Text
             style={[
               styles.tabBarLabel,
-              { color: activeTab === 'edital' ? tokens.success : tokens.textMuted },
-              activeTab === 'edital' && { fontWeight: '900' },
+              {
+                color: activeTab === 'edital' ? tokens.primary : tokens.textMuted,
+                fontWeight: activeTab === 'edital' ? '600' : '500',
+              },
             ]}
           >
             Edital
@@ -666,25 +647,23 @@ export default function App() {
             triggerLightHaptic();
             setActiveTab('mural');
           }}
+          activeOpacity={0.85}
           style={styles.tabBarItem}
         >
           <View style={styles.tabIconWrapper}>
             <Ionicons
               name={activeTab === 'mural' ? 'bulb' : 'bulb-outline'}
-              size={20}
-              color={activeTab === 'mural' ? tokens.warning : tokens.textMuted}
+              size={22}
+              color={activeTab === 'mural' ? tokens.primary : tokens.textMuted}
             />
-            {favorites.length > 0 && (
-              <View style={[styles.tabBadgeCount, { backgroundColor: tokens.warning }]}>
-                <Text style={styles.tabBadgeCountText}>{favorites.length}</Text>
-              </View>
-            )}
           </View>
           <Text
             style={[
               styles.tabBarLabel,
-              { color: activeTab === 'mural' ? tokens.warning : tokens.textMuted },
-              activeTab === 'mural' && { fontWeight: '900' },
+              {
+                color: activeTab === 'mural' ? tokens.primary : tokens.textMuted,
+                fontWeight: activeTab === 'mural' ? '600' : '500',
+              },
             ]}
           >
             Macetes
@@ -723,48 +702,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    height: 56,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
     borderBottomWidth: 1,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-  },
-  headerLogoSquircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   headerTitle: {
-    fontSize: 15,
-    fontWeight: '900',
-    letterSpacing: -0.3,
+    fontSize: 16,
+    fontWeight: '600',
   },
   tagBadge: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   tagBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  headerSub: {
-    fontSize: 11,
-    marginTop: 1,
+    fontSize: 12,
+    fontWeight: '500',
   },
   headerRight: {
     flexDirection: 'row',
@@ -776,13 +737,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
   },
   streakText: {
     fontSize: 12,
-    fontWeight: '900',
+    fontWeight: '700',
   },
   headerIconBtn: {
     width: 34,
@@ -1172,14 +1133,15 @@ const styles = StyleSheet.create({
   bottomTabBar: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 4,
   },
   tabBarItem: {
     flex: 1,
+    minHeight: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: 2,
   },
   tabIconWrapper: {
     position: 'relative',
@@ -1192,23 +1154,10 @@ const styles = StyleSheet.create({
   },
   tabBadgeDot: {
     position: 'absolute',
-    top: -2,
-    right: -6,
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
-  tabBadgeCount: {
-    position: 'absolute',
-    top: -4,
-    right: -10,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 8,
-  },
-  tabBadgeCountText: {
-    color: '#ffffff',
-    fontSize: 9,
-    fontWeight: '900',
+    top: -1,
+    right: -4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
 });

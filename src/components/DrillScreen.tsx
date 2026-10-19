@@ -17,8 +17,10 @@ import type {
   FilaDoDia,
   Dificuldade,
 } from '../types/schema';
+import type { QuestionFilters } from '../services/filterEngine';
 import { FilaDoDiaBanner } from './FilaDoDiaBanner';
 import { triggerLightHaptic } from '../utils/storage';
+import { radius, typography, weights, spacing } from '../theme/tokens';
 
 export interface DrillScreenProps {
   questionsData: Question[];
@@ -43,6 +45,8 @@ export interface DrillScreenProps {
   onAnswer: (optionIndex: number, tempoGastoMs?: number) => void;
   onNext: () => void;
   onSkip: () => void;
+  onShuffle?: () => void;
+  filtros?: QuestionFilters;
   onToggleFavorite: (questionId: string) => void;
   onOpenFiltersModal: () => void;
   onResetFilters: () => void;
@@ -87,6 +91,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   onAnswer,
   onNext,
   onSkip,
+  onShuffle,
+  filtros,
   onToggleFavorite,
   onOpenFiltersModal,
   onResetFilters,
@@ -95,26 +101,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   legacyColors,
   isDark,
   categories,
-  getCategoryColor,
-  getDifficultyColor,
 }) => {
-  const currentCatColors = currentQuestion
-    ? getCategoryColor(currentQuestion.category)
-    : {
-        accent: tokens.primary,
-        soft: tokens.primarySoft,
-        border: tokens.cardBorder,
-        badgeText: tokens.primary,
-      };
-
-  const currentDiffColors = currentQuestion ? getDifficultyColor(currentQuestion.difficulty) : null;
-  const isCurrentBlindSpot = currentQuestion
-    ? stats.blindSpotQueue.includes(currentQuestion.id)
-    : false;
-
-  const progressRatio =
-    filteredQuestions.length > 0 ? (currentIndex + 1) / filteredQuestions.length : 0;
-
   // Cronômetro de tempo gasto na questão
   const questionStartTimeRef = useRef<number>(Date.now());
 
@@ -127,36 +114,33 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
     onAnswer(idx, tempoGastoMs);
   };
 
-  // Render text statement with lacuna badge
-  const renderStatement = (text: string, accentColor: string, softBg: string) => {
+  const progressRatio =
+    filteredQuestions.length > 0 ? (currentIndex + 1) / filteredQuestions.length : 0;
+
+  // Render text statement com destaque para lacuna [ ? ]
+  const renderStatement = (text: string) => {
     const parts = text.split('_____');
     if (parts.length === 1) {
-      return <Text style={[styles.statementText, { color: tokens.textPrimary }]}>{text}</Text>;
+      return (
+        <Text style={[styles.statementText, { color: tokens.textPrimary }]}>
+          {text}
+        </Text>
+      );
     }
     return (
       <Text style={[styles.statementText, { color: tokens.textPrimary }]}>
         {parts[0]}
-        <View style={[styles.lacunaBox, { backgroundColor: softBg, borderColor: accentColor }]}>
-          <Text style={[styles.lacunaText, { color: accentColor }]}> [ ? ] </Text>
-        </View>
-        {parts[1]}
+        <Text style={{ color: tokens.primary, fontWeight: weights.title }}>[ ? ]</Text>
+        {parts.slice(1).join('_____')}
       </Text>
     );
   };
 
-  // Streak milestone message
-  const getStreakMilestone = (streak: number) => {
-    if (streak >= 20) return { title: 'Mestre da VUNESP!', badge: '👑 20x' };
-    if (streak >= 15) return { title: 'Gabarito VUNESP!', badge: '🏆 15x' };
-    if (streak >= 10) return { title: 'Foco Imbatível!', badge: '⚡ 10x' };
-    if (streak >= 5) return { title: 'Em Chamas!', badge: '🔥 5x' };
-    return null;
-  };
-  const milestone = getStreakMilestone(stats.streak);
+  const isCurrentFavorite = currentQuestion ? favorites.includes(currentQuestion.id) : false;
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      {/* Banner Fila do Dia (SRS SM-2) */}
+      {/* 1. Banner Fila do Dia (64px, bloco único) */}
       <FilaDoDiaBanner
         fila={filaDoDia}
         isFilaActive={isFilaSRSActive}
@@ -168,124 +152,73 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
         isDark={isDark}
       />
 
-      {/* Streak Milestone Toast */}
-      {milestone &&
-        stats.streak >= 5 &&
-        isAnswered &&
-        selectedOptionIndex === currentQuestion?.correctIndex && (
+      {/* 2. Linha de controles (32px) */}
+      <View style={styles.controlsRow}>
+        <View style={styles.controlsLeft}>
+          {/* Chip da categoria ativa */}
           <View
             style={[
-              styles.milestoneBanner,
-              { backgroundColor: tokens.warningSoft, borderColor: tokens.warningBorder },
+              styles.controlChip,
+              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
             ]}
           >
-            <Ionicons name="sparkles" size={15} color={tokens.warning} />
-            <Text style={[styles.milestoneText, { color: tokens.warning }]}>
-              <Text style={{ fontWeight: '900' }}>{milestone.badge} </Text>
-              {milestone.title}
+            <Text style={[styles.controlChipText, { color: tokens.textPrimary }]}>
+              {selectedCategory === 'all' ? 'Todas' : selectedCategory.split(' ')[0]}
             </Text>
           </View>
-        )}
 
-      {/* Filtros Rápidos de Status */}
-      <View style={styles.filterBarRow}>
-        <View style={[styles.segmentedPills, { backgroundColor: tokens.surfaceSubtle }]}>
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setIsFilaSRSActive(false);
-              setMode('all');
-            }}
+          {/* Chip da dificuldade */}
+          <View
             style={[
-              styles.segmentedBtn,
-              !isFilaSRSActive &&
-                mode === 'all' && [styles.segmentedBtnActive, { backgroundColor: tokens.cardBg }],
+              styles.controlChip,
+              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
             ]}
           >
-            <Text
-              style={[
-                styles.segmentedText,
-                {
-                  color: !isFilaSRSActive && mode === 'all' ? tokens.primary : tokens.textMuted,
-                },
-                !isFilaSRSActive && mode === 'all' && { fontWeight: '800' },
-              ]}
-            >
-              Todas ({questionsData.length})
+            <Text style={[styles.controlChipText, { color: tokens.textMuted }]}>
+              {filtros?.dificuldade && filtros.dificuldade !== 'all'
+                ? filtros.dificuldade
+                : currentQuestion
+                ? currentQuestion.difficulty
+                : 'Todas'}
             </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setIsFilaSRSActive(false);
-              setMode('errors_only');
-            }}
-            style={[
-              styles.segmentedBtn,
-              mode === 'errors_only' && [
-                styles.segmentedBtnActive,
-                { backgroundColor: tokens.cardBg },
-              ],
-            ]}
-          >
-            <Text
-              style={[
-                styles.segmentedText,
-                {
-                  color: mode === 'errors_only' ? tokens.warning : tokens.textMuted,
-                },
-                mode === 'errors_only' && { fontWeight: '800' },
-              ]}
-            >
-              Erros ({stats.errorQueue.length})
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setIsFilaSRSActive(false);
-              setMode('blind_spots_only');
-            }}
-            style={[
-              styles.segmentedBtn,
-              mode === 'blind_spots_only' && [
-                styles.segmentedBtnActive,
-                { backgroundColor: tokens.cardBg },
-              ],
-            ]}
-          >
-            <Text
-              style={[
-                styles.segmentedText,
-                {
-                  color: mode === 'blind_spots_only' ? tokens.danger : tokens.textMuted,
-                },
-                mode === 'blind_spots_only' && { fontWeight: '800' },
-              ]}
-            >
-              Pontos Cegos ({stats.blindSpotQueue.length})
-            </Text>
-          </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Botão Filtros Modal */}
-        <TouchableOpacity
-          onPress={() => {
-            triggerLightHaptic();
-            onOpenFiltersModal();
-          }}
-          style={[
-            styles.filterModalTrigger,
-            { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Ionicons name="options-outline" size={16} color={tokens.primary} />
-        </TouchableOpacity>
+        <View style={styles.controlsRight}>
+          {/* Botão Shuffle */}
+          {onShuffle && (
+            <TouchableOpacity
+              onPress={onShuffle}
+              activeOpacity={0.85}
+              style={[
+                styles.controlIconBtn,
+                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+              ]}
+              accessibilityLabel="Embaralhar questões"
+            >
+              <Ionicons name="shuffle" size={16} color={tokens.textMuted} />
+            </TouchableOpacity>
+          )}
+
+          {/* Botão Filtros */}
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              onOpenFiltersModal();
+            }}
+            activeOpacity={0.85}
+            style={[
+              styles.controlIconBtn,
+              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+            ]}
+            accessibilityLabel="Abrir filtros"
+          >
+            <Ionicons name="options-outline" size={16} color={tokens.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Carrossel de Categorias */}
+      {/* 3. Carrossel de Categorias (32px de altura) */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -296,6 +229,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             triggerLightHaptic();
             setSelectedCategory('all');
           }}
+          activeOpacity={0.85}
           style={[
             styles.categoryPill,
             selectedCategory === 'all'
@@ -315,9 +249,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
         {categories.map((cat) => {
           const isSel = selectedCategory === cat;
-          const catCols = getCategoryColor(cat);
           const count = questionsData.filter((q) => q.category === cat).length;
-
           return (
             <TouchableOpacity
               key={cat}
@@ -325,10 +257,11 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 triggerLightHaptic();
                 setSelectedCategory(cat);
               }}
+              activeOpacity={0.85}
               style={[
                 styles.categoryPill,
                 isSel
-                  ? { backgroundColor: catCols.accent, borderColor: catCols.accent }
+                  ? { backgroundColor: tokens.primary, borderColor: tokens.primary }
                   : { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
               ]}
             >
@@ -345,7 +278,27 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
         })}
       </ScrollView>
 
-      {/* ================= CARD DA QUESTÃO / FEEDBACK ================= */}
+      {/* 4. Barra de progresso de 3px com fração meta 12 à direita */}
+      <View style={styles.progressRow}>
+        <View style={[styles.progressTrack, { backgroundColor: tokens.surface }]}>
+          <View
+            style={[
+              styles.progressFill,
+              {
+                width: `${Math.round(progressRatio * 100)}%`,
+                backgroundColor: tokens.primary,
+              },
+            ]}
+          />
+        </View>
+        <Text style={[styles.progressFraction, { color: tokens.textMuted }]}>
+          {filteredQuestions.length > 0
+            ? `${currentIndex + 1}/${filteredQuestions.length}`
+            : '0/0'}
+        </Text>
+      </View>
+
+      {/* 5. CARD ÚNICO — A questão é o herói */}
       {filteredQuestions.length === 0 ? (
         <View
           style={[
@@ -353,570 +306,297 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
           ]}
         >
-          <Ionicons name="checkmark-done-circle" size={50} color={tokens.success} />
+          <Ionicons name="checkmark-done-circle" size={40} color={tokens.success} />
           <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>
             {isFilaSRSActive
-              ? 'Fila do Dia Concluída!'
+              ? 'Fila do dia concluída'
               : mode === 'blind_spots_only'
-              ? 'Nenhum Ponto Cego Ativo!'
-              : 'Fila Vazia!'}
+              ? 'Nenhum ponto cego ativo'
+              : 'Nenhuma questão encontrada'}
           </Text>
           <Text style={[styles.emptyDesc, { color: tokens.textMuted }]}>
             {isFilaSRSActive
-              ? 'Você completou todas as revisões programadas para hoje pelo algoritmo SRS!'
-              : mode === 'blind_spots_only'
-              ? 'Você superou todas as ilusões de competência com 3 - Certeza!'
-              : 'Nenhuma questão encontrada com estes critérios.'}
+              ? 'Você completou todas as revisões programadas para hoje.'
+              : 'Ajuste os filtros para continuar praticando.'}
           </Text>
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
               onResetFilters();
             }}
+            activeOpacity={0.85}
             style={[styles.emptyActionBtn, { backgroundColor: tokens.primary }]}
           >
-            <Text style={styles.emptyActionBtnText}>Voltar ao Banco Geral (145 Questões)</Text>
+            <Text style={styles.emptyActionBtnText}>Voltar ao banco geral</Text>
           </TouchableOpacity>
         </View>
-      ) : !isAnswered ? (
-        /* CARD DE PERGUNTA ATIVA */
-        <View
-          style={[
-            styles.questionCard,
-            {
-              backgroundColor: tokens.cardBg,
-              borderColor: isCurrentBlindSpot ? tokens.danger : tokens.cardBorder,
-              borderTopColor: currentCatColors.accent,
-            },
-          ]}
-        >
-          {/* Barra de Progresso Superior */}
-          <View style={[styles.progressTrack, { backgroundColor: tokens.surface }]}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  width: `${Math.round(progressRatio * 100)}%`,
-                  backgroundColor: currentCatColors.accent,
-                },
-              ]}
-            />
-          </View>
-
-          {/* Linha de Metadados: Categoria, Dificuldade, Contador */}
-          <View style={styles.metaRow}>
-            <View
-              style={[
-                styles.subtopicBadge,
-                { backgroundColor: currentCatColors.soft, borderColor: currentCatColors.border },
-              ]}
-            >
-              <Text style={[styles.subtopicBadgeText, { color: currentCatColors.badgeText }]}>
-                {currentQuestion!.subtopic}
-              </Text>
-            </View>
-
-            <View style={styles.metaRightGroup}>
-              {currentDiffColors && (
-                <View
-                  style={[
-                    styles.diffBadge,
-                    {
-                      backgroundColor: currentDiffColors.bg,
-                      borderColor: currentDiffColors.border,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.diffBadgeText, { color: currentDiffColors.text }]}>
-                    {currentQuestion!.difficulty}
-                  </Text>
-                </View>
-              )}
-              <Text style={[styles.counterText, { color: tokens.textMuted }]}>
-                {currentIndex + 1}/{filteredQuestions.length}
-              </Text>
-            </View>
-          </View>
-
-          {/* Banner de Ponto Cego Ativo */}
-          {isCurrentBlindSpot && (
-            <View
-              style={[
-                styles.blindSpotWarningPill,
-                { backgroundColor: tokens.dangerSoft, borderColor: tokens.dangerBorder },
-              ]}
-            >
-              <Ionicons name="warning" size={13} color={tokens.danger} />
-              <Text style={[styles.blindSpotWarningText, { color: tokens.danger }]}>
-                Ponto Cego Ativo — Treino Prioritário
-              </Text>
-            </View>
-          )}
-
-          {/* Enunciado com destaque para lacuna */}
-          <View style={styles.statementArea}>
-            <View style={styles.statementTypeBadge}>
-              <Ionicons name="flash" size={12} color={currentCatColors.accent} />
-              <Text style={[styles.statementTypeBadgeText, { color: currentCatColors.accent }]}>
-                {currentQuestion!.questionFormat === 'assertivas'
-                  ? 'JULGAMENTO DE ASSERTIVAS (VUNESP)'
-                  : currentQuestion!.questionFormat === 'multipla_escolha'
-                  ? 'MÚLTIPLA ESCOLHA (VUNESP)'
-                  : 'PREENCHA A LACUNA (VUNESP)'}
-              </Text>
-            </View>
-
-            {currentQuestion!.supportText && (
-              <View
-                style={[
-                  styles.supportTextBox,
-                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-                ]}
-              >
-                <Ionicons name="document-text-outline" size={14} color={tokens.textMuted} />
-                <Text style={[styles.supportTextContent, { color: tokens.textMuted }]}>
-                  {currentQuestion!.supportText}
-                </Text>
-              </View>
-            )}
-
-            {renderStatement(
-              currentQuestion!.statement,
-              currentCatColors.accent,
-              currentCatColors.soft
-            )}
-          </View>
-
-          {/* SELETOR DE CERTEZA REFINADO */}
-          <View style={[styles.cardDivider, { borderTopColor: tokens.divider }]}>
-            <View style={styles.sectionHeadingRow}>
-              <Ionicons name="shield-checkmark" size={14} color={tokens.primary} />
-              <Text style={[styles.sectionHeadingText, { color: tokens.textMuted }]}>
-                1. SEU NÍVEL DE CERTEZA:
-              </Text>
-            </View>
-
-            <View style={styles.certaintyRow}>
-              {/* Chute */}
-              <TouchableOpacity
-                onPress={() => {
-                  triggerLightHaptic();
-                  setSelectedCertainty(1);
-                }}
-                activeOpacity={0.7}
-                style={[
-                  styles.certaintyCard,
-                  {
-                    backgroundColor:
-                      selectedCertainty === 1 ? tokens.warningSoft : tokens.surface,
-                    borderColor:
-                      selectedCertainty === 1 ? tokens.warning : tokens.cardBorder,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="dice"
-                  size={15}
-                  color={selectedCertainty === 1 ? tokens.warning : tokens.textMuted}
-                />
-                <Text
-                  style={[
-                    styles.certaintyCardTitle,
-                    { color: selectedCertainty === 1 ? tokens.warning : tokens.textMuted },
-                  ]}
-                >
-                  1. Chute
-                </Text>
-                <Text style={[styles.certaintyCardSub, { color: tokens.textMuted }]}>Sorte</Text>
-              </TouchableOpacity>
-
-              {/* Dúvida */}
-              <TouchableOpacity
-                onPress={() => {
-                  triggerLightHaptic();
-                  setSelectedCertainty(2);
-                }}
-                activeOpacity={0.7}
-                style={[
-                  styles.certaintyCard,
-                  {
-                    backgroundColor:
-                      selectedCertainty === 2 ? tokens.primarySoft : tokens.surface,
-                    borderColor:
-                      selectedCertainty === 2 ? tokens.primary : tokens.cardBorder,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="help-circle"
-                  size={15}
-                  color={selectedCertainty === 2 ? tokens.primary : tokens.textMuted}
-                />
-                <Text
-                  style={[
-                    styles.certaintyCardTitle,
-                    { color: selectedCertainty === 2 ? tokens.primary : tokens.textMuted },
-                  ]}
-                >
-                  2. Dúvida
-                </Text>
-                <Text style={[styles.certaintyCardSub, { color: tokens.textMuted }]}>
-                  Inseguro
-                </Text>
-              </TouchableOpacity>
-
-              {/* Certeza */}
-              <TouchableOpacity
-                onPress={() => {
-                  triggerLightHaptic();
-                  setSelectedCertainty(3);
-                }}
-                activeOpacity={0.7}
-                style={[
-                  styles.certaintyCard,
-                  {
-                    backgroundColor:
-                      selectedCertainty === 3 ? tokens.successSoft : tokens.surface,
-                    borderColor:
-                      selectedCertainty === 3 ? tokens.success : tokens.cardBorder,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="shield-checkmark"
-                  size={15}
-                  color={selectedCertainty === 3 ? tokens.success : tokens.textMuted}
-                />
-                <Text
-                  style={[
-                    styles.certaintyCardTitle,
-                    { color: selectedCertainty === 3 ? tokens.success : tokens.textMuted },
-                  ]}
-                >
-                  3. Certeza
-                </Text>
-                <Text style={[styles.certaintyCardSub, { color: tokens.textMuted }]}>
-                  Domínio
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* ALTERNATIVAS DE RESPOSTA */}
-          <View style={[styles.cardDivider, { borderTopColor: tokens.divider }]}>
-            <View style={styles.sectionHeaderBetween}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Ionicons name="flash" size={14} color={currentCatColors.accent} />
-                <Text style={[styles.sectionHeadingText, { color: tokens.textMuted }]}>
-                  2. RESPOSTA RÁPIDA:
-                </Text>
-              </View>
-
-              <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
-                <Text style={[styles.skipButtonText, { color: tokens.textMuted }]}>Pular</Text>
-                <Ionicons name="arrow-forward" size={12} color={tokens.textMuted} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.optionsList}>
-              {currentQuestion!.options.map((option, idx) => {
-                const letter = String.fromCharCode(65 + idx);
-                return (
-                  <TouchableOpacity
-                    key={option}
-                    onPress={() => handleSelectOption(idx)}
-                    activeOpacity={0.7}
-                    style={[
-                      styles.optionButton,
-                      { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-                    ]}
-                  >
-                    <View style={styles.optionLeftGroup}>
-                      <View
-                        style={[
-                          styles.optionLetterCircle,
-                          {
-                            backgroundColor: tokens.cardBg,
-                            borderColor: currentCatColors.accent,
-                          },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.optionLetterText,
-                            { color: currentCatColors.accent },
-                          ]}
-                        >
-                          {letter}
-                        </Text>
-                      </View>
-                      <Text style={[styles.optionLabel, { color: tokens.textPrimary }]}>
-                        {option}
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-        </View>
       ) : (
-        /* CARD DE FEEDBACK DETALHADO (PÓS-RESPOSTA) */
         <View
           style={[
             styles.questionCard,
-            {
-              backgroundColor: tokens.cardBg,
-              borderColor:
-                selectedOptionIndex === currentQuestion!.correctIndex
-                  ? tokens.success
-                  : tokens.danger,
-              borderTopColor:
-                selectedOptionIndex === currentQuestion!.correctIndex
-                  ? tokens.success
-                  : tokens.danger,
-            },
+            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
           ]}
         >
-          {/* Status da Resposta */}
-          <View
-            style={[
-              styles.feedbackBanner,
-              {
-                backgroundColor:
-                  selectedOptionIndex === currentQuestion!.correctIndex
-                    ? tokens.successSoft
-                    : tokens.dangerSoft,
-                borderColor:
-                  selectedOptionIndex === currentQuestion!.correctIndex
-                    ? tokens.success
-                    : tokens.danger,
-              },
-            ]}
-          >
-            <Ionicons
-              name={
-                selectedOptionIndex === currentQuestion!.correctIndex
-                  ? 'checkmark-circle'
-                  : 'close-circle'
-              }
-              size={28}
-              color={
-                selectedOptionIndex === currentQuestion!.correctIndex
-                  ? tokens.success
-                  : tokens.danger
-              }
-            />
-            <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text
-                style={[
-                  styles.feedbackTitle,
-                  {
-                    color:
-                      selectedOptionIndex === currentQuestion!.correctIndex
-                        ? tokens.success
-                        : tokens.danger,
-                  },
-                ]}
-              >
-                {selectedOptionIndex === currentQuestion!.correctIndex
-                  ? 'RESPOSTA CORRETA!'
-                  : 'RESPOSTA INCORRETA!'}
-              </Text>
-              <Text style={[styles.feedbackGabarito, { color: tokens.textPrimary }]}>
-                Gabarito:{' '}
-                <Text style={{ fontWeight: '800' }}>
-                  [{String.fromCharCode(65 + currentQuestion!.correctIndex)}]{' '}
-                  {currentQuestion!.options[currentQuestion!.correctIndex]}
-                </Text>
+          {/* Header do Card: Subtópico + Dificuldade à esquerda, Estrela de favorito à direita (22px) */}
+          <View style={styles.cardMetaRow}>
+            <View style={styles.cardMetaLeft}>
+              <Text style={[styles.metaText, { color: tokens.textMuted }]}>
+                {currentQuestion!.subtopic} · {currentQuestion!.difficulty}
               </Text>
             </View>
 
             <TouchableOpacity
               onPress={() => onToggleFavorite(currentQuestion!.id)}
-              style={{ padding: 6 }}
+              activeOpacity={0.85}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Ionicons
-                name={favorites.includes(currentQuestion!.id) ? 'star' : 'star-outline'}
+                name={isCurrentFavorite ? 'star' : 'star-outline'}
                 size={22}
-                color={
-                  favorites.includes(currentQuestion!.id) ? tokens.warning : tokens.textMuted
-                }
+                color={isCurrentFavorite ? tokens.warning : tokens.textMuted}
               />
             </TouchableOpacity>
           </View>
 
-          {/* Classificação Metacognitiva Especial */}
-          {lastClassification === 'real_mastery' && (
+          {/* Texto de Apoio (se houver) */}
+          {currentQuestion!.supportText && (
             <View
               style={[
-                styles.classificationBox,
-                { backgroundColor: tokens.successSoft, borderColor: tokens.success },
+                styles.supportTextBox,
+                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
               ]}
             >
-              <Ionicons name="shield-checkmark" size={17} color={tokens.success} />
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.classificationTitle, { color: tokens.success }]}>
-                  DOMÍNIO REAL CONFIRMADO!
-                </Text>
-                <Text style={[styles.classificationDesc, { color: tokens.textPrimary }]}>
-                  Você marcou [3 - Certeza] e acertou. O algoritmo avançou esta questão na caixa de
-                  repetição espaçada!
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {lastClassification === 'blind_spot' && (
-            <View
-              style={[
-                styles.classificationBox,
-                {
-                  backgroundColor: tokens.dangerSoft,
-                  borderColor: tokens.danger,
-                  borderWidth: 2,
-                },
-              ]}
-            >
-              <Ionicons name="warning" size={24} color={tokens.danger} />
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.classificationTitle, { color: tokens.danger, fontSize: 13, fontWeight: '900' }]}>
-                  ⚠️ Ponto Cego Detectado: Cuidado com a pegadinha da VUNESP!
-                </Text>
-                <Text style={[styles.classificationDesc, { color: tokens.textPrimary, marginTop: 4 }]}>
-                  Você selecionou [3 - Certeza] e errou a questão. Esta ilusão de competência foi adicionada à sua Fila Prioritária do SRS para repetição intensiva!
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* Alerta de Pegadinha VUNESP específica (se configurado na questão) */}
-          {currentQuestion!.trapAlert && (
-            <View
-              style={[
-                styles.trapAlertBox,
-                {
-                  backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
-                  borderColor: tokens.danger,
-                },
-              ]}
-            >
-              <View style={styles.trapAlertHeader}>
-                <Ionicons name="alert-circle" size={16} color={tokens.danger} />
-                <Text style={[styles.trapAlertTitle, { color: tokens.danger }]}>
-                  PEGADINHA ESPECÍFICA DA VUNESP:
-                </Text>
-              </View>
-              <Text style={[styles.trapAlertText, { color: tokens.textPrimary }]}>
-                {currentQuestion!.trapAlert}
+              <Text style={[styles.supportTextContent, { color: tokens.textMuted }]}>
+                {currentQuestion!.supportText}
               </Text>
             </View>
           )}
 
-          {lastClassification === 'lucky_guess' && (
-            <View
-              style={[
-                styles.classificationBox,
-                { backgroundColor: tokens.warningSoft, borderColor: tokens.warning },
-              ]}
-            >
-              <Ionicons name="dice" size={17} color={tokens.warning} />
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.classificationTitle, { color: tokens.warning }]}>
-                  ACERTO POR CHUTE (SORTE)
-                </Text>
-                <Text style={[styles.classificationDesc, { color: tokens.textPrimary }]}>
-                  Você acertou sem certeza plena. Memorize o macete abaixo para transformar em
-                  Domínio Real!
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* RAIO-X DA PEGADINHA (com ênfase visual em caso de Ponto Cego) */}
-          <View
-            style={[
-              styles.raioXBox,
-              lastClassification === 'blind_spot'
-                ? {
-                    backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
-                    borderColor: tokens.warning,
-                    borderWidth: 2,
-                  }
-                : {
-                    backgroundColor: currentCatColors.soft,
-                    borderColor: currentCatColors.border,
-                  },
-            ]}
-          >
-            <View style={styles.raioXHeader}>
-              <Ionicons name="bulb" size={16} color={tokens.warning} />
-              <Text
-                style={[
-                  styles.raioXTitle,
-                  { color: lastClassification === 'blind_spot' ? tokens.warning : currentCatColors.accent },
-                ]}
-              >
-                RAIO-X DA PEGADINHA (MACETE VUNESP):
-              </Text>
-            </View>
-            <Text style={[styles.raioXText, { color: tokens.textPrimary }]}>
-              "{currentQuestion!.raioX}"
-            </Text>
+          {/* Enunciado 20/600, lineHeight 28. A lacuna [ ? ] usa primary */}
+          <View style={styles.statementBox}>
+            {renderStatement(currentQuestion!.statement)}
           </View>
 
-          {/* Fundamentação Legal / Gramatical (com ênfase visual em caso de Ponto Cego) */}
-          {currentQuestion!.legalBasis && (
-            <View
-              style={[
-                styles.legalBasisBox,
-                lastClassification === 'blind_spot'
-                  ? {
-                      backgroundColor: tokens.surface,
-                      borderColor: tokens.danger,
-                      borderWidth: 1.5,
-                    }
-                  : {
-                      backgroundColor: tokens.surface,
-                      borderColor: tokens.cardBorder,
+          {/* Alternativas: linhas com letra em círculo de 28. Sem chevron */}
+          <View style={styles.optionsList}>
+            {currentQuestion!.options.map((option, idx) => {
+              const letter = String.fromCharCode(65 + idx);
+              const isSelected = selectedOptionIndex === idx;
+              const isCorrectOption = idx === currentQuestion!.correctIndex;
+
+              let optBg = tokens.cardBg;
+              let optBorder = tokens.cardBorder;
+
+              if (!isAnswered) {
+                if (isSelected) {
+                  optBg = tokens.primarySoft;
+                  optBorder = tokens.primary;
+                }
+              } else {
+                if (isCorrectOption) {
+                  optBg = tokens.successSoft;
+                  optBorder = tokens.success;
+                } else if (isSelected && !isCorrectOption) {
+                  optBg = tokens.dangerSoft;
+                  optBorder = tokens.danger;
+                }
+              }
+
+              return (
+                <TouchableOpacity
+                  key={option}
+                  onPress={() => {
+                    if (!isAnswered) handleSelectOption(idx);
+                  }}
+                  disabled={isAnswered}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.optionRow,
+                    {
+                      backgroundColor: optBg,
+                      borderColor: optBorder,
                     },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.legalBasisTitle,
-                  { color: lastClassification === 'blind_spot' ? tokens.danger : tokens.textMuted },
-                ]}
+                  ]}
+                >
+                  <View style={[styles.letterCircle, { backgroundColor: tokens.surface }]}>
+                    <Text style={[styles.letterText, { color: tokens.textPrimary }]}>
+                      {letter}
+                    </Text>
+                  </View>
+                  <Text style={[styles.optionText, { color: tokens.textPrimary }]}>
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Bloco de Certeza (fica abaixo das alternativas e some após responder) */}
+          {!isAnswered ? (
+            <View style={styles.certaintySection}>
+              <View style={styles.certaintySegments}>
+                {/* Chute */}
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerLightHaptic();
+                    setSelectedCertainty(1);
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.certaintySegment,
+                    selectedCertainty === 1
+                      ? { backgroundColor: tokens.warning }
+                      : {
+                          backgroundColor: tokens.surface,
+                          borderColor: tokens.cardBorder,
+                          borderWidth: 1,
+                        },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.certaintyText,
+                      { color: selectedCertainty === 1 ? '#ffffff' : tokens.textMuted },
+                    ]}
+                  >
+                    Chute
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Dúvida */}
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerLightHaptic();
+                    setSelectedCertainty(2);
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.certaintySegment,
+                    selectedCertainty === 2
+                      ? { backgroundColor: tokens.primary }
+                      : {
+                          backgroundColor: tokens.surface,
+                          borderColor: tokens.cardBorder,
+                          borderWidth: 1,
+                        },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.certaintyText,
+                      { color: selectedCertainty === 2 ? '#ffffff' : tokens.textMuted },
+                    ]}
+                  >
+                    Dúvida
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Certeza */}
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerLightHaptic();
+                    setSelectedCertainty(3);
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.certaintySegment,
+                    selectedCertainty === 3
+                      ? { backgroundColor: tokens.success }
+                      : {
+                          backgroundColor: tokens.surface,
+                          borderColor: tokens.cardBorder,
+                          borderWidth: 1,
+                        },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.certaintyText,
+                      { color: selectedCertainty === 3 ? '#ffffff' : tokens.textMuted },
+                    ]}
+                  >
+                    Certeza
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Pular é texto 14 textMuted, sem botão preenchido */}
+              <TouchableOpacity
+                onPress={onSkip}
+                activeOpacity={0.85}
+                style={styles.skipBtn}
               >
-                📜 Fundamentação:{lastClassification === 'blind_spot' ? ' (Regra Crítica para o Concurso)' : ''}
-              </Text>
-              <Text style={[styles.legalBasisContent, { color: tokens.textPrimary }]}>
-                {currentQuestion!.legalBasis}
-              </Text>
+                <Text style={[styles.skipBtnText, { color: tokens.textMuted }]}>
+                  Pular questão
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            /* FEEDBACK NO MESMO CARD */
+            <View style={styles.feedbackSection}>
+              {/* Faixa única de 1 linha */}
+              {selectedOptionIndex === currentQuestion!.correctIndex ? (
+                lastClassification === 'lucky_guess' ? (
+                  <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.warningSoft }]}>
+                    <Text style={[styles.feedbackBannerText, { color: tokens.warning }]}>
+                      Acertou sem certeza
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.successSoft }]}>
+                    <Text style={[styles.feedbackBannerText, { color: tokens.success }]}>
+                      Certa
+                    </Text>
+                  </View>
+                )
+              ) : (
+                <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.dangerSoft }]}>
+                  <Text style={[styles.feedbackBannerText, { color: tokens.danger }]}>
+                    Errada
+                  </Text>
+                  {lastClassification === 'blind_spot' && (
+                    <Text style={[styles.feedbackSubText, { color: tokens.danger }]}>
+                      Ponto cego · volta amanhã
+                    </Text>
+                  )}
+                </View>
+              )}
+
+              {/* Macete (raioX): rótulo "Macete" em textMuted e o texto em 14/500 */}
+              <View style={[styles.maceteBox, { backgroundColor: tokens.surface }]}>
+                <Text style={[styles.maceteLabel, { color: tokens.textMuted }]}>
+                  Macete
+                </Text>
+                <Text style={[styles.maceteText, { color: tokens.textPrimary }]}>
+                  {currentQuestion!.raioX}
+                </Text>
+                {currentQuestion!.legalBasis && (
+                  <Text
+                    style={[styles.legalBasisText, { color: tokens.textMuted }]}
+                    numberOfLines={1}
+                  >
+                    {currentQuestion!.legalBasis}
+                  </Text>
+                )}
+              </View>
+
+              {/* Botão Próxima: full-width, 48 de altura, primary, radius 12, texto "Próxima" */}
+              <TouchableOpacity
+                onPress={onNext}
+                activeOpacity={0.85}
+                style={[styles.nextBtn, { backgroundColor: tokens.primary }]}
+              >
+                <Text style={styles.nextBtnText}>Próxima</Text>
+              </TouchableOpacity>
             </View>
           )}
-
-          {/* Botão Próxima Questão */}
-          <TouchableOpacity
-            onPress={onNext}
-            activeOpacity={0.85}
-            style={[styles.nextActionButton, { backgroundColor: currentCatColors.accent }]}
-          >
-            <Text style={styles.nextActionButtonText}>Próxima Questão</Text>
-            <Ionicons name="arrow-forward" size={18} color="#ffffff" />
-          </TouchableOpacity>
         </View>
       )}
 
-      {/* Rodapé de Métricas da Sessão */}
+      {/* Sessão footer */}
       <View style={styles.sessionFooter}>
         <Text style={[styles.sessionFooterText, { color: tokens.textMuted }]}>
-          Sessão Atual: {sessionStats.attempts} respondidas • {sessionStats.correct} acertos (
-          {sessionStats.attempts > 0
-            ? Math.round((sessionStats.correct / sessionStats.attempts) * 100)
-            : 0}
-          %) • Foco: Câmara de Itanhaém
+          Sessão: {sessionStats.attempts} respostas · {sessionStats.correct} acertos
         </Text>
       </View>
     </ScrollView>
@@ -925,419 +605,262 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
 const styles = StyleSheet.create({
   scrollContent: {
-    padding: 14,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.block,
     paddingBottom: 24,
+    gap: spacing.block,
   },
-  milestoneBanner: {
+  controlsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 32,
+  },
+  controlsLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
+  },
+  controlsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  controlChip: {
+    height: 32,
+    paddingHorizontal: 10,
+    borderRadius: radius.chip,
     borderWidth: 1,
-    marginBottom: 10,
-  },
-  milestoneText: {
-    fontSize: 12,
-  },
-  filterBarRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 10,
-  },
-  segmentedPills: {
-    flex: 1,
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: 3,
-  },
-  segmentedBtn: {
-    flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7,
-    borderRadius: 7,
+    alignItems: 'center',
   },
-  segmentedBtnActive: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+  controlChipText: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
   },
-  segmentedText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  filterModalTrigger: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+  controlIconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.chip,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryScroll: {
+    height: 32,
+    alignItems: 'center',
     gap: 6,
-    paddingBottom: 10,
   },
   categoryPill: {
+    height: 32,
     paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
+    borderRadius: radius.chip,
     borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryPillText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
   },
-  emptyCard: {
-    padding: 26,
-    borderRadius: 16,
-    borderWidth: 1.5,
+  progressRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 14,
-  },
-  emptyTitle: {
-    fontSize: 17,
-    fontWeight: '800',
-    marginTop: 10,
-    marginBottom: 6,
-  },
-  emptyDesc: {
-    fontSize: 13,
-    textAlign: 'center',
-    lineHeight: 18,
-    marginBottom: 16,
-  },
-  emptyActionBtn: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  emptyActionBtnText: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  questionCard: {
-    borderRadius: 18,
-    borderWidth: 1.5,
-    borderTopWidth: 3.5,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    gap: 10,
   },
   progressTrack: {
-    height: 4,
-    borderRadius: 2,
+    flex: 1,
+    height: 3,
+    borderRadius: 1.5,
     overflow: 'hidden',
-    marginBottom: 12,
   },
   progressFill: {
-    height: '100%',
-    borderRadius: 2,
+    height: 3,
+    borderRadius: 1.5,
   },
-  metaRow: {
+  progressFraction: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
+  },
+  questionCard: {
+    borderRadius: radius.card,
+    borderWidth: 1,
+    padding: 16,
+    gap: spacing.block,
+  },
+  cardMetaRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
   },
-  subtopicBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+  cardMetaLeft: {
+    flex: 1,
+  },
+  metaText: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
+  },
+  supportTextBox: {
+    padding: 10,
+    borderRadius: radius.chip,
     borderWidth: 1,
   },
-  subtopicBadgeText: {
-    fontSize: 11,
-    fontWeight: '800',
+  supportTextContent: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
+    lineHeight: 18,
   },
-  metaRightGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  diffBadge: {
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 5,
-    borderWidth: 1,
-  },
-  diffBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  counterText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  blindSpotWarningPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 12,
-  },
-  blindSpotWarningText: {
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  statementArea: {
-    marginBottom: 16,
-  },
-  statementTypeBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: 8,
-  },
-  statementTypeBadgeText: {
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 0.5,
+  statementBox: {
+    //
   },
   statementText: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-  },
-  lacunaBox: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    borderWidth: 1,
-  },
-  lacunaText: {
-    fontWeight: '900',
-  },
-  cardDivider: {
-    borderTopWidth: 1,
-    paddingTop: 14,
-    marginTop: 10,
-  },
-  sectionHeadingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
-  },
-  sectionHeaderBetween: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  sectionHeadingText: {
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  skipButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  skipButtonText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  certaintyRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  certaintyCard: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 4,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    gap: 2,
-  },
-  certaintyCardTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    marginTop: 2,
-  },
-  certaintyCardSub: {
-    fontSize: 10,
-    fontWeight: '500',
+    fontSize: typography.statement,
+    fontWeight: weights.title,
+    lineHeight: 28,
   },
   optionsList: {
     gap: 8,
   },
-  optionButton: {
+  optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    paddingVertical: 10,
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: radius.control,
     borderWidth: 1.5,
   },
-  optionLeftGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  optionLetterCircle: {
+  letterCircle: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  optionLetterText: {
-    fontSize: 13,
-    fontWeight: '900',
+  letterText: {
+    fontSize: typography.body,
+    fontWeight: weights.number,
   },
-  optionLabel: {
-    fontSize: 15,
-    fontWeight: '600',
+  optionText: {
+    fontSize: typography.option,
+    fontWeight: weights.meta,
     flex: 1,
+    marginLeft: 10,
   },
-  feedbackBanner: {
+  certaintySection: {
+    marginTop: 4,
+    gap: 10,
+  },
+  certaintySegments: {
     flexDirection: 'row',
+    height: 40,
+    gap: 8,
+  },
+  certaintySegment: {
+    flex: 1,
+    height: 40,
+    borderRadius: radius.chip,
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    marginBottom: 12,
+    justifyContent: 'center',
   },
-  feedbackTitle: {
-    fontSize: 13,
-    fontWeight: '900',
-    letterSpacing: 0.5,
+  certaintyText: {
+    fontSize: typography.body,
+    fontWeight: weights.title,
   },
-  feedbackGabarito: {
-    fontSize: 13,
+  skipBtn: {
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  skipBtnText: {
+    fontSize: typography.body,
+    fontWeight: weights.meta,
+  },
+  feedbackSection: {
+    gap: 10,
+    marginTop: 4,
+  },
+  feedbackBannerRow: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: radius.chip,
+  },
+  feedbackBannerText: {
+    fontSize: typography.body,
+    fontWeight: weights.title,
+  },
+  feedbackSubText: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
     marginTop: 2,
   },
-  classificationBox: {
-    flexDirection: 'row',
-    gap: 10,
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    marginBottom: 10,
-  },
-  classificationTitle: {
-    fontSize: 12,
-    fontWeight: '900',
-    marginBottom: 2,
-  },
-  classificationDesc: {
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  raioXBox: {
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    marginBottom: 10,
-  },
-  raioXHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
-  },
-  raioXTitle: {
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0.5,
-  },
-  raioXText: {
-    fontSize: 13,
-    lineHeight: 19,
-    fontWeight: '600',
-  },
-  legalBasisBox: {
+  maceteBox: {
     padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginBottom: 14,
+    borderRadius: radius.chip,
+    gap: 2,
   },
-  legalBasisTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    marginBottom: 2,
+  maceteLabel: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
   },
-  legalBasisContent: {
-    fontSize: 12,
-    lineHeight: 17,
+  maceteText: {
+    fontSize: typography.body,
+    fontWeight: weights.meta,
+    lineHeight: 20,
   },
-  nextActionButton: {
-    flexDirection: 'row',
+  legalBasisText: {
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
+    marginTop: 4,
+  },
+  nextBtn: {
+    height: 48,
+    borderRadius: radius.control,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    borderRadius: 12,
   },
-  nextActionButtonText: {
+  nextBtnText: {
     color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  supportTextBox: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'flex-start',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  supportTextContent: {
-    fontSize: 12,
-    lineHeight: 17,
-    flex: 1,
-    fontStyle: 'italic',
-  },
-  trapAlertBox: {
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    marginBottom: 10,
-  },
-  trapAlertHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
-  },
-  trapAlertTitle: {
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0.5,
-  },
-  trapAlertText: {
-    fontSize: 12,
-    lineHeight: 18,
-    fontWeight: '600',
+    fontSize: typography.body,
+    fontWeight: weights.title,
   },
   sessionFooter: {
     alignItems: 'center',
-    marginTop: 16,
+    paddingVertical: 8,
   },
   sessionFooterText: {
-    fontSize: 11,
+    fontSize: typography.meta,
+    fontWeight: weights.meta,
+  },
+  emptyCard: {
+    borderRadius: radius.card,
+    borderWidth: 1,
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  emptyTitle: {
+    fontSize: typography.option,
+    fontWeight: weights.title,
     textAlign: 'center',
   },
+  emptyDesc: {
+    fontSize: typography.body,
+    fontWeight: weights.meta,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  emptyActionBtn: {
+    height: 40,
+    paddingHorizontal: 16,
+    borderRadius: radius.control,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  emptyActionBtnText: {
+    color: '#ffffff',
+    fontSize: typography.body,
+    fontWeight: weights.title,
+  },
 });
-

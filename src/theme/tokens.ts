@@ -185,3 +185,28 @@ export const categoryColors = {
     },
   },
 };
+
+export const radius = {
+  chip: 8,
+  control: 12,
+  card: 16,
+} as const;
+
+export const typography = {
+  meta: 12,
+  body: 14,
+  option: 16,
+  statement: 20,
+  feedback: 22,
+} as const;
+
+export const weights = {
+  meta: '500' as const,
+  title: '600' as const,
+  number: '700' as const,
+} as const;
+
+export const spacing = {
+  block: 12,
+  screenPadding: 16,
+} as const;
