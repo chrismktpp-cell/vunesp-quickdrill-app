@@ -2,7 +2,10 @@ export type CategoryType =
   | 'Crase (VUNESP)'
   | 'Sujeito Oracional e Transitividade'
   | 'Gestão de Patrimônio e Bens Públicos'
-  | 'Nova Lei de Licitações (Lei 14.133/2021)';
+  | 'Nova Lei de Licitações (Lei 14.133/2021)'
+  | 'Língua Portuguesa (Agente Patrimonial)'
+  | 'Matemática e Raciocínio Lógico'
+  | 'Conhecimentos Específicos - Agente Patrimonial';
 
 export type Banca = 'VUNESP' | 'FCC' | 'FGV' | 'Cebraspe' | 'Geral';
 
@@ -10,7 +13,9 @@ export type Materia =
   | 'Língua Portuguesa'
   | 'Direito Administrativo'
   | 'Administração Pública e Patrimônio'
-  | 'Legislação Municipal';
+  | 'Legislação Municipal'
+  | 'Matemática e Raciocínio Lógico'
+  | 'Conhecimentos Específicos';
 
 export type Dificuldade = 'Fácil' | 'Média' | 'Difícil';
 
@@ -41,6 +46,8 @@ export interface Question {
   supportText?: string;
   trapAlert?: string;
   questionFormat?: 'lacuna' | 'multipla_escolha' | 'assertivas';
+  cargo?: string;
+  prova?: string;
 }
 
 export type Pergunta = Question;
@@ -169,4 +176,3 @@ export interface UserStats {
 }
 
 export type DrillMode = 'all' | 'errors_only' | 'blind_spots_only' | 'srs_queue';
-

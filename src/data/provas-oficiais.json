@@ -1,0 +1,60 @@
+[
+  {
+    "id": "itanhaem-ps012026",
+    "titulo": "Processo Seletivo Prefeitura de Itanhaém/SP - 01/2026",
+    "organizadora": "Instituto Nosso Rumo",
+    "banca": "Instituto Nosso Rumo",
+    "cargo": "Agente de Vigilância Patrimonial",
+    "codigoCargo": "101",
+    "cidade": "Itanhaém/SP",
+    "ano": 2026,
+    "quantidadeQuestoes": 24,
+    "disciplinas": ["Língua Portuguesa", "Matemática", "Conhecimentos Específicos"],
+    "statusQuestoes": "caderno não disponibilizado publicamente na fonte consultada",
+    "fonteConcurso": "https://www.itanhaem.sp.gov.br/concurso/processo-seletivo-prazo-determinado/",
+    "fonteEdital": "https://www.itanhaem.sp.gov.br/wp-content/uploads/2026/03/INR_EDITAL-DE-ABERTURA_ITANHAEM_PS012026_publicacao-26-03.pdf",
+    "fonteGabaritoFinal": "https://www.itanhaem.sp.gov.br/wp-content/uploads/2026/07/INR_ITANHAEM_PS012026_GABARITO-FINAL.pdf"
+  },
+  {
+    "id": "vunesp-cmal2301",
+    "titulo": "Concurso Público Câmara de Alumínio - 01/2024",
+    "organizadora": "Fundação VUNESP",
+    "banca": "VUNESP",
+    "cargo": "Agente de Segurança Patrimonial",
+    "cidade": "Alumínio/SP",
+    "ano": 2024,
+    "quantidadeQuestoes": null,
+    "disciplinas": [],
+    "statusQuestoes": "prova e gabarito disponíveis na área oficial do candidato mediante acesso",
+    "fonteConcurso": "https://www.vunesp.com.br/CMAL2301",
+    "fonteProvaGabarito": "https://www.vunesp.com.br/AreaCandidato/Posicionar/CMAL2301/ProvaGabarito"
+  },
+  {
+    "id": "vunesp-cmri2403",
+    "titulo": "Concurso Público Câmara de Marília - 01/2025",
+    "organizadora": "Fundação VUNESP",
+    "banca": "VUNESP",
+    "cargo": "Agente de Segurança Legislativa",
+    "cidade": "Marília/SP",
+    "ano": 2025,
+    "quantidadeQuestoes": null,
+    "disciplinas": [],
+    "statusQuestoes": "prova e gabarito disponíveis na área oficial do candidato mediante acesso",
+    "fonteConcurso": "https://www.vunesp.com.br/CMRI2403",
+    "fonteProvaGabarito": "https://www.vunesp.com.br/AreaCandidato/Posicionar/CMRI2403/ProvaGabarito"
+  },
+  {
+    "id": "vunesp-pmih1901",
+    "titulo": "Concurso Guarda Civil Municipal de Itanhaém",
+    "organizadora": "Fundação VUNESP",
+    "banca": "VUNESP",
+    "cargo": "Guarda Civil Municipal",
+    "cidade": "Itanhaém/SP",
+    "ano": 2019,
+    "quantidadeQuestoes": null,
+    "disciplinas": [],
+    "statusQuestoes": "prova e gabarito disponíveis na área oficial do candidato mediante acesso",
+    "fonteConcurso": "https://www.vunesp.com.br/PMIH1901",
+    "fonteProvaGabarito": "https://www.vunesp.com.br/AreaCandidato/Posicionar/PMIH1901/ProvaGabarito"
+  }
+]

@@ -89,6 +89,30 @@ export const FiltrosModal: React.FC<FiltrosModalProps> = ({
               ) : null}
             </View>
 
+            <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>Concurso selecionado</Text>
+            <View style={styles.chipCol}>
+              {[
+                { key: 'banca', label: 'Banca: VUNESP', value: 'VUNESP' },
+                { key: 'cargo', label: 'Cargo: Agente Patrimonial', value: 'Agente Patrimonial' },
+                { key: 'prova', label: 'Prova: Prefeitura de Itanhaém', value: 'Prefeitura de Itanhaém' },
+              ].map((item) => {
+                const key = item.key as 'banca' | 'cargo' | 'prova';
+                const isSel = filtros[key] === item.value;
+                return (
+                  <TouchableOpacity
+                    key={item.key}
+                    onPress={() => {
+                      triggerLightHaptic();
+                      onChangeFiltros({ ...filtros, [key]: isSel ? 'all' : item.value });
+                    }}
+                    style={[styles.fullChip, { backgroundColor: isSel ? colors.primary : colors.subtle, borderColor: isSel ? colors.primary : colors.cardBorder }]}
+                  >
+                    <Text style={[styles.chipText, { color: isSel ? '#ffffff' : colors.text }]}>{item.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
             {/* Status de Estudo */}
             <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>
               Status de Desempenho
@@ -384,4 +408,3 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 });
-

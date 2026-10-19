@@ -48,6 +48,9 @@ const CATEGORIES: CategoryType[] = [
   'Sujeito Oracional e Transitividade',
   'Gestão de Patrimônio e Bens Públicos',
   'Nova Lei de Licitações (Lei 14.133/2021)',
+  'Língua Portuguesa (Agente Patrimonial)',
+  'Matemática e Raciocínio Lógico',
+  'Conhecimentos Específicos - Agente Patrimonial',
 ];
 
 // Fisher-Yates shuffle
@@ -88,6 +91,9 @@ export default function App() {
   const [filtrosModalOpen, setFiltrosModalOpen] = useState<boolean>(false);
   const [filtros, setFiltros] = useState<QuestionFilters>({
     category: 'all',
+    banca: 'VUNESP',
+    cargo: 'Agente Patrimonial',
+    prova: 'Prefeitura de Itanhaém',
     dificuldade: 'all',
     statusEstudo: 'todas',
     termoBusca: '',
@@ -305,6 +311,13 @@ export default function App() {
         return categoryColors.patrimonio[modeKey];
       case 'Nova Lei de Licitações (Lei 14.133/2021)':
         return categoryColors.licitacao[modeKey];
+      default:
+        return {
+          accent: tokens.primary,
+          soft: tokens.primarySoft,
+          border: tokens.cardBorder,
+          badgeText: tokens.primary,
+        };
     }
   };
 
@@ -677,9 +690,12 @@ export default function App() {
         onClose={() => setFiltrosModalOpen(false)}
         filtros={filtros}
         onChangeFiltros={(novos: QuestionFilters) => setFiltros(novos)}
-        onLimparFiltros={() =>
+          onLimparFiltros={() =>
           setFiltros({
             category: 'all',
+            banca: 'VUNESP',
+            cargo: 'Agente Patrimonial',
+            prova: 'Prefeitura de Itanhaém',
             dificuldade: 'all',
             statusEstudo: 'todas',
             termoBusca: '',
