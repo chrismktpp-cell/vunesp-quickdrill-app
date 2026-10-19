@@ -105,3 +105,4 @@ describe('Simulado Service', () => {
     expect(d40.classificacao).toBe('Crítico');
   });
 });
+

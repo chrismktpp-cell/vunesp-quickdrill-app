@@ -165,3 +165,4 @@ export interface UserStats {
 }
 
 export type DrillMode = 'all' | 'errors_only' | 'blind_spots_only' | 'srs_queue';
+

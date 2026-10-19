@@ -177,3 +177,4 @@ describe('Edital Tracking Service', () => {
     expect(cobertura.porMateria['Direito Administrativo'].percentualCobertura).toBe(0);
   });
 });
+
