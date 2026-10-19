@@ -13,6 +13,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.vunespquickdrill.app",
       "adaptiveIcon": {
         "backgroundColor": "#0f172a",
         "foregroundImage": "./assets/android-icon-foreground.png"
