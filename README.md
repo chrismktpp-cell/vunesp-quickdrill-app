@@ -1,6 +1,6 @@
 # VUNESP QuickDrill
 
-Aplicativo tático de treino e repetição espaçada (SRS) 100% offline para concursos da banca VUNESP, com foco específico no concurso da Prefeitura de Itanhaém para Agente Patrimonial.
+Aplicativo tático de treino e repetição espaçada (SRS) 100% offline para concursos públicos, com catálogo de fontes oficiais da VUNESP e separação do processo seletivo de Agente de Vigilância Patrimonial de Itanhaém.
 
 ## 🚀 Como Executar
 
@@ -35,5 +35,7 @@ Aplicativo tático de treino e repetição espaçada (SRS) 100% offline para con
 
 - **Banco de Questões:** [`src/data/questions.json`](src/data/questions.json) (questões formatadas com lacunas, alternativas, gabarito e raio-X da banca).
 - **Mapeamento do Edital:** [`src/data/edital.json`](src/data/edital.json) (tópicos curriculares oficiais e legislação).
-- **Lote Agente Patrimonial - Itanhaém:** 30 questões novas, distribuídas igualmente entre Língua Portuguesa, Matemática e Raciocínio Lógico e Conhecimentos Específicos, com metadados de banca, cargo e prova para filtragem.
+- **Catálogo de provas oficiais:** [`src/data/provas-oficiais.json`](src/data/provas-oficiais.json), com links para as páginas oficiais da VUNESP e para os documentos oficiais do Instituto Nosso Rumo/Prefeitura de Itanhaém.
+- **Gabaritos oficiais:** [`src/data/gabaritos-oficiais.json`](src/data/gabaritos-oficiais.json), contendo o gabarito definitivo publicado para o cargo 101 de Itanhaém.
+- **Regra de integridade:** não são inseridas questões quando o caderno oficial e o gabarito correspondente não estão publicamente verificáveis. O caderno de Itanhaém não está no portal municipal consultado; o edital informa que ele ficou disponível apenas durante o período de recursos. As páginas de provas da VUNESP direcionam para a área oficial do candidato.
 - **Progresso e Estatísticas do Usuário:** Armazenados localmente no dispositivo via `@react-native-async-storage/async-storage` (100% offline, sem necessidade de conexão com a internet).
