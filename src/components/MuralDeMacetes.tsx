@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { Question, CategoryType } from '../types';
+import type { Question, CategoryType } from '../types/schema';
 import { triggerLightHaptic } from '../utils/storage';
 
 interface MuralDeMacetesProps {

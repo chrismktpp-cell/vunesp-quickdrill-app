@@ -65,7 +65,6 @@ export interface RevisaoSRS {
   intervaloDias: number; // 1d, 3d, 7d, 14d, 30d
   proximaRevisao: number; // timestamp em ms
   historicoRepeticoes: number;
-  fatorFacilidade: number; // Padrão 2.5 (SM-2)
   lapses: number; // Vezes que errou após aprender
   status: SRSStatus;
   ultimaRevisao: number; // timestamp em ms

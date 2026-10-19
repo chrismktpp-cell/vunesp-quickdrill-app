@@ -5,11 +5,13 @@ import {
   loadInitialStats,
   saveAttemptToStorage,
   saveSimuladoToStorage,
-  OLD_STORAGE_KEY,
-  KEY_META,
-  KEY_SRS,
-  KEY_ATTEMPTS,
-  KEY_SIMULADOS,
+  migrate,
+  wrapEnvelope,
+  OLD_STORAGE_KEY_V1,
+  KEY_META_V2,
+  KEY_SRS_V2,
+  KEY_ATTEMPTS_V2,
+  KEY_SIMULADOS_V2,
 } from '../utils/storage';
 import type { UserStats, SimuladoResultado } from '../types/schema';
 
@@ -51,7 +53,7 @@ vi.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium' },
 }));
 
-describe('Storage & Performance Optimizations', () => {
+describe('Storage & Performance Optimizations (V2 Envelope & Mutex)', () => {
   const initialStats: UserStats = {
     attempts: [],
     streak: 0,
@@ -63,7 +65,7 @@ describe('Storage & Performance Optimizations', () => {
   };
 
   beforeEach(async () => {
-    await AsyncStorage.clear();
+    mockStore = {};
   });
 
   describe('aplicarResposta (função pura em memória)', () => {
@@ -101,7 +103,6 @@ describe('Storage & Performance Optimizations', () => {
 
     it('deve limitar attempts ao teto de 400 tentativas mais recentes', () => {
       let stats = initialStats;
-      // Adiciona 410 tentativas
       for (let i = 0; i < 410; i++) {
         const { newStats } = aplicarResposta(stats, {
           questionId: `q-${i}`,
@@ -114,56 +115,62 @@ describe('Storage & Performance Optimizations', () => {
       }
 
       expect(stats.attempts.length).toBe(400);
-      // A tentativa mais recente (q-409) deve ser a primeira
       expect(stats.attempts[0].questionId).toBe('q-409');
     });
   });
 
-  describe('Migração de chaves e persistência separada', () => {
-    it('deve migrar da chave antiga única para as 4 chaves separadas', () => {
-      // Setup mock de armazenamento com chave antiga
-      const mockOldData = {
-        streak: 5,
-        bestStreak: 10,
+  describe('migrate (idempotência e segurança)', () => {
+    it('deve retornar stats vazios para JSON inválido sem derrubar o app', () => {
+      const res = migrate('{"invalido:');
+      expect(res.attempts).toEqual([]);
+      expect(res.streak).toBe(0);
+    });
+
+    it('deve devolver dados intactos se já for envelope v === 2', () => {
+      const v2Envelope = {
+        v: 2,
+        savedAt: 1234567,
+        data: {
+          attempts: [],
+          streak: 7,
+          bestStreak: 12,
+          blindSpotQueue: ['q-1'],
+          errorQueue: [],
+          revisoesSRS: {},
+          simuladosHistorico: [],
+        },
+      };
+
+      const res = migrate(JSON.stringify(v2Envelope));
+      expect(res.streak).toBe(7);
+      expect(res.bestStreak).toBe(12);
+      expect(res.blindSpotQueue).toEqual(['q-1']);
+    });
+
+    it('deve migrar blob v1 antigo descartando objeto pergunta de simulados e removendo fatorFacilidade', () => {
+      const oldBlob = {
+        streak: 3,
+        bestStreak: 6,
         blindSpotQueue: ['q-blind'],
         errorQueue: ['q-err'],
-        attempts: [
-          {
-            questionId: 'q-old',
-            category: 'Crase (VUNESP)',
-            selectedOptionIndex: 0,
-            isCorrect: true,
-            certainty: 3,
-            classification: 'real_mastery',
-            timestamp: 123456,
-          },
-        ],
+        attempts: [{ questionId: 'q-old', isCorrect: true, timestamp: 100 }],
         revisoesSRS: {
           'q-old': {
             perguntaId: 'q-old',
             caixa: 2,
             intervaloDias: 3,
-            proximaRevisao: 999999,
+            proximaRevisao: 200,
             historicoRepeticoes: 1,
             fatorFacilidade: 2.5,
             lapses: 0,
             status: 'em_revisao',
-            ultimaRevisao: 123456,
+            ultimaRevisao: 100,
           },
         },
         simuladosHistorico: [
           {
-            id: 'sim-old',
-            titulo: 'Simulado Antigo',
-            dataHora: 1000,
-            tempoTotalGastoSegundos: 300,
-            duracaoTotalSegundos: 900,
-            totalQuestoes: 1,
-            acertos: 1,
-            erros: 0,
-            emBranco: 0,
-            pontuacaoPercentual: 100,
-            detalhesPorCategoria: {},
+            id: 'sim-1',
+            titulo: 'Simulado V1',
             respostas: [
               {
                 pergunta: { id: 'q-old', statement: 'Statement antigo duplicado' },
@@ -175,24 +182,68 @@ describe('Storage & Performance Optimizations', () => {
         ],
       };
 
-      mockStore[OLD_STORAGE_KEY] = JSON.stringify(mockOldData);
+      const res = migrate(oldBlob);
+      expect(res.streak).toBe(3);
+      expect(res.revisoesSRS?.['q-old'].caixa).toBe(2);
+      expect((res.revisoesSRS?.['q-old'] as any).fatorFacilidade).toBeUndefined();
+      expect(res.simuladosHistorico?.[0].respostas[0].perguntaId).toBe('q-old');
+      expect((res.simuladosHistorico?.[0].respostas[0] as any).pergunta).toBeUndefined();
+    });
+  });
 
-      return loadInitialStats().then((loaded) => {
-        expect(loaded.streak).toBe(5);
-        expect(loaded.bestStreak).toBe(10);
-        expect(loaded.blindSpotQueue).toEqual(['q-blind']);
-        expect(loaded.revisoesSRS?.['q-old'].caixa).toBe(2);
-        // Simulado deve ter descartado objeto 'pergunta' e mantido 'perguntaId'
-        expect(loaded.simuladosHistorico?.[0].respostas[0].perguntaId).toBe('q-old');
-        expect((loaded.simuladosHistorico?.[0].respostas[0] as any).pergunta).toBeUndefined();
+  describe('Persistência V2 e Mutex', () => {
+    it('deve gravar tentativas encapsuladas em envelopes V2 sem tocar na chave de simulados', async () => {
+      const statsToSave: UserStats = {
+        attempts: [
+          {
+            questionId: 'q-save',
+            category: 'Crase (VUNESP)',
+            selectedOptionIndex: 0,
+            isCorrect: true,
+            certainty: 3,
+            classification: 'real_mastery',
+            timestamp: 1234,
+          },
+        ],
+        streak: 2,
+        bestStreak: 4,
+        blindSpotQueue: [],
+        errorQueue: [],
+        revisoesSRS: {},
+        simuladosHistorico: [],
+      };
 
-        // Deve ter gravado nas 4 chaves novas e removido a chave antiga
-        expect(mockStore[OLD_STORAGE_KEY]).toBeUndefined();
-        expect(mockStore[KEY_META]).toBeDefined();
-        expect(mockStore[KEY_SRS]).toBeDefined();
-        expect(mockStore[KEY_ATTEMPTS]).toBeDefined();
-        expect(mockStore[KEY_SIMULADOS]).toBeDefined();
-      });
+      await saveAttemptToStorage(statsToSave);
+
+      expect(mockStore[KEY_META_V2]).toBeDefined();
+      expect(mockStore[KEY_SRS_V2]).toBeDefined();
+      expect(mockStore[KEY_ATTEMPTS_V2]).toBeDefined();
+      expect(mockStore[KEY_SIMULADOS_V2]).toBeUndefined();
+
+      const parsedMeta = JSON.parse(mockStore[KEY_META_V2]);
+      expect(parsedMeta.v).toBe(2);
+      expect(parsedMeta.data.streak).toBe(2);
+    });
+
+    it('deve migrar da chave v1 na primeira carga e apagar a chave antiga', async () => {
+      const mockOldData = {
+        streak: 5,
+        bestStreak: 10,
+        blindSpotQueue: ['q-blind'],
+        errorQueue: ['q-err'],
+        attempts: [],
+        revisoesSRS: {},
+        simuladosHistorico: [],
+      };
+
+      mockStore[OLD_STORAGE_KEY_V1] = JSON.stringify(mockOldData);
+
+      const loaded = await loadInitialStats();
+
+      expect(loaded.streak).toBe(5);
+      expect(loaded.bestStreak).toBe(10);
+      expect(mockStore[OLD_STORAGE_KEY_V1]).toBeUndefined();
+      expect(mockStore[KEY_META_V2]).toBeDefined();
     });
   });
 });

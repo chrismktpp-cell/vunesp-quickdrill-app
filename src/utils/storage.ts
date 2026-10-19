@@ -8,15 +8,23 @@ import type {
   CategoryType,
   RevisaoSRS,
   SimuladoResultado,
-} from '../types';
+} from '../types/schema';
 import { processarRespostaSRS } from '../services/srsEngine';
 
-// Chaves de armazenamento divididas para performance e granularidade
-export const OLD_STORAGE_KEY = 'vunesp_quickdrill_stats_v1';
-export const KEY_META = 'vunesp_qd_meta_v1';
-export const KEY_SRS = 'vunesp_qd_srs_v1';
-export const KEY_ATTEMPTS = 'vunesp_qd_attempts_v1';
-export const KEY_SIMULADOS = 'vunesp_qd_simulados_v1';
+// Chaves Versionadas V2 (com envelope { v: 2, savedAt: number, data: T })
+export const KEY_META_V2 = 'vunesp_qd_meta_v2';
+export const KEY_SRS_V2 = 'vunesp_qd_srs_v2';
+export const KEY_ATTEMPTS_V2 = 'vunesp_qd_attempts_v2';
+export const KEY_SIMULADOS_V2 = 'vunesp_qd_simulados_v2';
+
+export const OLD_STORAGE_KEY_V1 = 'vunesp_quickdrill_stats_v1';
+export const OLD_KEYS_V1 = [
+  'vunesp_quickdrill_stats_v1',
+  'vunesp_qd_meta_v1',
+  'vunesp_qd_srs_v1',
+  'vunesp_qd_attempts_v1',
+  'vunesp_qd_simulados_v1',
+];
 
 const THEME_KEY = 'vunesp_quickdrill_theme';
 const FAVORITES_KEY = 'vunesp_quickdrill_favorites_v1';
@@ -24,9 +32,116 @@ const FAVORITES_KEY = 'vunesp_quickdrill_favorites_v1';
 const MAX_ATTEMPTS = 400;
 const MAX_SIMULADOS = 20;
 
+export interface StorageEnvelope<T> {
+  v: 2;
+  savedAt: number;
+  data: T;
+}
+
+export function wrapEnvelope<T>(data: T): string {
+  const envelope: StorageEnvelope<T> = {
+    v: 2,
+    savedAt: Date.now(),
+    data,
+  };
+  return JSON.stringify(envelope);
+}
+
+// Mutex de fila de escrita (Promise Chain) para garantir persistência ordenada
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+export function enqueueWrite<T>(task: () => Promise<T>): Promise<T> {
+  const next = writeQueue.then(task, task);
+  writeQueue = next.catch(() => {});
+  return next;
+}
+
 /**
- * Função pura para calcular o novo UserStats e a classificação de desempenho em memória.
- * Mantém um teto de 400 tentativas recentes sem afetar o histórico consolidado do SRS.
+ * Migra dados de formato antigo de forma idempotente e segura:
+ * - sem v ou v === 1 -> normaliza e migra para formato v2
+ * - v === 2 -> devolve
+ * - JSON inválido -> devolve stats vazios, sem quebrar o app
+ */
+export function migrate(raw: unknown): UserStats {
+  const emptyStats: UserStats = {
+    attempts: [],
+    streak: 0,
+    bestStreak: 0,
+    blindSpotQueue: [],
+    errorQueue: [],
+    revisoesSRS: {},
+    simuladosHistorico: [],
+  };
+
+  if (!raw) return emptyStats;
+
+  let parsed: any = raw;
+  if (typeof raw === 'string') {
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      console.error('JSON inválido no storage, recuperando com stats vazios');
+      return emptyStats;
+    }
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
+    return emptyStats;
+  }
+
+  // Se já for envelope v === 2
+  if (parsed.v === 2 && parsed.data && typeof parsed.data === 'object') {
+    return parsed.data as UserStats;
+  }
+
+  // Se for v === 1 ou sem v (blob antigo)
+  const source = parsed.data && typeof parsed.data === 'object' ? parsed.data : parsed;
+
+  const rawAttempts = Array.isArray(source.attempts) ? source.attempts : [];
+  const attempts = rawAttempts.slice(0, MAX_ATTEMPTS);
+
+  const streak = typeof source.streak === 'number' ? source.streak : 0;
+  const bestStreak = typeof source.bestStreak === 'number' ? source.bestStreak : 0;
+  const blindSpotQueue = Array.isArray(source.blindSpotQueue) ? source.blindSpotQueue : [];
+  const errorQueue = Array.isArray(source.errorQueue) ? source.errorQueue : [];
+
+  // Remove fatorFacilidade de itens antigos do SRS
+  const revisoesSRS: Record<string, RevisaoSRS> = {};
+  if (source.revisoesSRS && typeof source.revisoesSRS === 'object') {
+    for (const [k, v] of Object.entries(source.revisoesSRS)) {
+      if (v && typeof v === 'object') {
+        const { fatorFacilidade, ...rest } = v as any;
+        revisoesSRS[k] = rest as RevisaoSRS;
+      }
+    }
+  }
+
+  // Normaliza simulados antigos: descarta objeto pergunta inteiro, mantendo perguntaId
+  const rawSimulados = Array.isArray(source.simuladosHistorico) ? source.simuladosHistorico : [];
+  const simuladosHistorico: SimuladoResultado[] = rawSimulados.slice(0, MAX_SIMULADOS).map((sim: any) => ({
+    ...sim,
+    respostas: Array.isArray(sim.respostas)
+      ? sim.respostas.map((r: any) => ({
+          perguntaId: r.perguntaId || r.pergunta?.id || '',
+          selectedOptionIndex: r.selectedOptionIndex !== undefined ? r.selectedOptionIndex : null,
+          isCorrect: !!r.isCorrect,
+        }))
+      : [],
+  }));
+
+  return {
+    attempts,
+    streak,
+    bestStreak,
+    blindSpotQueue,
+    errorQueue,
+    revisoesSRS,
+    simuladosHistorico,
+  };
+}
+
+/**
+ * Função pura para calcular o novo UserStats e a classificação em memória.
  */
 export function aplicarResposta(
   prevStats: UserStats,
@@ -44,18 +159,18 @@ export function aplicarResposta(
 
   if (isCorrect) {
     if (certainty === 3) {
-      classification = 'real_mastery'; // Certeza + Acerto -> Domínio Real!
+      classification = 'real_mastery';
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } else if (certainty === 1) {
-      classification = 'lucky_guess'; // Chute + Acerto -> Sorte
+      classification = 'lucky_guess';
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     } else {
-      classification = 'doubt_success'; // Dúvida + Acerto
+      classification = 'doubt_success';
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     }
   } else {
     if (certainty === 3) {
-      classification = 'blind_spot'; // Certeza + Erro -> PONTO CEGO CRÍTICO!
+      classification = 'blind_spot';
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
     } else if (certainty === 1) {
       classification = 'conscious_error';
@@ -81,7 +196,7 @@ export function aplicarResposta(
   const newStreak = isCorrect ? prevStats.streak + 1 : 0;
   const bestStreak = Math.max(prevStats.bestStreak, newStreak);
 
-  // Atualiza fila de pontos cegos
+  // Atualiza filas
   const blindSpotSet = new Set(prevStats.blindSpotQueue);
   if (classification === 'blind_spot') {
     blindSpotSet.add(questionId);
@@ -89,7 +204,6 @@ export function aplicarResposta(
     blindSpotSet.delete(questionId);
   }
 
-  // Atualiza fila de erros
   const errorSet = new Set(prevStats.errorQueue);
   if (!isCorrect) {
     errorSet.add(questionId);
@@ -97,12 +211,11 @@ export function aplicarResposta(
     errorSet.delete(questionId);
   }
 
-  // Atualiza Repetição Espaçada (SRS SM-2 / Leitner)
+  // Atualiza SRS
   const srsMap = { ...(prevStats.revisoesSRS || {}) };
   const srsAtual = srsMap[questionId];
   srsMap[questionId] = processarRespostaSRS(srsAtual, questionId, isCorrect, certainty, now);
 
-  // Teto de 400 tentativas mais recentes (inseridas no início)
   const updatedAttempts = [newAttempt, ...(prevStats.attempts || [])].slice(0, MAX_ATTEMPTS);
 
   const newStats: UserStats = {
@@ -119,92 +232,119 @@ export function aplicarResposta(
 }
 
 /**
- * Carrega estatísticas iniciais a partir das 4 chaves separadas.
- * Se houver chave antiga única (v1), executa migração automática uma vez e apaga a antiga.
+ * Carrega estatísticas iniciais a partir das 4 chaves versionadas V2.
+ * Caso não existam, verifica a chave legada V1, migra os dados e remove as chaves antigas.
  */
 export async function loadInitialStats(): Promise<UserStats> {
   try {
-    const keys = [KEY_META, KEY_SRS, KEY_ATTEMPTS, KEY_SIMULADOS];
+    const keys = [KEY_META_V2, KEY_SRS_V2, KEY_ATTEMPTS_V2, KEY_SIMULADOS_V2];
     const pairs = await AsyncStorage.multiGet(keys);
     const map = new Map<string, string | null>(pairs);
 
-    const rawMeta = map.get(KEY_META);
-    const rawSrs = map.get(KEY_SRS);
-    const rawAttempts = map.get(KEY_ATTEMPTS);
-    const rawSimulados = map.get(KEY_SIMULADOS);
+    const rawMeta = map.get(KEY_META_V2);
+    const rawSrs = map.get(KEY_SRS_V2);
+    const rawAttempts = map.get(KEY_ATTEMPTS_V2);
+    const rawSimulados = map.get(KEY_SIMULADOS_V2);
 
     if (rawMeta || rawSrs || rawAttempts || rawSimulados) {
-      const meta = rawMeta ? JSON.parse(rawMeta) : {};
-      const srs = rawSrs ? JSON.parse(rawSrs) : {};
-      const attempts = rawAttempts ? JSON.parse(rawAttempts) : [];
-      const simulados = rawSimulados ? JSON.parse(rawSimulados) : [];
+      let meta: any = {};
+      let srs: any = {};
+      let attempts: any[] = [];
+      let simulados: any[] = [];
 
-      // Sanitiza simulados antigos que possam ainda ter o objeto pergunta inteiro
-      const simuladosNormalizados = (Array.isArray(simulados) ? simulados : []).map((sim: any) => ({
+      if (rawMeta) {
+        try {
+          const parsed = JSON.parse(rawMeta);
+          meta = parsed?.data || parsed || {};
+        } catch {
+          meta = {};
+        }
+      }
+
+      if (rawSrs) {
+        try {
+          const parsed = JSON.parse(rawSrs);
+          srs = parsed?.data || parsed || {};
+        } catch {
+          srs = {};
+        }
+      }
+
+      if (rawAttempts) {
+        try {
+          const parsed = JSON.parse(rawAttempts);
+          attempts = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
+        } catch {
+          attempts = [];
+        }
+      }
+
+      if (rawSimulados) {
+        try {
+          const parsed = JSON.parse(rawSimulados);
+          simulados = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
+        } catch {
+          simulados = [];
+        }
+      }
+
+      const cleanSRS: Record<string, RevisaoSRS> = {};
+      if (srs && typeof srs === 'object') {
+        for (const [k, v] of Object.entries(srs)) {
+          if (v && typeof v === 'object') {
+            const { fatorFacilidade, ...rest } = v as any;
+            cleanSRS[k] = rest as RevisaoSRS;
+          }
+        }
+      }
+
+      const cleanSimulados = simulados.slice(0, MAX_SIMULADOS).map((sim: any) => ({
         ...sim,
         respostas: Array.isArray(sim.respostas)
           ? sim.respostas.map((r: any) => ({
-              perguntaId: r.perguntaId || r.pergunta?.id,
-              selectedOptionIndex: r.selectedOptionIndex ?? null,
+              perguntaId: r.perguntaId || r.pergunta?.id || '',
+              selectedOptionIndex: r.selectedOptionIndex !== undefined ? r.selectedOptionIndex : null,
               isCorrect: !!r.isCorrect,
             }))
           : [],
       }));
 
       return {
-        attempts: Array.isArray(attempts) ? attempts.slice(0, MAX_ATTEMPTS) : [],
+        attempts: attempts.slice(0, MAX_ATTEMPTS),
         streak: typeof meta.streak === 'number' ? meta.streak : 0,
         bestStreak: typeof meta.bestStreak === 'number' ? meta.bestStreak : 0,
         blindSpotQueue: Array.isArray(meta.blindSpotQueue) ? meta.blindSpotQueue : [],
         errorQueue: Array.isArray(meta.errorQueue) ? meta.errorQueue : [],
-        revisoesSRS: srs || {},
-        simuladosHistorico: simuladosNormalizados.slice(0, MAX_SIMULADOS),
+        revisoesSRS: cleanSRS,
+        simuladosHistorico: cleanSimulados,
       };
     }
 
-    // Caso de migração: chave única legada
-    const oldRaw = await AsyncStorage.getItem(OLD_STORAGE_KEY);
-    if (oldRaw) {
-      const parsed = JSON.parse(oldRaw);
-      const attempts = (Array.isArray(parsed.attempts) ? parsed.attempts : []).slice(0, MAX_ATTEMPTS);
-      const revisoesSRS = parsed.revisoesSRS || {};
-      const streak = typeof parsed.streak === 'number' ? parsed.streak : 0;
-      const bestStreak = typeof parsed.bestStreak === 'number' ? parsed.bestStreak : 0;
-      const blindSpotQueue = Array.isArray(parsed.blindSpotQueue) ? parsed.blindSpotQueue : [];
-      const errorQueue = Array.isArray(parsed.errorQueue) ? parsed.errorQueue : [];
+    // Se as chaves v2 não existem, checa chaves antigas
+    for (const oldKey of OLD_KEYS_V1) {
+      const oldRaw = await AsyncStorage.getItem(oldKey);
+      if (oldRaw) {
+        const migrated = migrate(oldRaw);
 
-      const rawSimulados = Array.isArray(parsed.simuladosHistorico) ? parsed.simuladosHistorico : [];
-      const simuladosNormalizados = rawSimulados.slice(0, MAX_SIMULADOS).map((sim: any) => ({
-        ...sim,
-        respostas: Array.isArray(sim.respostas)
-          ? sim.respostas.map((r: any) => ({
-              perguntaId: r.perguntaId || r.pergunta?.id,
-              selectedOptionIndex: r.selectedOptionIndex ?? null,
-              isCorrect: !!r.isCorrect,
-            }))
-          : [],
-      }));
+        await AsyncStorage.multiSet([
+          [
+            KEY_META_V2,
+            wrapEnvelope({
+              streak: migrated.streak,
+              bestStreak: migrated.bestStreak,
+              blindSpotQueue: migrated.blindSpotQueue,
+              errorQueue: migrated.errorQueue,
+            }),
+          ],
+          [KEY_SRS_V2, wrapEnvelope(migrated.revisoesSRS || {})],
+          [KEY_ATTEMPTS_V2, wrapEnvelope(migrated.attempts.slice(0, MAX_ATTEMPTS))],
+          [KEY_SIMULADOS_V2, wrapEnvelope((migrated.simuladosHistorico || []).slice(0, MAX_SIMULADOS))],
+        ]);
 
-      const meta = { streak, bestStreak, blindSpotQueue, errorQueue };
+        await AsyncStorage.multiRemove(OLD_KEYS_V1).catch(() => {});
 
-      // Grava nas quatro novas chaves e remove a legada
-      await AsyncStorage.multiSet([
-        [KEY_META, JSON.stringify(meta)],
-        [KEY_SRS, JSON.stringify(revisoesSRS)],
-        [KEY_ATTEMPTS, JSON.stringify(attempts)],
-        [KEY_SIMULADOS, JSON.stringify(simuladosNormalizados)],
-      ]);
-      await AsyncStorage.removeItem(OLD_STORAGE_KEY);
-
-      return {
-        attempts,
-        streak,
-        bestStreak,
-        blindSpotQueue,
-        errorQueue,
-        revisoesSRS,
-        simuladosHistorico: simuladosNormalizados,
-      };
+        return migrated;
+      }
     }
   } catch (e) {
     console.error('Error loading stats from AsyncStorage', e);
@@ -222,42 +362,46 @@ export async function loadInitialStats(): Promise<UserStats> {
 }
 
 /**
- * Grava apenas as chaves de resposta (meta, srs, attempts) usando multiSet.
- * Não regrava histórico de simulados.
+ * Persiste a resposta através da fila de escrita em ordem sequencial.
+ * Grava apenas as chaves meta + srs + attempts com o teto de 400 tentativas.
  */
-export async function saveAttemptToStorage(newStats: UserStats): Promise<void> {
-  try {
-    const meta = {
-      streak: newStats.streak,
-      bestStreak: newStats.bestStreak,
-      blindSpotQueue: newStats.blindSpotQueue,
-      errorQueue: newStats.errorQueue,
-    };
+export function saveAttemptToStorage(newStats: UserStats): Promise<void> {
+  return enqueueWrite(async () => {
+    try {
+      const meta = {
+        streak: newStats.streak,
+        bestStreak: newStats.bestStreak,
+        blindSpotQueue: newStats.blindSpotQueue,
+        errorQueue: newStats.errorQueue,
+      };
 
-    await AsyncStorage.multiSet([
-      [KEY_META, JSON.stringify(meta)],
-      [KEY_SRS, JSON.stringify(newStats.revisoesSRS || {})],
-      [KEY_ATTEMPTS, JSON.stringify((newStats.attempts || []).slice(0, MAX_ATTEMPTS))],
-    ]);
-  } catch (e) {
-    console.error('Error saving attempt to AsyncStorage', e);
-  }
+      const cappedAttempts = (newStats.attempts || []).slice(0, MAX_ATTEMPTS);
+
+      await AsyncStorage.multiSet([
+        [KEY_META_V2, wrapEnvelope(meta)],
+        [KEY_SRS_V2, wrapEnvelope(newStats.revisoesSRS || {})],
+        [KEY_ATTEMPTS_V2, wrapEnvelope(cappedAttempts)],
+      ]);
+    } catch (e) {
+      console.error('Error saving attempt to AsyncStorage', e);
+    }
+  });
 }
 
 /**
- * Salva apenas a chave de simulados (KEY_SIMULADOS), sem tocar em attempts/meta/srs.
- * Mantém no máximo 20 resultados leves (sem o objeto Question duplicado).
+ * Persiste apenas a chave de simulados na fila de escrita, sem tocar em meta/srs/attempts.
+ * Aplica o teto de 20 simulados no formato leve (sem Question embutida).
  */
-export async function saveSimuladoToStorage(
+export function saveSimuladoToStorage(
   prevStats: UserStats,
   resultado: SimuladoResultado
 ): Promise<UserStats> {
   const normalizado: SimuladoResultado = {
     ...resultado,
     respostas: (resultado.respostas || []).map((r) => ({
-      perguntaId: r.perguntaId || (r as any).pergunta?.id,
-      selectedOptionIndex: r.selectedOptionIndex,
-      isCorrect: r.isCorrect,
+      perguntaId: r.perguntaId || (r as any).pergunta?.id || '',
+      selectedOptionIndex: r.selectedOptionIndex !== undefined ? r.selectedOptionIndex : null,
+      isCorrect: !!r.isCorrect,
     })),
   };
 
@@ -267,13 +411,15 @@ export async function saveSimuladoToStorage(
     simuladosHistorico: historico,
   };
 
-  try {
-    await AsyncStorage.setItem(KEY_SIMULADOS, JSON.stringify(historico));
-  } catch (e) {
-    console.error('Error saving simulado to AsyncStorage', e);
-  }
+  enqueueWrite(async () => {
+    try {
+      await AsyncStorage.setItem(KEY_SIMULADOS_V2, wrapEnvelope(historico));
+    } catch (e) {
+      console.error('Error saving simulado to AsyncStorage', e);
+    }
+  });
 
-  return updatedStats;
+  return Promise.resolve(updatedStats);
 }
 
 export async function clearUserStats(): Promise<UserStats> {
@@ -288,11 +434,11 @@ export async function clearUserStats(): Promise<UserStats> {
   };
   try {
     await AsyncStorage.multiRemove([
-      OLD_STORAGE_KEY,
-      KEY_META,
-      KEY_SRS,
-      KEY_ATTEMPTS,
-      KEY_SIMULADOS,
+      KEY_META_V2,
+      KEY_SRS_V2,
+      KEY_ATTEMPTS_V2,
+      KEY_SIMULADOS_V2,
+      ...OLD_KEYS_V1,
     ]);
   } catch (e) {
     console.error('Error clearing storage', e);
@@ -318,7 +464,6 @@ export async function saveStoredTheme(theme: 'light' | 'dark'): Promise<void> {
   }
 }
 
-// Favorites for Flashcard / Macetes
 export async function loadFavoriteIds(): Promise<string[]> {
   try {
     const raw = await AsyncStorage.getItem(FAVORITES_KEY);

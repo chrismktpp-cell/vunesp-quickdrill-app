@@ -6,6 +6,8 @@ import {
   estaPendenteParaRevisao,
   gerarFilaDoDia,
   resumirSRS,
+  formatarDataCivilLocal,
+  shuffleComSeed,
 } from '../services/srsEngine';
 import type { Question, RevisaoSRS } from '../types/schema';
 
@@ -40,48 +42,91 @@ const mockPerguntas: Question[] = [
     raioX: 'Macete 3',
     difficulty: 'Difícil',
   },
+  {
+    id: 'q-4',
+    category: 'Gestão de Patrimônio e Bens Públicos',
+    subtopic: 'Bens de Uso Comum',
+    statement: 'Questao 4',
+    options: ['A', 'B'],
+    correctIndex: 0,
+    raioX: 'Macete 4',
+    difficulty: 'Média',
+  },
+  {
+    id: 'q-5',
+    category: 'Sujeito Oracional e Transitividade',
+    subtopic: 'Concordância Verbal',
+    statement: 'Questao 5',
+    options: ['A', 'B'],
+    correctIndex: 1,
+    raioX: 'Macete 5',
+    difficulty: 'Fácil',
+  },
 ];
 
-describe('SRS Engine (SM-2 & Leitner)', () => {
-  const agora = 1700000000000;
+describe('SRS Engine (Leitner com regras explícitas de certeza)', () => {
+  // Fixa um timestamp para teste (2026-10-19 12:00:00 UTC)
+  const agora = new Date('2026-10-19T12:00:00Z').getTime();
   const umDiaMs = 24 * 60 * 60 * 1000;
 
-  it('deve criar revisão inicial com caixa 1 e intervalo de 1 dia', () => {
+  it('deve criar revisão inicial com caixa 1 e intervalo de 1 dia (sem fatorFacilidade)', () => {
     const srs = criarRevisaoInicial('q-1', agora);
     expect(srs.perguntaId).toBe('q-1');
     expect(srs.caixa).toBe(1);
     expect(srs.intervaloDias).toBe(1);
     expect(srs.proximaRevisao).toBe(agora + umDiaMs);
-    expect(srs.fatorFacilidade).toBe(2.5);
     expect(srs.lapses).toBe(0);
     expect(srs.status).toBe('pendente');
+    expect((srs as any).fatorFacilidade).toBeUndefined();
   });
 
-  it('deve avançar de caixa ao acertar com Certeza (3)', () => {
-    const inicial = criarRevisaoInicial('q-1', agora);
-    const atualizado = processarRespostaSRS(inicial, 'q-1', true, 3, agora);
-
-    expect(atualizado.caixa).toBe(2);
-    expect(atualizado.intervaloDias).toBe(INTERVALOS_CAIXA_DIAS[2]); // 3 dias
-    expect(atualizado.proximaRevisao).toBe(agora + 3 * umDiaMs);
-    expect(atualizado.status).toBe('em_revisao');
-    expect(atualizado.fatorFacilidade).toBe(2.6);
-  });
-
-  it('deve atingir status "dominado" ao alcançar caixa 5 com sucessos consecutivos', () => {
+  it('deve avançar 1 caixa ao acertar com Certeza 3 e atingir "dominado" apenas na caixa 5', () => {
     let srs = criarRevisaoInicial('q-1', agora);
-    // Acertos consecutivos com certeza
-    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora); // Caixa 2
-    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora); // Caixa 3
-    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora); // Caixa 4
-    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora); // Caixa 5
 
+    // Acerto 1 com Certeza 3 -> Caixa 2
+    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora);
+    expect(srs.caixa).toBe(2);
+    expect(srs.intervaloDias).toBe(INTERVALOS_CAIXA_DIAS[2]); // 3 dias
+    expect(srs.status).toBe('em_revisao');
+
+    // Acerto 2 com Certeza 3 -> Caixa 3
+    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora);
+    expect(srs.caixa).toBe(3);
+    expect(srs.status).toBe('em_revisao');
+
+    // Acerto 3 com Certeza 3 -> Caixa 4
+    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora);
+    expect(srs.caixa).toBe(4);
+    expect(srs.status).toBe('em_revisao');
+
+    // Acerto 4 com Certeza 3 -> Caixa 5 (Dominado)
+    srs = processarRespostaSRS(srs, 'q-1', true, 3, agora);
     expect(srs.caixa).toBe(5);
-    expect(srs.intervaloDias).toBe(30);
+    expect(srs.intervaloDias).toBe(INTERVALOS_CAIXA_DIAS[5]); // 30 dias
     expect(srs.status).toBe('dominado');
   });
 
-  it('não deve avançar de caixa se acertar com Chute (1) - Acerto Frágil', () => {
+  it('acerto com Certeza 2 (Dúvida) deve subir no máximo 1 caixa, com teto na caixa 3 e sem dominar', () => {
+    let srs = criarRevisaoInicial('q-1', agora); // Caixa 1
+
+    // Acerto com Certeza 2: sobe de 1 para 2
+    srs = processarRespostaSRS(srs, 'q-1', true, 2, agora);
+    expect(srs.caixa).toBe(2);
+    expect(srs.status).toBe('em_revisao');
+
+    // Acerto com Certeza 2: sobe de 2 para 3
+    srs = processarRespostaSRS(srs, 'q-1', true, 2, agora);
+    expect(srs.caixa).toBe(3);
+    expect(srs.status).toBe('em_revisao');
+
+    // Acerto com Certeza 2: na caixa 3, bate no teto 3 e não sobe mais nem domina
+    srs = processarRespostaSRS(srs, 'q-1', true, 2, agora);
+    expect(srs.caixa).toBe(3);
+    expect(srs.status).toBe('em_revisao');
+    expect(srs.status).not.toBe('dominado');
+  });
+
+  it('não deve avançar de caixa se acertar com Chute (1)', () => {
     const inicial = criarRevisaoInicial('q-1', agora);
     const atualizado = processarRespostaSRS(inicial, 'q-1', true, 1, agora);
 
@@ -90,89 +135,83 @@ describe('SRS Engine (SM-2 & Leitner)', () => {
     expect(atualizado.status).toBe('em_revisao');
   });
 
-  it('deve resetar para caixa 1 e registrar lapse ao errar com Certeza (Ponto Cego)', () => {
-    // Usuário estava na caixa 4
+  it('deve resetar para caixa 1 e registrar lapse ao errar', () => {
     const srsAvancado: RevisaoSRS = {
       perguntaId: 'q-1',
       caixa: 4,
       intervaloDias: 14,
       proximaRevisao: agora + 14 * umDiaMs,
       historicoRepeticoes: 4,
-      fatorFacilidade: 2.7,
       lapses: 0,
       status: 'em_revisao',
-      ultimaRevisao: agora,
+      ultimaRevisao: agora - 5 * umDiaMs,
     };
 
     const aposErro = processarRespostaSRS(srsAvancado, 'q-1', false, 3, agora);
-
     expect(aposErro.caixa).toBe(1);
     expect(aposErro.intervaloDias).toBe(1);
     expect(aposErro.lapses).toBe(1);
     expect(aposErro.status).toBe('pendente');
-    expect(aposErro.fatorFacilidade).toBe(2.4); // Penalidade de 0.3
   });
 
-  it('deve identificar se a questão está pendente para revisão na data', () => {
-    const srs: RevisaoSRS = {
+  it('não deve incluir questão na fila de pendentes se já foi respondida no mesmo dia civil', () => {
+    // Questão respondida hoje (mesmo dia civil local)
+    const srsRespondidoHoje: RevisaoSRS = {
       perguntaId: 'q-1',
-      caixa: 2,
-      intervaloDias: 3,
-      proximaRevisao: agora + 3 * umDiaMs,
-      historicoRepeticoes: 2,
-      fatorFacilidade: 2.5,
+      caixa: 1,
+      intervaloDias: 1,
+      proximaRevisao: agora - 1000, // mesmo com proximaRevisao vencida
+      historicoRepeticoes: 1,
       lapses: 0,
       status: 'em_revisao',
-      ultimaRevisao: agora,
+      ultimaRevisao: agora, // respondida hoje
     };
 
-    // Antes da data alvo: não pendente
-    expect(estaPendenteParaRevisao(srs, agora + 2 * umDiaMs)).toBe(false);
+    expect(estaPendenteParaRevisao(srsRespondidoHoje, agora)).toBe(false);
 
-    // No dia exato ou depois: pendente
-    expect(estaPendenteParaRevisao(srs, agora + 3 * umDiaMs)).toBe(true);
-    expect(estaPendenteParaRevisao(srs, agora + 4 * umDiaMs)).toBe(true);
+    // Se a última revisão foi no dia anterior (ontem), e proximaRevisao é hoje ou antes, deve ser pendente
+    const srsRespondidoOntem: RevisaoSRS = {
+      ...srsRespondidoHoje,
+      ultimaRevisao: agora - umDiaMs,
+      proximaRevisao: agora,
+    };
+
+    expect(estaPendenteParaRevisao(srsRespondidoOntem, agora)).toBe(true);
   });
 
-  it('deve gerar a Fila do Dia priorizando revisões pendentes antes de novas questões', () => {
+  it('gerarFilaDoDia: duas chamadas na mesma data local devolvem exatamente as mesmas novas questões na mesma ordem', () => {
+    const srsMap: Record<string, RevisaoSRS> = {};
+
+    const filaA = gerarFilaDoDia(mockPerguntas, srsMap, 3, agora);
+    const filaB = gerarFilaDoDia(mockPerguntas, srsMap, 3, agora);
+
+    expect(filaA.novasQuestoes.length).toBe(3);
+    expect(filaB.novasQuestoes.length).toBe(3);
+    expect(filaA.novasQuestoes.map((q) => q.id)).toEqual(filaB.novasQuestoes.map((q) => q.id));
+  });
+
+  it('gerarFilaDoDia prioriza revisões pendentes antes de novas questões', () => {
     const srsMap: Record<string, RevisaoSRS> = {
       'q-1': {
         perguntaId: 'q-1',
         caixa: 1,
         intervaloDias: 1,
-        proximaRevisao: agora - 1000, // Venceu
+        proximaRevisao: agora - 5000,
         historicoRepeticoes: 1,
-        fatorFacilidade: 2.5,
         lapses: 0,
         status: 'em_revisao',
-        ultimaRevisao: agora - umDiaMs,
+        ultimaRevisao: agora - 2 * umDiaMs,
       },
-      'q-2': {
-        perguntaId: 'q-2',
-        caixa: 3,
-        intervaloDias: 7,
-        proximaRevisao: agora + 5 * umDiaMs, // Ainda não venceu
-        historicoRepeticoes: 3,
-        fatorFacilidade: 2.5,
-        lapses: 0,
-        status: 'em_revisao',
-        ultimaRevisao: agora,
-      },
-      // 'q-3' é nova, não tem SRS
     };
 
-    const fila = gerarFilaDoDia(mockPerguntas, srsMap, 5, agora);
-
+    const fila = gerarFilaDoDia(mockPerguntas, srsMap, 2, agora);
     expect(fila.revisoesPendentes.length).toBe(1);
     expect(fila.revisoesPendentes[0].id).toBe('q-1');
-
-    expect(fila.novasQuestoes.length).toBe(1);
-    expect(fila.novasQuestoes[0].id).toBe('q-3');
-
-    expect(fila.totalHoje).toBe(2);
+    expect(fila.novasQuestoes.length).toBe(2);
+    expect(fila.totalHoje).toBe(3);
   });
 
-  it('deve resumir as estatísticas de SRS com precisão', () => {
+  it('resumirSRS calcula estatísticas considerando apenas pendentes reais', () => {
     const srsMap: Record<string, RevisaoSRS> = {
       'q-1': {
         perguntaId: 'q-1',
@@ -180,31 +219,28 @@ describe('SRS Engine (SM-2 & Leitner)', () => {
         intervaloDias: 30,
         proximaRevisao: agora + 30 * umDiaMs,
         historicoRepeticoes: 5,
-        fatorFacilidade: 2.8,
         lapses: 0,
         status: 'dominado',
-        ultimaRevisao: agora,
+        ultimaRevisao: agora - umDiaMs,
       },
       'q-2': {
         perguntaId: 'q-2',
         caixa: 1,
         intervaloDias: 1,
-        proximaRevisao: agora - 10,
+        proximaRevisao: agora - umDiaMs,
         historicoRepeticoes: 2,
-        fatorFacilidade: 2.2,
         lapses: 1,
         status: 'pendente',
-        ultimaRevisao: agora - umDiaMs,
+        ultimaRevisao: agora - 2 * umDiaMs,
       },
     };
 
     const resumo = resumirSRS(mockPerguntas, srsMap, agora);
-    expect(resumo.totalQuestoes).toBe(3);
-    expect(resumo.novas).toBe(1); // q-3
+    expect(resumo.totalQuestoes).toBe(5);
+    expect(resumo.novas).toBe(3); // q-3, q-4, q-5
     expect(resumo.dominadas).toBe(1); // q-1
     expect(resumo.emRevisao).toBe(1); // q-2
     expect(resumo.pendentesHoje).toBe(1); // q-2
     expect(resumo.pontosCegosComLapse).toBe(1); // q-2
   });
 });
-
