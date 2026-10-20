@@ -38,3 +38,4 @@ export function triggerLightHaptic(): void {
 export function triggerSuccessHaptic(): void {
   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
 }
+
