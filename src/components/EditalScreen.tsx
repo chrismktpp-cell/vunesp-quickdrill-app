@@ -1,15 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { Question, QuestionAttempt, CategoryType, EditalTopico } from '../types/schema';
+import type {
+  Question,
+  QuestionAttempt,
+  CategoryType,
+  EditalTopico,
+  RevisaoSRS,
+} from '../types/schema';
 import editalPadrao from '../data/edital.json';
 import { calcularProgressoPorTopico, calcularCoberturaGeral } from '../services/editalService';
 import { triggerLightHaptic } from '../utils/haptics';
+import { EditalPathMap } from './EditalPathMap';
 
 interface EditalScreenProps {
   questions: Question[];
   attempts: QuestionAttempt[];
+  revisoesSRS?: Record<string, RevisaoSRS>;
   onTreinarTopico: (category: CategoryType) => void;
+  onIniciarSimulado?: () => void;
   colors: {
     bg: string;
     cardBg: string;
@@ -33,11 +42,14 @@ interface EditalScreenProps {
 export const EditalScreen: React.FC<EditalScreenProps> = ({
   questions,
   attempts,
+  revisoesSRS = {},
   onTreinarTopico,
+  onIniciarSimulado = () => {},
   colors,
   isDark,
   getCategoryColor,
 }) => {
+  const [visualizacao, setVisualizacao] = useState<'trilha' | 'artigos'>('trilha');
   const topicos = editalPadrao as EditalTopico[];
 
   const progressoTopicos = useMemo(() => {
@@ -82,7 +94,84 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
 
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-      {/* CARD PRINCIPAL DE COBERTURA */}
+      {/* SELETOR SUPERIOR ESTILO DUOLINGO: TRILHA vs ARTIGOS */}
+      <View
+        style={[
+          styles.viewToggleContainer,
+          { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            triggerLightHaptic();
+            setVisualizacao('trilha');
+          }}
+          activeOpacity={0.85}
+          style={[
+            styles.viewToggleBtn,
+            visualizacao === 'trilha' && {
+              backgroundColor: '#58cc02',
+            },
+          ]}
+        >
+          <Ionicons
+            name="map"
+            size={16}
+            color={visualizacao === 'trilha' ? '#ffffff' : colors.textMuted}
+          />
+          <Text
+            style={[
+              styles.viewToggleBtnText,
+              { color: visualizacao === 'trilha' ? '#ffffff' : colors.textMuted },
+            ]}
+          >
+            Trilha do Edital
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            triggerLightHaptic();
+            setVisualizacao('artigos');
+          }}
+          activeOpacity={0.85}
+          style={[
+            styles.viewToggleBtn,
+            visualizacao === 'artigos' && {
+              backgroundColor: colors.primary,
+            },
+          ]}
+        >
+          <Ionicons
+            name="list"
+            size={16}
+            color={visualizacao === 'artigos' ? '#ffffff' : colors.textMuted}
+          />
+          <Text
+            style={[
+              styles.viewToggleBtnText,
+              { color: visualizacao === 'artigos' ? '#ffffff' : colors.textMuted },
+            ]}
+          >
+            Artigos e Lei
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* RENDERIZAÇÃO DA TRILHA DE NÓS (DUOLINGO STYLE) */}
+      {visualizacao === 'trilha' ? (
+        <EditalPathMap
+          topicos={topicos}
+          progressoMap={mapaProgresso}
+          revisoesSRS={revisoesSRS}
+          onTreinarTopico={onTreinarTopico}
+          onIniciarSimulado={onIniciarSimulado}
+          isDark={isDark}
+          colors={colors}
+        />
+      ) : (
+        <>
+          {/* CARD PRINCIPAL DE COBERTURA */}
       <View
         style={[
           styles.mainCoverageCard,
@@ -256,6 +345,8 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
           </View>
         );
       })}
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -264,6 +355,27 @@ const styles = StyleSheet.create({
   container: {
     padding: 14,
     paddingBottom: 40,
+  },
+  viewToggleContainer: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 4,
+    marginBottom: 16,
+    gap: 4,
+  },
+  viewToggleBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  viewToggleBtnText: {
+    fontSize: 13,
+    fontWeight: '800',
   },
   mainCoverageCard: {
     padding: 16,

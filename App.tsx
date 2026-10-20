@@ -479,11 +479,15 @@ export default function App() {
           <EditalScreen
             questions={questionsData as Question[]}
             attempts={stats.attempts}
+            revisoesSRS={stats.revisoesSRS || {}}
             onTreinarTopico={(cat) => {
               setSelectedCategory(cat);
               setIsFilaSRSActive(false);
               setActiveTab('drill');
               setMode('all');
+            }}
+            onIniciarSimulado={() => {
+              setActiveTab('simulado');
             }}
             colors={legacyColors}
             isDark={isDark}
