@@ -166,6 +166,10 @@ export interface UserStats {
   errorQueue: string[]; // question ids with wrong answers
   revisoesSRS?: Record<string, RevisaoSRS>;
   simuladosHistorico?: SimuladoResultado[];
+  totalAcertos?: number;
+  totalErros?: number;
+  porCategoria?: Partial<Record<CategoryType, { acertos: number; erros: number }>>;
+  gen?: number;
 }
 
 export type DrillMode = 'all' | 'errors_only' | 'blind_spots_only' | 'srs_queue';

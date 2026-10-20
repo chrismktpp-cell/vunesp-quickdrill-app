@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Question, CategoryType } from '../types/schema';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 
 interface MuralDeMacetesProps {
   questions: Question[];

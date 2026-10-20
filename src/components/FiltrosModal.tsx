@@ -11,7 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import type { CategoryType, Dificuldade } from '../types/schema';
 import type { QuestionFilters } from '../services/filterEngine';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 
 interface FiltrosModalProps {
   visible: boolean;

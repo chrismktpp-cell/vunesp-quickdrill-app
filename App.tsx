@@ -30,8 +30,11 @@ import {
   saveStoredTheme,
   loadFavoriteIds,
   toggleFavoriteId,
-  triggerLightHaptic,
+  hasSeenOnboarding,
+  markOnboardingSeen,
+  restaurarBackup,
 } from './src/utils/storage';
+import { triggerResponseHaptic, triggerLightHaptic } from './src/utils/haptics';
 import { darkTheme, lightTheme, categoryColors } from './src/theme/tokens';
 import { MuralDeMacetes } from './src/components/MuralDeMacetes';
 import { SimuladoScreen } from './src/components/SimuladoScreen';
@@ -97,6 +100,16 @@ export default function App() {
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [lastClassification, setLastClassification] = useState<PerformanceClassification | null>(null);
+  const [feedbackTip, setLastFeedbackTip] = useState<string | undefined>(undefined);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+
+  useEffect(() => {
+    hasSeenOnboarding()
+      .then((seen) => {
+        if (!seen) setShowOnboarding(true);
+      })
+      .catch(() => {});
+  }, []);
 
   // Session stats
   const [sessionStats, setSessionStats] = useState<{ attempts: number; correct: number }>({
@@ -181,6 +194,7 @@ export default function App() {
     setIsAnswered(false);
     setSelectedOptionIndex(null);
     setLastClassification(null);
+    setLastFeedbackTip(undefined);
   }, [selectedCategory, mode, isFilaSRSActive, filteredQuestions.length]);
 
   const currentQuestion = filteredQuestions[currentIndex] || null;
@@ -192,6 +206,7 @@ export default function App() {
     setIsAnswered(false);
     setSelectedOptionIndex(null);
     setLastClassification(null);
+    setLastFeedbackTip(undefined);
   }, []);
 
   const handleAnswer = useCallback(
@@ -199,7 +214,7 @@ export default function App() {
       if (isAnswered || !currentQuestion) return;
 
       const isCorrect = optionIndex === currentQuestion.correctIndex;
-      const { newStats, classification } = aplicarResposta(stats, {
+      const { newStats, classification, feedbackTip: tip } = aplicarResposta(stats, {
         questionId: currentQuestion.id,
         category: currentQuestion.category,
         selectedOptionIndex: optionIndex,
@@ -207,6 +222,9 @@ export default function App() {
         certainty: selectedCertainty,
         tempoGastoMs,
       });
+
+      // Dispara o haptic depois com o mesmo mapeamento
+      triggerResponseHaptic(isCorrect, selectedCertainty, classification);
 
       // 1. Atualização otimista imediata antes de qualquer I/O assíncrono
       setStats(newStats);
@@ -216,6 +234,7 @@ export default function App() {
       }));
       setSelectedOptionIndex(optionIndex);
       setLastClassification(classification);
+      setLastFeedbackTip(tip);
       setIsAnswered(true);
 
       // 2. Gravação na fila sem bloquear a tela (não reverte tela em caso de falha)
@@ -229,6 +248,7 @@ export default function App() {
     setIsAnswered(false);
     setSelectedOptionIndex(null);
     setLastClassification(null);
+    setLastFeedbackTip(undefined);
 
     if (filteredQuestions.length > 0) {
       setCurrentIndex((prev) => (prev + 1) % filteredQuestions.length);
@@ -240,6 +260,7 @@ export default function App() {
     setIsAnswered(false);
     setSelectedOptionIndex(null);
     setLastClassification(null);
+    setLastFeedbackTip(undefined);
 
     if (filteredQuestions.length > 0) {
       setCurrentIndex((prev) => (prev + 1) % filteredQuestions.length);
@@ -269,6 +290,24 @@ export default function App() {
   const handleResetStats = useCallback(async () => {
     const res = await clearUserStats();
     setStats(res);
+  }, []);
+
+  const handleRestaurarBackup = useCallback(
+    async (backupData: any) => {
+      try {
+        const updated = await restaurarBackup(backupData, stats);
+        setStats(updated);
+        Alert.alert('Sucesso', 'Progresso restaurado com sucesso neste aparelho!');
+      } catch (err: any) {
+        Alert.alert('Erro ao Restaurar', err?.message || 'Falha ao restaurar backup.');
+      }
+    },
+    [stats]
+  );
+
+  const handleDismissOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    void markOnboardingSeen();
   }, []);
 
   // Design Tokens & Colors
@@ -421,6 +460,7 @@ export default function App() {
               setActiveTab('drill');
             }}
             onResetStats={handleResetStats}
+            onRestaurarBackup={handleRestaurarBackup}
             colors={legacyColors}
             isDark={isDark}
             getCategoryColor={getCategoryColor}
@@ -483,6 +523,9 @@ export default function App() {
             stats={stats}
             sessionStats={sessionStats}
             favorites={favorites}
+            feedbackTip={feedbackTip}
+            showOnboarding={showOnboarding}
+            onDismissOnboarding={handleDismissOnboarding}
             onAnswer={handleAnswer}
             onNext={handleNext}
             onSkip={handleSkip}

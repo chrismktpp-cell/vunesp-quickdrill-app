@@ -32,3 +32,8 @@ Aplicativo tático de treino e repetição espaçada (SRS) 100% offline para con
 - **Mapeamento do Edital:** [`src/data/edital.json`](src/data/edital.json) (tópicos curriculares oficiais e legislação).
 - **Progresso e Estatísticas do Usuário:** Armazenados localmente no dispositivo via `@react-native-async-storage/async-storage` (100% offline, sem necessidade de conexão com a internet).
 
+## ⚙️ Regras do Motor
+- **Teto da Fila:** Máximo de 20 revisões/dia priorizadas pelas mais atrasadas.
+- **Lapse Suave:** Questão avançada/dominada (caixa ≥ 4) que erra volta à caixa 2 (não ao início).
+- **Backup Local:** Exportação e restauração manual via JSON versionado (sem nuvem).
+

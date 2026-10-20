@@ -21,7 +21,7 @@ import {
   calcularResultadoSimulado,
   obterDiagnosticoSimulado,
 } from '../services/simuladoService';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 
 interface SimuladoScreenProps {
   questions: Question[];

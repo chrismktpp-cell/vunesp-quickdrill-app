@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { FilaDoDia } from '../types/schema';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 import { radius, typography, weights } from '../theme/tokens';
 
 interface FilaDoDiaBannerProps {

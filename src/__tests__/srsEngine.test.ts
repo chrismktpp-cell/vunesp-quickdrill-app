@@ -135,23 +135,44 @@ describe('SRS Engine (Leitner com regras explícitas de certeza)', () => {
     expect(atualizado.status).toBe('em_revisao');
   });
 
-  it('deve resetar para caixa 1 e registrar lapse ao errar', () => {
-    const srsAvancado: RevisaoSRS = {
+  it('erro com caixa >= 4 (ex: dominada na caixa 5) volta para caixa 2 com intervalo 3d e status em_revisao', () => {
+    const srsDominado: RevisaoSRS = {
       perguntaId: 'q-1',
-      caixa: 4,
-      intervaloDias: 14,
-      proximaRevisao: agora + 14 * umDiaMs,
-      historicoRepeticoes: 4,
+      caixa: 5,
+      intervaloDias: 30,
+      proximaRevisao: agora + 30 * umDiaMs,
+      historicoRepeticoes: 5,
       lapses: 0,
-      status: 'em_revisao',
-      ultimaRevisao: agora - 5 * umDiaMs,
+      status: 'dominado',
+      ultimaRevisao: agora - 10 * umDiaMs,
     };
 
-    const aposErro = processarRespostaSRS(srsAvancado, 'q-1', false, 3, agora);
+    const aposErro = processarRespostaSRS(srsDominado, 'q-1', false, 3, agora);
+    expect(aposErro.caixa).toBe(2);
+    expect(aposErro.intervaloDias).toBe(3);
+    expect(aposErro.lapses).toBe(1);
+    expect(aposErro.status).toBe('em_revisao');
+    expect(aposErro.proximaRevisao).toBe(agora + 3 * umDiaMs);
+  });
+
+  it('erro com caixa <= 3 (ex: caixa 2) cai para caixa 1 com intervalo 1d e status pendente', () => {
+    const srsCaixa2: RevisaoSRS = {
+      perguntaId: 'q-2',
+      caixa: 2,
+      intervaloDias: 3,
+      proximaRevisao: agora + 3 * umDiaMs,
+      historicoRepeticoes: 2,
+      lapses: 0,
+      status: 'em_revisao',
+      ultimaRevisao: agora - 2 * umDiaMs,
+    };
+
+    const aposErro = processarRespostaSRS(srsCaixa2, 'q-2', false, 3, agora);
     expect(aposErro.caixa).toBe(1);
     expect(aposErro.intervaloDias).toBe(1);
     expect(aposErro.lapses).toBe(1);
     expect(aposErro.status).toBe('pendente');
+    expect(aposErro.proximaRevisao).toBe(agora + umDiaMs);
   });
 
   it('não deve incluir questão na fila de pendentes se já foi respondida no mesmo dia civil', () => {
@@ -209,6 +230,46 @@ describe('SRS Engine (Leitner com regras explícitas de certeza)', () => {
     expect(fila.revisoesPendentes[0].id).toBe('q-1');
     expect(fila.novasQuestoes.length).toBe(2);
     expect(fila.totalHoje).toBe(3);
+  });
+
+  it('teto de revisões no dia: 40 pendentes -> a fila de revisões tem 20, as de proximaRevisao mais antiga', () => {
+    const muitasPerguntas: Question[] = [];
+    const srsMap: Record<string, RevisaoSRS> = {};
+
+    for (let i = 0; i < 40; i++) {
+      const id = `pend-${i}`;
+      muitasPerguntas.push({
+        id,
+        category: 'Crase (VUNESP)',
+        subtopic: 'Teste',
+        statement: `Questao ${i}`,
+        options: ['A', 'B'],
+        correctIndex: 0,
+        raioX: 'Macete',
+        difficulty: 'Fácil',
+      });
+
+      // pend-0 é a mais atrasada (proximaRevisao mais no passado)
+      const atrasoMs = (50 - i) * umDiaMs;
+      srsMap[id] = {
+        perguntaId: id,
+        caixa: 1,
+        intervaloDias: 1,
+        proximaRevisao: agora - atrasoMs,
+        historicoRepeticoes: 1,
+        lapses: 0,
+        status: 'pendente',
+        ultimaRevisao: agora - 2 * atrasoMs,
+      };
+    }
+
+    const fila = gerarFilaDoDia(muitasPerguntas, srsMap, 10, agora, 20);
+    // Teto estrito de 20 revisões
+    expect(fila.revisoesPendentes.length).toBe(20);
+    // As mais atrasadas entram primeiro (pend-0 a pend-19)
+    expect(fila.revisoesPendentes[0].id).toBe('pend-0');
+    expect(fila.revisoesPendentes[19].id).toBe('pend-19');
+    expect(fila.totalHoje).toBe(20);
   });
 
   it('resumirSRS calcula estatísticas considerando apenas pendentes reais', () => {

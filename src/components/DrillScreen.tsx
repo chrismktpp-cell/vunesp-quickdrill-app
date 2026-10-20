@@ -19,7 +19,7 @@ import type {
 } from '../types/schema';
 import type { QuestionFilters } from '../services/filterEngine';
 import { FilaDoDiaBanner } from './FilaDoDiaBanner';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 import { radius, typography, weights, spacing } from '../theme/tokens';
 
 export interface DrillScreenProps {
@@ -42,6 +42,9 @@ export interface DrillScreenProps {
   stats: UserStats;
   sessionStats: { attempts: number; correct: number };
   favorites: string[];
+  feedbackTip?: string;
+  showOnboarding?: boolean;
+  onDismissOnboarding?: () => void;
   onAnswer: (optionIndex: number, tempoGastoMs?: number) => void;
   onNext: () => void;
   onSkip: () => void;
@@ -88,6 +91,9 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   stats,
   sessionStats,
   favorites,
+  feedbackTip,
+  showOnboarding,
+  onDismissOnboarding,
   onAnswer,
   onNext,
   onSkip,
@@ -140,6 +146,38 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      {/* Onboarding de primeira abertura (dispensável, 3 linhas, botão Começar) */}
+      {showOnboarding && (
+        <View
+          style={[
+            styles.onboardingCard,
+            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
+          ]}
+        >
+          <View style={styles.onboardingLines}>
+            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+              • Chute, dúvida e certeza mudam a revisão.
+            </Text>
+            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+              • Certeza + erro vira ponto cego e volta logo.
+            </Text>
+            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+              • Dúvida acertada não conta como domínio.
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              onDismissOnboarding?.();
+            }}
+            activeOpacity={0.85}
+            style={[styles.onboardingBtn, { backgroundColor: tokens.primary }]}
+          >
+            <Text style={styles.onboardingBtnText}>Começar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* 1. Banner Fila do Dia (64px, bloco único) */}
       <FilaDoDiaBanner
         fila={filaDoDia}
@@ -535,7 +573,33 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             /* FEEDBACK NO MESMO CARD */
             <View style={styles.feedbackSection}>
               {/* Faixa única de 1 linha */}
-              {selectedOptionIndex === currentQuestion!.correctIndex ? (
+              {feedbackTip ? (
+                <View
+                  style={[
+                    styles.feedbackBannerRow,
+                    {
+                      backgroundColor:
+                        selectedOptionIndex === currentQuestion!.correctIndex
+                          ? tokens.warningSoft
+                          : tokens.dangerSoft,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.feedbackBannerText,
+                      {
+                        color:
+                          selectedOptionIndex === currentQuestion!.correctIndex
+                            ? tokens.warning
+                            : tokens.danger,
+                      },
+                    ]}
+                  >
+                    {feedbackTip}
+                  </Text>
+                </View>
+              ) : selectedOptionIndex === currentQuestion!.correctIndex ? (
                 lastClassification === 'lucky_guess' ? (
                   <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.warningSoft }]}>
                     <Text style={[styles.feedbackBannerText, { color: tokens.warning }]}>
@@ -609,6 +673,32 @@ const styles = StyleSheet.create({
     paddingTop: spacing.block,
     paddingBottom: 24,
     gap: spacing.block,
+  },
+  onboardingCard: {
+    padding: 16,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    gap: 12,
+  },
+  onboardingLines: {
+    gap: 6,
+  },
+  onboardingLine: {
+    fontSize: typography.body,
+    fontWeight: weights.meta,
+    lineHeight: 20,
+  },
+  onboardingBtn: {
+    height: 44,
+    borderRadius: radius.control,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+  },
+  onboardingBtnText: {
+    color: '#ffffff',
+    fontSize: typography.body,
+    fontWeight: weights.title,
   },
   controlsRow: {
     flexDirection: 'row',

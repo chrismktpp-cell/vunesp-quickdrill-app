@@ -92,7 +92,7 @@ export function processarRespostaSRS(
       srs.intervaloDias = INTERVALOS_CAIXA_DIAS[srs.caixa] || 30;
       srs.status = srs.caixa >= 5 ? 'dominado' : 'em_revisao';
     } else if (certainty === 2) {
-      // Sobe no máximo 1 caixa, com teto na caixa 3
+      // Sobe no máximo 1 caixa, com teto na caixa 3. Não vira dominado.
       srs.caixa = Math.min(3, srs.caixa + 1);
       srs.intervaloDias = INTERVALOS_CAIXA_DIAS[srs.caixa] || 7;
       srs.status = 'em_revisao';
@@ -103,11 +103,19 @@ export function processarRespostaSRS(
       srs.status = 'em_revisao';
     }
   } else {
-    // Erro (Lapse): volta à caixa 1
+    // Erro (Lapse)
     srs.lapses += 1;
-    srs.caixa = 1;
-    srs.intervaloDias = 1;
-    srs.status = 'pendente';
+    if (srs.caixa >= 4) {
+      // Já tinha passado de dúvida: volta para caixa 2, intervalo 3 dias, status em_revisao. Não volta para a caixa 1.
+      srs.caixa = 2;
+      srs.intervaloDias = 3;
+      srs.status = 'em_revisao';
+    } else {
+      // Erro com caixa <= 3: continua caindo para caixa 1, intervalo 1 dia, status pendente.
+      srs.caixa = 1;
+      srs.intervaloDias = 1;
+      srs.status = 'pendente';
+    }
   }
 
   srs.proximaRevisao = timestamp + srs.intervaloDias * MS_PER_DAY;
@@ -147,7 +155,8 @@ export function gerarFilaDoDia(
   todasPerguntas: Question[],
   srsMap: Record<string, RevisaoSRS> = {},
   limiteNovas: number = 10,
-  dataReferencia: number = Date.now()
+  dataReferencia: number = Date.now(),
+  limiteRevisoes: number = 20
 ): FilaDoDia {
   const revisoesPendentes: Question[] = [];
   const novasQuestoes: Question[] = [];
@@ -171,14 +180,17 @@ export function gerarFilaDoDia(
     return (srsA?.proximaRevisao ?? 0) - (srsB?.proximaRevisao ?? 0);
   });
 
+  // Teto de revisões no dia: corta DEPOIS da ordenação por atraso (as mais atrasadas entram primeiro)
+  const revisoesSelecionadas = revisoesPendentes.slice(0, limiteRevisoes);
+
   // Embaralha novas questões com seed determinística do dia civil local (YYYY-MM-DD)
   const novasEmbaralhadas = shuffleComSeed(novasQuestoes, diaRef);
   const novasSelecionadas = novasEmbaralhadas.slice(0, limiteNovas);
 
   return {
-    revisoesPendentes,
+    revisoesPendentes: revisoesSelecionadas,
     novasQuestoes: novasSelecionadas,
-    totalHoje: revisoesPendentes.length + novasSelecionadas.length,
+    totalHoje: revisoesSelecionadas.length + novasSelecionadas.length,
     timestampCalculo: dataReferencia,
   };
 }

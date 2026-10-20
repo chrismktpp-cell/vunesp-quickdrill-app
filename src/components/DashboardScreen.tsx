@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
+  TextInput,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type {
@@ -19,7 +22,9 @@ import { resumirSRS, gerarFilaDoDia } from '../services/srsEngine';
 import { calcularProgressoPorTopico, calcularCoberturaGeral } from '../services/editalService';
 import { obterDiagnosticoSimulado } from '../services/simuladoService';
 import editalPadrao from '../data/edital.json';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
+import { exportarBackupArquivo, selecionarArquivoWeb } from '../utils/backupService';
+import { validarBackup } from '../utils/storage';
 
 interface DashboardScreenProps {
   questions: Question[];
@@ -30,6 +35,7 @@ interface DashboardScreenProps {
   onTreinarPontosCegos: () => void;
   onTreinarCategoria: (cat: CategoryType) => void;
   onResetStats: () => void;
+  onRestaurarBackup?: (backupData: any) => Promise<void>;
   colors: {
     bg: string;
     cardBg: string;
@@ -59,6 +65,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   onTreinarPontosCegos,
   onTreinarCategoria,
   onResetStats,
+  onRestaurarBackup,
   colors,
   isDark,
   getCategoryColor,
@@ -69,7 +76,59 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const blindSpotQueue = stats.blindSpotQueue || [];
   const simulados = simuladosHistorico;
 
-  // 1. Totais, taxa geral, contagem por classificação e dados por categoria em PASSO ÚNICO O(N)
+  const [modalImportAberto, setModalImportAberto] = useState(false);
+  const [textoJsonImport, setTextoJsonImport] = useState('');
+
+  const executarRestauracao = (data: any) => {
+    Alert.alert(
+      'Restaurar Backup',
+      'Isto substitui o progresso deste aparelho',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          style: 'destructive',
+          onPress: () => {
+            if (onRestaurarBackup) {
+              onRestaurarBackup(data);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleImportPress = async () => {
+    triggerLightHaptic();
+    if (Platform.OS === 'web') {
+      try {
+        const raw = await selecionarArquivoWeb();
+        const validado = validarBackup(raw);
+        if (!validado.valido || !validado.data) {
+          Alert.alert('Backup Inválido', validado.erro || 'JSON de backup incompatível.');
+          return;
+        }
+        executarRestauracao(validado.data);
+      } catch (err: any) {
+        if (err?.message !== 'Nenhum arquivo selecionado') {
+          Alert.alert('Erro ao Importar', err?.message || 'Falha ao processar arquivo.');
+        }
+      }
+    } else {
+      setTextoJsonImport('');
+      setModalImportAberto(true);
+    }
+  };
+
+  const confirmarImportTexto = () => {
+    const validado = validarBackup(textoJsonImport);
+    if (!validado.valido || !validado.data) {
+      Alert.alert('Backup Inválido', validado.erro || 'JSON de backup incompatível.');
+      return;
+    }
+    setModalImportAberto(false);
+    executarRestauracao(validado.data);
+  };
   const {
     totalAttempts,
     correctCount,
@@ -135,18 +194,26 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     }
 
     for (const cat of categories) {
+      const catAcum = stats.porCategoria?.[cat];
+      const catTotal = catAcum ? catAcum.acertos + catAcum.erros : catAgg[cat].total;
+      const catCorrect = catAcum ? catAcum.acertos : catAgg[cat].correct;
       const item = catAgg[cat];
       if (item) {
-        item.rate = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+        item.total = catTotal;
+        item.correct = catCorrect;
+        item.rate = catTotal > 0 ? Math.round((catCorrect / catTotal) * 100) : 0;
       }
     }
 
-    const total = attempts.length;
-    const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
+    // Acumuladores históricos que sobrevivem ao corte de 400
+    const totalHistorico = (stats.totalAcertos ?? 0) + (stats.totalErros ?? 0);
+    const total = totalHistorico > 0 ? totalHistorico : attempts.length;
+    const finalCorrect = totalHistorico > 0 ? (stats.totalAcertos ?? 0) : correct;
+    const rate = total > 0 ? Math.round((finalCorrect / total) * 100) : 0;
 
     return {
       totalAttempts: total,
-      correctCount: correct,
+      correctCount: finalCorrect,
       accuracyRate: rate,
       realMasteryCount: realMastery,
       luckyGuessCount: luckyGuess,
@@ -155,7 +222,15 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       doubtFailureCount: doubtFailure,
       categoryStats: catAgg,
     };
-  }, [attempts, questions, categories, blindSpotQueue]);
+  }, [
+    attempts,
+    questions,
+    categories,
+    blindSpotQueue,
+    stats.totalAcertos,
+    stats.totalErros,
+    stats.porCategoria,
+  ]);
 
   // SRS Summary
   const srsSummary = useMemo(() => {
@@ -674,7 +749,84 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         </View>
       )}
 
-      {/* ================= 8. RESET DE DADOS ================= */}
+      {/* ================= 8. BACKUP E RESTAURAÇÃO ================= */}
+      <View style={styles.backupRow}>
+        <TouchableOpacity
+          onPress={async () => {
+            triggerLightHaptic();
+            try {
+              await exportarBackupArquivo(stats);
+            } catch (err: any) {
+              Alert.alert('Erro ao Exportar', err?.message || 'Falha ao gerar arquivo de backup.');
+            }
+          }}
+          activeOpacity={0.85}
+          style={[styles.backupBtn, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}
+        >
+          <Ionicons name="share-outline" size={16} color={colors.primary} />
+          <Text style={[styles.backupBtnText, { color: colors.text }]}>Exportar Backup</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleImportPress}
+          activeOpacity={0.85}
+          style={[styles.backupBtn, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}
+        >
+          <Ionicons name="download-outline" size={16} color={colors.primary} />
+          <Text style={[styles.backupBtnText, { color: colors.text }]}>Importar Backup</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal de Importação para Mobile */}
+      <Modal
+        visible={modalImportAberto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalImportAberto(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Importar Backup (JSON)</Text>
+            <Text style={[styles.modalDesc, { color: colors.textMuted }]}>
+              Cole o conteúdo do arquivo de backup gerado anteriormente:
+            </Text>
+            <TextInput
+              style={[
+                styles.importTextInput,
+                {
+                  color: colors.text,
+                  backgroundColor: colors.subtle,
+                  borderColor: colors.cardBorder,
+                },
+              ]}
+              multiline
+              numberOfLines={6}
+              value={textoJsonImport}
+              onChangeText={setTextoJsonImport}
+              placeholder='{"v": 2, ...}'
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                onPress={() => setModalImportAberto(false)}
+                style={[styles.modalBtn, { borderColor: colors.cardBorder }]}
+              >
+                <Text style={[styles.modalBtnText, { color: colors.textMuted }]}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={confirmarImportTexto}
+                style={[styles.modalBtn, { backgroundColor: colors.primary, borderColor: colors.primary }]}
+              >
+                <Text style={[styles.modalBtnText, { color: '#ffffff' }]}>Validar e Restaurar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ================= 9. RESET DE DADOS ================= */}
       <TouchableOpacity
         onPress={() => {
           Alert.alert(
@@ -1013,6 +1165,74 @@ const styles = StyleSheet.create({
   simuladoItemScoreText: {
     fontSize: 13,
     fontWeight: '900',
+  },
+  backupRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 20,
+  },
+  backupBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  backupBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 420,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  modalDesc: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 12,
+  },
+  importTextInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    height: 120,
+    textAlignVertical: 'top',
+    fontSize: 11,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginBottom: 14,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  modalBtn: {
+    paddingVertical: 9,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  modalBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   resetBtn: {
     flexDirection: 'row',

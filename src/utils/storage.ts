@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Haptics from 'expo-haptics';
 import type {
   UserStats,
   QuestionAttempt,
@@ -10,8 +9,9 @@ import type {
   SimuladoResultado,
 } from '../types/schema';
 import { processarRespostaSRS } from '../services/srsEngine';
+import questionsData from '../data/questions.json';
 
-// Chaves Versionadas V2 (com envelope { v: 2, savedAt: number, data: T })
+// Chaves Versionadas V2 (com envelope { v: 2, gen: number, savedAt: number, data: T })
 export const KEY_META_V2 = 'vunesp_qd_meta_v2';
 export const KEY_SRS_V2 = 'vunesp_qd_srs_v2';
 export const KEY_ATTEMPTS_V2 = 'vunesp_qd_attempts_v2';
@@ -26,21 +26,24 @@ export const OLD_KEYS_V1 = [
   'vunesp_qd_simulados_v1',
 ];
 
-const THEME_KEY = 'vunesp_quickdrill_theme';
-const FAVORITES_KEY = 'vunesp_quickdrill_favorites_v1';
+export const THEME_KEY = 'vunesp_quickdrill_theme';
+export const FAVORITES_KEY = 'vunesp_quickdrill_favorites_v1';
+export const ONBOARDING_KEY = 'vunesp_qd_onboarding_v1';
 
-const MAX_ATTEMPTS = 400;
-const MAX_SIMULADOS = 20;
+export const MAX_ATTEMPTS = 400;
+export const MAX_SIMULADOS = 20;
 
 export interface StorageEnvelope<T> {
   v: 2;
+  gen: number;
   savedAt: number;
   data: T;
 }
 
-export function wrapEnvelope<T>(data: T): string {
+export function wrapEnvelope<T>(data: T, gen: number = 1): string {
   const envelope: StorageEnvelope<T> = {
     v: 2,
+    gen,
     savedAt: Date.now(),
     data,
   };
@@ -57,8 +60,49 @@ export function enqueueWrite<T>(task: () => Promise<T>): Promise<T> {
 }
 
 /**
+ * Extrai acumuladores com fallback para melhor esforço somando attempts.
+ */
+function extrairAcumuladores(
+  source: any,
+  attempts: QuestionAttempt[]
+): {
+  totalAcertos: number;
+  totalErros: number;
+  porCategoria: Record<CategoryType, { acertos: number; erros: number }>;
+} {
+  let totalAcertos = typeof source.totalAcertos === 'number' ? source.totalAcertos : undefined;
+  let totalErros = typeof source.totalErros === 'number' ? source.totalErros : undefined;
+  let porCategoria =
+    source.porCategoria && typeof source.porCategoria === 'object' ? source.porCategoria : undefined;
+
+  if (totalAcertos === undefined || totalErros === undefined) {
+    let ac = 0;
+    let er = 0;
+    const catMap: Record<string, { acertos: number; erros: number }> = {};
+    for (const a of attempts) {
+      if (a.isCorrect) ac += 1;
+      else er += 1;
+      if (a.category) {
+        if (!catMap[a.category]) catMap[a.category] = { acertos: 0, erros: 0 };
+        if (a.isCorrect) catMap[a.category].acertos += 1;
+        else catMap[a.category].erros += 1;
+      }
+    }
+    totalAcertos = ac;
+    totalErros = er;
+    if (!porCategoria) porCategoria = catMap as any;
+  }
+
+  return {
+    totalAcertos: totalAcertos ?? 0,
+    totalErros: totalErros ?? 0,
+    porCategoria: porCategoria || ({} as any),
+  };
+}
+
+/**
  * Migra dados de formato antigo de forma idempotente e segura:
- * - sem v ou v === 1 -> normaliza e migra para formato v2
+ * - sem v ou v === 1 -> normaliza e migra para formato v2 com acumuladores
  * - v === 2 -> devolve
  * - JSON inválido -> devolve stats vazios, sem quebrar o app
  */
@@ -71,6 +115,10 @@ export function migrate(raw: unknown): UserStats {
     errorQueue: [],
     revisoesSRS: {},
     simuladosHistorico: [],
+    totalAcertos: 0,
+    totalErros: 0,
+    porCategoria: {} as any,
+    gen: 1,
   };
 
   if (!raw) return emptyStats;
@@ -91,7 +139,17 @@ export function migrate(raw: unknown): UserStats {
 
   // Se já for envelope v === 2
   if (parsed.v === 2 && parsed.data && typeof parsed.data === 'object') {
-    return parsed.data as UserStats;
+    const data = parsed.data;
+    const attempts = Array.isArray(data.attempts) ? data.attempts.slice(0, MAX_ATTEMPTS) : [];
+    const acum = extrairAcumuladores(data, attempts);
+    return {
+      ...data,
+      attempts,
+      totalAcertos: acum.totalAcertos,
+      totalErros: acum.totalErros,
+      porCategoria: acum.porCategoria,
+      gen: typeof parsed.gen === 'number' ? parsed.gen : (typeof data.gen === 'number' ? data.gen : 1),
+    };
   }
 
   // Se for v === 1 ou sem v (blob antigo)
@@ -116,7 +174,7 @@ export function migrate(raw: unknown): UserStats {
     }
   }
 
-  // Normaliza simulados antigos: descarta objeto pergunta inteiro, mantendo perguntaId
+  // Normaliza simulados antigos
   const rawSimulados = Array.isArray(source.simuladosHistorico) ? source.simuladosHistorico : [];
   const simuladosHistorico: SimuladoResultado[] = rawSimulados.slice(0, MAX_SIMULADOS).map((sim: any) => ({
     ...sim,
@@ -129,6 +187,8 @@ export function migrate(raw: unknown): UserStats {
       : [],
   }));
 
+  const acum = extrairAcumuladores(source, attempts);
+
   return {
     attempts,
     streak,
@@ -137,11 +197,16 @@ export function migrate(raw: unknown): UserStats {
     errorQueue,
     revisoesSRS,
     simuladosHistorico,
+    totalAcertos: acum.totalAcertos,
+    totalErros: acum.totalErros,
+    porCategoria: acum.porCategoria,
+    gen: 1,
   };
 }
 
 /**
  * Função pura para calcular o novo UserStats e a classificação em memória.
+ * Não chama Haptics nem manipula I/O.
  */
 export function aplicarResposta(
   prevStats: UserStats,
@@ -153,7 +218,11 @@ export function aplicarResposta(
     certainty: CertaintyLevel;
     tempoGastoMs?: number;
   }
-): { newStats: UserStats; classification: PerformanceClassification } {
+): {
+  newStats: UserStats;
+  classification: PerformanceClassification;
+  feedbackTip?: string;
+} {
   const { questionId, category, selectedOptionIndex, isCorrect, certainty, tempoGastoMs } = input;
 
   let classification: PerformanceClassification;
@@ -161,24 +230,18 @@ export function aplicarResposta(
   if (isCorrect) {
     if (certainty === 3) {
       classification = 'real_mastery';
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } else if (certainty === 1) {
       classification = 'lucky_guess';
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     } else {
       classification = 'doubt_success';
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     }
   } else {
     if (certainty === 3) {
       classification = 'blind_spot';
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
     } else if (certainty === 1) {
       classification = 'conscious_error';
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     } else {
       classification = 'doubt_failure';
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     }
   }
 
@@ -215,8 +278,32 @@ export function aplicarResposta(
 
   // Atualiza SRS
   const srsMap = { ...(prevStats.revisoesSRS || {}) };
-  const srsAtual = srsMap[questionId];
-  srsMap[questionId] = processarRespostaSRS(srsAtual, questionId, isCorrect, certainty, now);
+  const srsAnterior = srsMap[questionId];
+  const srsNovo = processarRespostaSRS(srsAnterior, questionId, isCorrect, certainty, now);
+  srsMap[questionId] = srsNovo;
+
+  // Dica de UI cirúrgica de 1 linha:
+  // - Certeza 2 com caixa atingindo 3: "Dúvida não marca domínio. Acerte com certeza para avançar."
+  // - Dominado ou avançado (caixa >= 4) caindo para caixa 2: "Voltou uma casa, não para o início."
+  let feedbackTip: string | undefined;
+  if (isCorrect && certainty === 2 && srsNovo.caixa === 3) {
+    feedbackTip = 'Dúvida não marca domínio. Acerte com certeza para avançar.';
+  } else if (!isCorrect && (srsAnterior?.caixa ?? 0) >= 4 && srsNovo.caixa === 2) {
+    feedbackTip = 'Voltou uma casa, não para o início.';
+  }
+
+  // Acumuladores que sobrevivem ao corte de 400
+  const prevTotalAcertos = prevStats.totalAcertos ?? 0;
+  const prevTotalErros = prevStats.totalErros ?? 0;
+  const newTotalAcertos = isCorrect ? prevTotalAcertos + 1 : prevTotalAcertos;
+  const newTotalErros = !isCorrect ? prevTotalErros + 1 : prevTotalErros;
+
+  const porCategoria = { ...(prevStats.porCategoria || {}) };
+  const catStats = porCategoria[category] || { acertos: 0, erros: 0 };
+  porCategoria[category] = {
+    acertos: isCorrect ? catStats.acertos + 1 : catStats.acertos,
+    erros: !isCorrect ? catStats.erros + 1 : catStats.erros,
+  };
 
   const updatedAttempts = [newAttempt, ...(prevStats.attempts || [])].slice(0, MAX_ATTEMPTS);
 
@@ -228,14 +315,46 @@ export function aplicarResposta(
     errorQueue: Array.from(errorSet),
     revisoesSRS: srsMap,
     simuladosHistorico: prevStats.simuladosHistorico || [],
+    totalAcertos: newTotalAcertos,
+    totalErros: newTotalErros,
+    porCategoria,
+    gen: prevStats.gen || 1,
   };
 
-  return { newStats, classification };
+  return { newStats, classification, feedbackTip };
+}
+
+/**
+ * Poda de SRS órfão: apaga de revisoesSRS, blindSpotQueue e errorQueue qualquer id inexistente em questions.json.
+ * Não altera os acumuladores históricos.
+ */
+export function podarOrfaosSRS(stats: UserStats): UserStats {
+  const validIds = new Set(questionsData.map((q: any) => q.id));
+
+  const cleanSRS: Record<string, RevisaoSRS> = {};
+  if (stats.revisoesSRS) {
+    for (const [id, rev] of Object.entries(stats.revisoesSRS)) {
+      if (validIds.has(id)) {
+        cleanSRS[id] = rev;
+      }
+    }
+  }
+
+  const cleanBlindSpotQueue = (stats.blindSpotQueue || []).filter((id) => validIds.has(id));
+  const cleanErrorQueue = (stats.errorQueue || []).filter((id) => validIds.has(id));
+
+  return {
+    ...stats,
+    blindSpotQueue: cleanBlindSpotQueue,
+    errorQueue: cleanErrorQueue,
+    revisoesSRS: cleanSRS,
+  };
 }
 
 /**
  * Carrega estatísticas iniciais a partir das 4 chaves versionadas V2.
- * Caso não existam, verifica a chave legada V1, migra os dados e remove as chaves antigas.
+ * - Valida 'gen' entre as chaves: se srs ou attempts divergirem do gen da meta, descarta a chave divergente.
+ * - Executa poda de órfãos pós-migração.
  */
 export async function loadInitialStats(): Promise<UserStats> {
   try {
@@ -249,46 +368,56 @@ export async function loadInitialStats(): Promise<UserStats> {
     const rawSimulados = map.get(KEY_SIMULADOS_V2);
 
     if (rawMeta || rawSrs || rawAttempts || rawSimulados) {
-      let meta: any = {};
-      let srs: any = {};
-      let attempts: any[] = [];
-      let simulados: any[] = [];
+      let envMeta: StorageEnvelope<any> | null = null;
+      let envSrs: StorageEnvelope<any> | null = null;
+      let envAttempts: StorageEnvelope<any> | null = null;
+      let envSimulados: StorageEnvelope<any> | null = null;
 
       if (rawMeta) {
         try {
-          const parsed = JSON.parse(rawMeta);
-          meta = parsed?.data || parsed || {};
+          envMeta = JSON.parse(rawMeta);
         } catch {
-          meta = {};
+          envMeta = null;
         }
       }
 
       if (rawSrs) {
         try {
-          const parsed = JSON.parse(rawSrs);
-          srs = parsed?.data || parsed || {};
+          envSrs = JSON.parse(rawSrs);
         } catch {
-          srs = {};
+          envSrs = null;
         }
       }
 
       if (rawAttempts) {
         try {
-          const parsed = JSON.parse(rawAttempts);
-          attempts = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
+          envAttempts = JSON.parse(rawAttempts);
         } catch {
-          attempts = [];
+          envAttempts = null;
         }
       }
 
       if (rawSimulados) {
         try {
-          const parsed = JSON.parse(rawSimulados);
-          simulados = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
+          envSimulados = JSON.parse(rawSimulados);
         } catch {
-          simulados = [];
+          envSimulados = null;
         }
       }
+
+      const metaGen = envMeta?.gen ?? envMeta?.data?.gen ?? 1;
+      const meta = envMeta?.data || envMeta || {};
+
+      // Validação de geração única: se o gen gravado diferir do gen da meta, descarta a divergente
+      let srs = envSrs && (envSrs.gen === metaGen || !envSrs.gen) ? (envSrs.data || envSrs) : {};
+      let attempts =
+        envAttempts && (envAttempts.gen === metaGen || !envAttempts.gen)
+          ? (Array.isArray(envAttempts.data) ? envAttempts.data : Array.isArray(envAttempts) ? envAttempts : [])
+          : [];
+      let simulados =
+        envSimulados && (envSimulados.gen === metaGen || !envSimulados.gen)
+          ? (Array.isArray(envSimulados.data) ? envSimulados.data : Array.isArray(envSimulados) ? envSimulados : [])
+          : [];
 
       const cleanSRS: Record<string, RevisaoSRS> = {};
       if (srs && typeof srs === 'object') {
@@ -311,36 +440,54 @@ export async function loadInitialStats(): Promise<UserStats> {
           : [],
       }));
 
-      return {
-        attempts: attempts.slice(0, MAX_ATTEMPTS),
+      const cappedAttempts = attempts.slice(0, MAX_ATTEMPTS);
+      const acum = extrairAcumuladores(meta, cappedAttempts);
+
+      const rawStats: UserStats = {
+        attempts: cappedAttempts,
         streak: typeof meta.streak === 'number' ? meta.streak : 0,
         bestStreak: typeof meta.bestStreak === 'number' ? meta.bestStreak : 0,
         blindSpotQueue: Array.isArray(meta.blindSpotQueue) ? meta.blindSpotQueue : [],
         errorQueue: Array.isArray(meta.errorQueue) ? meta.errorQueue : [],
         revisoesSRS: cleanSRS,
         simuladosHistorico: cleanSimulados,
+        totalAcertos: acum.totalAcertos,
+        totalErros: acum.totalErros,
+        porCategoria: acum.porCategoria,
+        gen: metaGen,
       };
+
+      // Poda de órfãos
+      return podarOrfaosSRS(rawStats);
     }
 
     // Se as chaves v2 não existem, checa chaves antigas
     for (const oldKey of OLD_KEYS_V1) {
       const oldRaw = await AsyncStorage.getItem(oldKey);
       if (oldRaw) {
-        const migrated = migrate(oldRaw);
+        const migrated = podarOrfaosSRS(migrate(oldRaw));
+        const initialGen = 1;
 
         await AsyncStorage.multiSet([
           [
             KEY_META_V2,
-            wrapEnvelope({
-              streak: migrated.streak,
-              bestStreak: migrated.bestStreak,
-              blindSpotQueue: migrated.blindSpotQueue,
-              errorQueue: migrated.errorQueue,
-            }),
+            wrapEnvelope(
+              {
+                gen: initialGen,
+                streak: migrated.streak,
+                bestStreak: migrated.bestStreak,
+                blindSpotQueue: migrated.blindSpotQueue,
+                errorQueue: migrated.errorQueue,
+                totalAcertos: migrated.totalAcertos,
+                totalErros: migrated.totalErros,
+                porCategoria: migrated.porCategoria,
+              },
+              initialGen
+            ),
           ],
-          [KEY_SRS_V2, wrapEnvelope(migrated.revisoesSRS || {})],
-          [KEY_ATTEMPTS_V2, wrapEnvelope(migrated.attempts.slice(0, MAX_ATTEMPTS))],
-          [KEY_SIMULADOS_V2, wrapEnvelope((migrated.simuladosHistorico || []).slice(0, MAX_SIMULADOS))],
+          [KEY_SRS_V2, wrapEnvelope(migrated.revisoesSRS || {}, initialGen)],
+          [KEY_ATTEMPTS_V2, wrapEnvelope(migrated.attempts.slice(0, MAX_ATTEMPTS), initialGen)],
+          [KEY_SIMULADOS_V2, wrapEnvelope((migrated.simuladosHistorico || []).slice(0, MAX_SIMULADOS), initialGen)],
         ]);
 
         await AsyncStorage.multiRemove(OLD_KEYS_V1).catch(() => {});
@@ -360,30 +507,42 @@ export async function loadInitialStats(): Promise<UserStats> {
     errorQueue: [],
     revisoesSRS: {},
     simuladosHistorico: [],
+    totalAcertos: 0,
+    totalErros: 0,
+    porCategoria: {} as any,
+    gen: 1,
   };
 }
 
 /**
- * Persiste a resposta através da fila de escrita em ordem sequencial.
- * Grava apenas as chaves meta + srs + attempts com o teto de 400 tentativas.
+ * Persiste a resposta através da fila de escrita em ordem sequencial estrita:
+ * 1. srs
+ * 2. attempts
+ * 3. meta (commit final com o novo gen)
  */
 export function saveAttemptToStorage(newStats: UserStats): Promise<void> {
   return enqueueWrite(async () => {
     try {
+      const nextGen = (newStats.gen || 0) + 1;
+      newStats.gen = nextGen;
+
       const meta = {
+        gen: nextGen,
         streak: newStats.streak,
         bestStreak: newStats.bestStreak,
         blindSpotQueue: newStats.blindSpotQueue,
         errorQueue: newStats.errorQueue,
+        totalAcertos: newStats.totalAcertos,
+        totalErros: newStats.totalErros,
+        porCategoria: newStats.porCategoria,
       };
 
       const cappedAttempts = (newStats.attempts || []).slice(0, MAX_ATTEMPTS);
 
-      await AsyncStorage.multiSet([
-        [KEY_META_V2, wrapEnvelope(meta)],
-        [KEY_SRS_V2, wrapEnvelope(newStats.revisoesSRS || {})],
-        [KEY_ATTEMPTS_V2, wrapEnvelope(cappedAttempts)],
-      ]);
+      // Ordem rigorosa: srs, attempts, meta por último (commit)
+      await AsyncStorage.setItem(KEY_SRS_V2, wrapEnvelope(newStats.revisoesSRS || {}, nextGen));
+      await AsyncStorage.setItem(KEY_ATTEMPTS_V2, wrapEnvelope(cappedAttempts, nextGen));
+      await AsyncStorage.setItem(KEY_META_V2, wrapEnvelope(meta, nextGen));
     } catch (e) {
       console.error('Error saving attempt to AsyncStorage', e);
     }
@@ -391,8 +550,7 @@ export function saveAttemptToStorage(newStats: UserStats): Promise<void> {
 }
 
 /**
- * Persiste apenas a chave de simulados na fila de escrita, sem tocar em meta/srs/attempts.
- * Aplica o teto de 20 simulados no formato leve (sem Question embutida).
+ * Persiste simulados com incremento de gen e commit na meta.
  */
 export function saveSimuladoToStorage(
   prevStats: UserStats,
@@ -407,15 +565,29 @@ export function saveSimuladoToStorage(
     })),
   };
 
+  const nextGen = (prevStats.gen || 0) + 1;
   const historico = [normalizado, ...(prevStats.simuladosHistorico || [])].slice(0, MAX_SIMULADOS);
   const updatedStats: UserStats = {
     ...prevStats,
     simuladosHistorico: historico,
+    gen: nextGen,
   };
 
   enqueueWrite(async () => {
     try {
-      await AsyncStorage.setItem(KEY_SIMULADOS_V2, wrapEnvelope(historico));
+      const meta = {
+        gen: nextGen,
+        streak: updatedStats.streak,
+        bestStreak: updatedStats.bestStreak,
+        blindSpotQueue: updatedStats.blindSpotQueue,
+        errorQueue: updatedStats.errorQueue,
+        totalAcertos: updatedStats.totalAcertos,
+        totalErros: updatedStats.totalErros,
+        porCategoria: updatedStats.porCategoria,
+      };
+
+      await AsyncStorage.setItem(KEY_SIMULADOS_V2, wrapEnvelope(historico, nextGen));
+      await AsyncStorage.setItem(KEY_META_V2, wrapEnvelope(meta, nextGen));
     } catch (e) {
       console.error('Error saving simulado to AsyncStorage', e);
     }
@@ -433,6 +605,10 @@ export async function clearUserStats(): Promise<UserStats> {
     errorQueue: [],
     revisoesSRS: {},
     simuladosHistorico: [],
+    totalAcertos: 0,
+    totalErros: 0,
+    porCategoria: {} as any,
+    gen: 1,
   };
   try {
     await AsyncStorage.multiRemove([
@@ -483,10 +659,8 @@ export async function toggleFavoriteId(id: string, currentFavorites: string[]): 
   const set = new Set(currentFavorites);
   if (set.has(id)) {
     set.delete(id);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
   } else {
     set.add(id);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
   }
   const updated = Array.from(set);
   try {
@@ -497,6 +671,140 @@ export async function toggleFavoriteId(id: string, currentFavorites: string[]): 
   return updated;
 }
 
-export function triggerLightHaptic() {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+// Onboarding (primeira abertura única)
+export async function hasSeenOnboarding(): Promise<boolean> {
+  try {
+    const val = await AsyncStorage.getItem(ONBOARDING_KEY);
+    return val === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export async function markOnboardingSeen(): Promise<void> {
+  try {
+    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+  } catch {
+    // ignore
+  }
+}
+
+// Backup & Restauração
+export interface QuickDrillBackup {
+  v: 2;
+  exportedAt: number;
+  meta: {
+    gen: number;
+    streak: number;
+    bestStreak: number;
+    blindSpotQueue: string[];
+    errorQueue: string[];
+    totalAcertos?: number;
+    totalErros?: number;
+    porCategoria?: Partial<Record<CategoryType, { acertos: number; erros: number }>>;
+  };
+  srs: Record<string, RevisaoSRS>;
+  attempts: QuestionAttempt[];
+  simulados: SimuladoResultado[];
+}
+
+export function gerarObjetoBackup(stats: UserStats): QuickDrillBackup {
+  return {
+    v: 2,
+    exportedAt: Date.now(),
+    meta: {
+      gen: stats.gen || 1,
+      streak: stats.streak,
+      bestStreak: stats.bestStreak,
+      blindSpotQueue: stats.blindSpotQueue,
+      errorQueue: stats.errorQueue,
+      totalAcertos: stats.totalAcertos,
+      totalErros: stats.totalErros,
+      porCategoria: stats.porCategoria,
+    },
+    srs: stats.revisoesSRS || {},
+    attempts: (stats.attempts || []).slice(0, MAX_ATTEMPTS),
+    simulados: (stats.simuladosHistorico || []).slice(0, MAX_SIMULADOS),
+  };
+}
+
+export function validarBackup(raw: unknown): { valido: boolean; erro?: string; data?: QuickDrillBackup } {
+  let parsed: any = raw;
+  if (typeof raw === 'string') {
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return { valido: false, erro: 'JSON com formatação inválida.' };
+    }
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
+    return { valido: false, erro: 'Estrutura inválida.' };
+  }
+
+  if (parsed.v !== 2) {
+    return { valido: false, erro: 'Versão de backup incompatível (esperada v: 2).' };
+  }
+
+  if (!parsed.meta || typeof parsed.meta !== 'object') {
+    return { valido: false, erro: 'Metadados ausentes ou inválidos.' };
+  }
+
+  if (!parsed.srs || typeof parsed.srs !== 'object') {
+    return { valido: false, erro: 'Dados de repetição SRS ausentes ou inválidos.' };
+  }
+
+  if (!Array.isArray(parsed.attempts)) {
+    return { valido: false, erro: 'Histórico de tentativas ausente ou inválido.' };
+  }
+
+  if (!Array.isArray(parsed.simulados)) {
+    return { valido: false, erro: 'Histórico de simulados ausente ou inválido.' };
+  }
+
+  return { valido: true, data: parsed as QuickDrillBackup };
+}
+
+export async function restaurarBackup(
+  backup: QuickDrillBackup,
+  currentStats: UserStats
+): Promise<UserStats> {
+  const newGen = (currentStats.gen || 0) + 1;
+
+  const rawStats: UserStats = {
+    attempts: backup.attempts.slice(0, MAX_ATTEMPTS),
+    streak: typeof backup.meta.streak === 'number' ? backup.meta.streak : 0,
+    bestStreak: typeof backup.meta.bestStreak === 'number' ? backup.meta.bestStreak : 0,
+    blindSpotQueue: Array.isArray(backup.meta.blindSpotQueue) ? backup.meta.blindSpotQueue : [],
+    errorQueue: Array.isArray(backup.meta.errorQueue) ? backup.meta.errorQueue : [],
+    revisoesSRS: backup.srs || {},
+    simuladosHistorico: backup.simulados || [],
+    totalAcertos: backup.meta.totalAcertos,
+    totalErros: backup.meta.totalErros,
+    porCategoria: backup.meta.porCategoria,
+    gen: newGen,
+  };
+
+  const pruned = podarOrfaosSRS(rawStats);
+
+  await enqueueWrite(async () => {
+    const metaToSave = {
+      gen: newGen,
+      streak: pruned.streak,
+      bestStreak: pruned.bestStreak,
+      blindSpotQueue: pruned.blindSpotQueue,
+      errorQueue: pruned.errorQueue,
+      totalAcertos: pruned.totalAcertos,
+      totalErros: pruned.totalErros,
+      porCategoria: pruned.porCategoria,
+    };
+
+    // Ordem de gravação com o novo gen
+    await AsyncStorage.setItem(KEY_SRS_V2, wrapEnvelope(pruned.revisoesSRS || {}, newGen));
+    await AsyncStorage.setItem(KEY_ATTEMPTS_V2, wrapEnvelope(pruned.attempts, newGen));
+    await AsyncStorage.setItem(KEY_SIMULADOS_V2, wrapEnvelope(pruned.simuladosHistorico || [], newGen));
+    await AsyncStorage.setItem(KEY_META_V2, wrapEnvelope(metaToSave, newGen));
+  });
+
+  return pruned;
 }

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import type { Question, QuestionAttempt, CategoryType, EditalTopico } from '../types/schema';
 import editalPadrao from '../data/edital.json';
 import { calcularProgressoPorTopico, calcularCoberturaGeral } from '../services/editalService';
-import { triggerLightHaptic } from '../utils/storage';
+import { triggerLightHaptic } from '../utils/haptics';
 
 interface EditalScreenProps {
   questions: Question[];
