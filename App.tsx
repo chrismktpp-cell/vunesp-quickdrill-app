@@ -51,6 +51,9 @@ const CATEGORIES: CategoryType[] = [
   'Sujeito Oracional e Transitividade',
   'Gestão de Patrimônio e Bens Públicos',
   'Nova Lei de Licitações (Lei 14.133/2021)',
+  'Língua Portuguesa (Agente Patrimonial)',
+  'Matemática e Raciocínio Lógico',
+  'Conhecimentos Específicos - Agente Patrimonial',
 ];
 
 // Fisher-Yates shuffle
@@ -344,6 +347,19 @@ export default function App() {
         return categoryColors.patrimonio[modeKey];
       case 'Nova Lei de Licitações (Lei 14.133/2021)':
         return categoryColors.licitacao[modeKey];
+      case 'Língua Portuguesa (Agente Patrimonial)':
+        return categoryColors.crase[modeKey];
+      case 'Matemática e Raciocínio Lógico':
+        return {
+          accent: isDark ? '#38bdf8' : '#0284c7',
+          soft: isDark ? 'rgba(56, 189, 248, 0.14)' : 'rgba(2, 132, 199, 0.10)',
+          border: isDark ? '#0284c7' : '#38bdf8',
+          badgeText: isDark ? '#bae6fd' : '#0369a1',
+        };
+      case 'Conhecimentos Específicos - Agente Patrimonial':
+        return categoryColors.patrimonio[modeKey];
+      default:
+        return categoryColors.crase[modeKey];
     }
   };
 
