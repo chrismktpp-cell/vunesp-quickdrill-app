@@ -7,6 +7,12 @@ export interface QuestionFilters {
   dificuldade?: Dificuldade | 'all';
   statusEstudo?: 'todas' | 'erros' | 'pontos_cegos' | 'pendentes_srs' | 'dominadas';
   termoBusca?: string;
+  banca?: string | 'all';
+  orgao?: string | 'all';
+  prova?: string | 'all';
+  cargo?: string | 'all';
+  cidade?: string | 'all';
+  ano?: number | 'all';
 }
 
 /**
@@ -69,6 +75,42 @@ export function filtrarQuestoes(
         const srs = srsMap[q.id];
         if (!srs || srs.status !== 'dominado') return false;
       }
+    }
+
+    // 7. Banca / Organizadora
+    if (filtros.banca && filtros.banca !== 'all') {
+      const qBanca = q.banca || 'VUNESP';
+      if (qBanca !== filtros.banca) return false;
+    }
+
+    // 8. Órgão
+    if (filtros.orgao && filtros.orgao !== 'all') {
+      const qOrgao = q.orgao || 'Câmara Municipal de Itanhaém';
+      if (qOrgao !== filtros.orgao) return false;
+    }
+
+    // 9. Concurso / Prova
+    if (filtros.prova && filtros.prova !== 'all') {
+      const qProva = q.prova || 'Concurso Câmara de Itanhaém';
+      if (qProva !== filtros.prova) return false;
+    }
+
+    // 10. Cargo
+    if (filtros.cargo && filtros.cargo !== 'all') {
+      const qCargo = q.cargo || 'Agente de Segurança Legislativa';
+      if (qCargo !== filtros.cargo) return false;
+    }
+
+    // 11. Cidade
+    if (filtros.cidade && filtros.cidade !== 'all') {
+      const qCidade = q.cidade || 'Itanhaém';
+      if (qCidade !== filtros.cidade) return false;
+    }
+
+    // 12. Ano
+    if (filtros.ano && filtros.ano !== 'all') {
+      const qAno = q.ano || 2024;
+      if (qAno !== filtros.ano) return false;
     }
 
     return true;

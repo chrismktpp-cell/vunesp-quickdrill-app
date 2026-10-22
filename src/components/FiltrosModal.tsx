@@ -252,6 +252,139 @@ export const FiltrosModal: React.FC<FiltrosModalProps> = ({
                 );
               })}
             </View>
+
+            {/* Banca / Organizadora */}
+            <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>Banca / Organizadora</Text>
+            <View style={styles.chipRow}>
+              {[
+                { id: 'all', label: 'Todas as Bancas' },
+                { id: 'VUNESP', label: 'VUNESP' },
+                { id: 'Instituto Nosso Rumo', label: 'Instituto Nosso Rumo' },
+              ].map((b) => {
+                const isSel = (!filtros.banca || filtros.banca === 'all') ? b.id === 'all' : filtros.banca === b.id;
+                return (
+                  <TouchableOpacity
+                    key={b.id}
+                    onPress={() => {
+                      triggerLightHaptic();
+                      onChangeFiltros({ ...filtros, banca: b.id as any });
+                    }}
+                    style={[
+                      styles.chip,
+                      {
+                        backgroundColor: isSel ? colors.primary : colors.subtle,
+                        borderColor: colors.cardBorder,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.chipText, { color: isSel ? '#ffffff' : colors.text }]}>
+                      {b.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Órgão */}
+            <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>Órgão / Ente</Text>
+            <View style={styles.chipCol}>
+              {[
+                { id: 'all', label: 'Todos os Órgãos' },
+                { id: 'Câmara Municipal de Itanhaém', label: 'Câmara Municipal de Itanhaém' },
+                { id: 'Prefeitura Municipal da Estância Balneária de Itanhaém', label: 'Prefeitura de Itanhaém' },
+                { id: 'Câmara Municipal de Alumínio', label: 'Câmara de Alumínio' },
+                { id: 'Câmara Municipal de Marília', label: 'Câmara de Marília' },
+              ].map((org) => {
+                const isSel = (!filtros.orgao || filtros.orgao === 'all') ? org.id === 'all' : filtros.orgao === org.id;
+                return (
+                  <TouchableOpacity
+                    key={org.id}
+                    onPress={() => {
+                      triggerLightHaptic();
+                      onChangeFiltros({ ...filtros, orgao: org.id });
+                    }}
+                    style={[
+                      styles.fullChip,
+                      {
+                        backgroundColor: isSel ? colors.primary : colors.subtle,
+                        borderColor: colors.cardBorder,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.chipText, { color: isSel ? '#ffffff' : colors.text }]}>
+                      {org.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Cargo */}
+            <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>Cargo do Concurso</Text>
+            <View style={styles.chipCol}>
+              {[
+                { id: 'all', label: 'Todos os Cargos' },
+                { id: 'Agente de Segurança Legislativa', label: 'Agente de Segurança Legislativa (Câmara)' },
+                { id: 'Agente de Vigilância Patrimonial', label: 'Agente de Vigilância Patrimonial (Itanhaém)' },
+                { id: 'Agente de Segurança Patrimonial', label: 'Agente de Segurança Patrimonial (Alumínio)' },
+                { id: 'Guarda Civil Municipal - 2ª Classe', label: 'Guarda Civil Municipal (Itanhaém)' },
+              ].map((c) => {
+                const isSel = (!filtros.cargo || filtros.cargo === 'all') ? c.id === 'all' : filtros.cargo === c.id;
+                return (
+                  <TouchableOpacity
+                    key={c.id}
+                    onPress={() => {
+                      triggerLightHaptic();
+                      onChangeFiltros({ ...filtros, cargo: c.id });
+                    }}
+                    style={[
+                      styles.fullChip,
+                      {
+                        backgroundColor: isSel ? colors.primary : colors.subtle,
+                        borderColor: colors.cardBorder,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.chipText, { color: isSel ? '#ffffff' : colors.text }]}>
+                      {c.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Cidade / Município */}
+            <Text style={[styles.label, { color: colors.text, marginTop: 14 }]}>Município / UF</Text>
+            <View style={styles.chipRow}>
+              {[
+                { id: 'all', label: 'Todos' },
+                { id: 'Itanhaém', label: 'Itanhaém' },
+                { id: 'Alumínio/SP', label: 'Alumínio' },
+                { id: 'Marília/SP', label: 'Marília' },
+              ].map((cid) => {
+                const isSel = (!filtros.cidade || filtros.cidade === 'all') ? cid.id === 'all' : filtros.cidade === cid.id;
+                return (
+                  <TouchableOpacity
+                    key={cid.id}
+                    onPress={() => {
+                      triggerLightHaptic();
+                      onChangeFiltros({ ...filtros, cidade: cid.id });
+                    }}
+                    style={[
+                      styles.chip,
+                      {
+                        backgroundColor: isSel ? colors.primary : colors.subtle,
+                        borderColor: colors.cardBorder,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.chipText, { color: isSel ? '#ffffff' : colors.text }]}>
+                      {cid.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </ScrollView>
 
           {/* Footer */}

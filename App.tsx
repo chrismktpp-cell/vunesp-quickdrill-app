@@ -51,9 +51,6 @@ const CATEGORIES: CategoryType[] = [
   'Sujeito Oracional e Transitividade',
   'Gestão de Patrimônio e Bens Públicos',
   'Nova Lei de Licitações (Lei 14.133/2021)',
-  'Língua Portuguesa (Agente Patrimonial)',
-  'Matemática e Raciocínio Lógico',
-  'Conhecimentos Específicos - Agente Patrimonial',
 ];
 
 // Fisher-Yates shuffle
@@ -97,6 +94,12 @@ export default function App() {
     dificuldade: 'all',
     statusEstudo: 'todas',
     termoBusca: '',
+    banca: 'all',
+    orgao: 'all',
+    prova: 'all',
+    cargo: 'all',
+    cidade: 'all',
+    ano: 'all',
   });
 
   const [selectedCertainty, setSelectedCertainty] = useState<CertaintyLevel>(3);
@@ -562,6 +565,12 @@ export default function App() {
                 dificuldade: 'all',
                 statusEstudo: 'todas',
                 termoBusca: '',
+                banca: 'all',
+                orgao: 'all',
+                prova: 'all',
+                cargo: 'all',
+                cidade: 'all',
+                ano: 'all',
               });
             }}
             setCurrentIndex={setCurrentIndex}
@@ -746,6 +755,12 @@ export default function App() {
             dificuldade: 'all',
             statusEstudo: 'todas',
             termoBusca: '',
+            banca: 'all',
+            orgao: 'all',
+            prova: 'all',
+            cargo: 'all',
+            cidade: 'all',
+            ano: 'all',
           })
         }
         totalEncontradas={filteredQuestions.length}
