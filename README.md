@@ -30,6 +30,9 @@ Aplicativo tático de treino e repetição espaçada (SRS) 100% offline para con
 
 - **Banco de Questões:** [`src/data/questions.json`](src/data/questions.json) (questões formatadas com lacunas, alternativas, gabarito e raio-X da banca).
 - **Mapeamento do Edital:** [`src/data/edital.json`](src/data/edital.json) (tópicos curriculares oficiais e legislação).
+- **Catálogo de Provas Oficiais:** [`src/data/provas-oficiais.json`](src/data/provas-oficiais.json) (metadados e URLs oficiais de concursos VUNESP e Instituto Nosso Rumo).
+- **Gabaritos Oficiais:** [`src/data/gabaritos-oficiais.json`](src/data/gabaritos-oficiais.json) (gabaritos oficiais publicados pelas organizadoras).
+- **Regra de Integridade Oficial:** nenhuma questão é importada sem verificação direta do caderno oficial de provas publicado e do gabarito definitivo oficial. Cadernos restritos à Área do Candidato com login são catalogados como fonte, sem importação sintética.
 - **Progresso e Estatísticas do Usuário:** Armazenados localmente no dispositivo via `@react-native-async-storage/async-storage` (100% offline, sem necessidade de conexão com a internet).
 
 ## ⚙️ Regras do Motor

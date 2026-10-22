@@ -48,6 +48,45 @@ export interface Question {
   questionFormat?: 'lacuna' | 'multipla_escolha' | 'assertivas';
   cargo?: string;
   prova?: string;
+  orgao?: string;
+  cidade?: string;
+  fonteCaderno?: string;
+  fonteGabarito?: string;
+}
+
+export interface ProvaOficial {
+  id: string;
+  titulo: string;
+  orgao: string;
+  cidade: string;
+  ano: number;
+  organizadora: string;
+  banca: string;
+  cargo: string;
+  codigoCargo?: string;
+  quantidadeQuestoes: number | null;
+  disciplinas: string[];
+  urlConcurso: string;
+  urlEdital?: string;
+  urlCaderno?: string | null;
+  urlGabarito?: string;
+  fonteConcurso?: string;
+  fonteEdital?: string;
+  fonteProvaGabarito?: string;
+  fonteGabaritoFinal?: string;
+  situacaoCaderno: string;
+  statusQuestoes?: string;
+  observacoesAcesso?: string;
+}
+
+export interface GabaritoOficial {
+  provaId: string;
+  cargo: string;
+  codigoCargo?: string;
+  organizadora: string;
+  tipo: 'preliminar' | 'definitivo';
+  fonte: string;
+  respostas: string[];
 }
 
 export type Pergunta = Question;
