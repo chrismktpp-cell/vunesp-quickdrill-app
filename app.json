@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "VUNESP QuickDrill",
+    "name": "AprovaFox",
     "slug": "vunesp-quickdrill-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "backgroundColor": "#0f172a"
+      "backgroundColor": "#0B1020"
     },
     "ios": {
       "supportsTablet": true
@@ -15,7 +15,7 @@
     "android": {
       "package": "com.vunespquickdrill.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0f172a",
+        "backgroundColor": "#0B1020",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false

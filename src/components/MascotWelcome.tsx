@@ -29,7 +29,7 @@ export const MascotWelcome: React.FC<MascotWelcomeProps> = ({
       </View>
 
       <View style={styles.mascotCol}>
-        <AprovaFoxMascot mood="welcome" size={88} />
+        <AprovaFoxMascot mood="welcome" size={96} />
       </View>
     </View>
   );

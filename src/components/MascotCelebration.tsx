@@ -16,7 +16,7 @@ export const MascotCelebration: React.FC<MascotCelebrationProps> = ({
 }) => {
   return (
     <View style={[styles.container, isPerfect && styles.perfectBorder]}>
-      <AprovaFoxMascot mood="celebration" size={105} />
+      <AprovaFoxMascot mood="celebration" size={124} showMoodBadge />
       <Text style={styles.titulo}>{titulo}</Text>
       <Text style={styles.subtitulo}>{subtitulo}</Text>
     </View>
