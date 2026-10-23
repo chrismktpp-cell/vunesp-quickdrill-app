@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { triggerLightHaptic } from '../utils/haptics';
-import { radius, typography, weights, spacing } from '../theme/tokens';
+import { aprovaFoxColors, radius, typography, weights, spacing } from '../theme/aprovafox';
+import { MascotCelebration } from './MascotCelebration';
 
 export interface SessionSummaryData {
   attempts: number;
@@ -27,8 +28,8 @@ export interface SessionSummaryProps {
   onContinue: () => void;
   onReviewErrors?: () => void;
   onGoHome: () => void;
-  tokens: any;
-  isDark: boolean;
+  tokens?: any;
+  isDark?: boolean;
 }
 
 export const SessionSummary: React.FC<SessionSummaryProps> = ({
@@ -39,195 +40,128 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
   onContinue,
   onReviewErrors,
   onGoHome,
-  tokens,
-  isDark,
 }) => {
   const isPerfect = data.attempts > 0 && data.correct === data.attempts;
   const isGood = data.accuracy >= 70;
 
   const goalPercent = Math.min(100, Math.round((questionsToday / Math.max(1, dailyGoal)) * 100));
 
+  const celebrationTitle = isPerfect
+    ? 'Desempenho Impecável!'
+    : isGood
+    ? 'Excelente Sessão!'
+    : 'Sessão Concluída!';
+
+  const celebrationSub = isPerfect
+    ? 'Você gabaritou todas as questões desta rodada estratégica da AprovaFox.'
+    : isGood
+    ? 'Consistência e precisão rumo à posse no concurso público.'
+    : 'Cada questão resolvida consolida seu aprendizado e avança seu SRS.';
+
   return (
     <ScrollView
-      contentContainerStyle={[styles.container, { backgroundColor: tokens.bg }]}
+      contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {/* CARD PRINCIPAL COMEMORATIVO */}
-      <View
-        style={[
-          styles.heroCard,
-          {
-            backgroundColor: tokens.cardBg,
-            borderColor: isPerfect ? tokens.warning : tokens.cardBorder,
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.iconCircle,
-            {
-              backgroundColor: isPerfect
-                ? 'rgba(245, 158, 11, 0.15)'
-                : isGood
-                ? 'rgba(22, 163, 74, 0.15)'
-                : 'rgba(37, 99, 235, 0.15)',
-            },
-          ]}
-        >
-          <Ionicons
-            name={isPerfect ? 'trophy' : isGood ? 'ribbon' : 'checkmark-done'}
-            size={48}
-            color={isPerfect ? tokens.warning : isGood ? tokens.success : tokens.primary}
-          />
+      {/* 1. MASCOTE CELEBRATION */}
+      <MascotCelebration
+        titulo={celebrationTitle}
+        subtitulo={celebrationSub}
+        isPerfect={isPerfect}
+      />
+
+      {/* BADGE DE XP GANHO */}
+      <View style={styles.xpCard}>
+        <View style={styles.xpBadge}>
+          <Ionicons name="sparkles" size={22} color={aprovaFoxColors.amber} />
+          <Text style={styles.xpText}>+{data.xpGained} XP Conquistados</Text>
         </View>
-
-        <Text style={[styles.heroTitle, { color: tokens.textPrimary }]}>
-          {isPerfect
-            ? 'Desempenho Impecável!'
-            : isGood
-            ? 'Excelente Sessão!'
-            : 'Sessão Concluída!'}
-        </Text>
-
-        <Text style={[styles.heroSubtitle, { color: tokens.textMuted }]}>
-          {isPerfect
-            ? 'Você gabaritou todas as questões desta rodada de treino.'
-            : isGood
-            ? 'Consistência e precisão rumo à posse na VUNESP.'
-            : 'Cada questão resolvida consolida seu aprendizado.'}
-        </Text>
-
-        {/* BADGE DE XP */}
-        <View
-          style={[
-            styles.xpBadge,
-            {
-              backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7',
-              borderColor: tokens.warning,
-            },
-          ]}
-        >
-          <Ionicons name="sparkles" size={20} color={tokens.warning} />
-          <Text style={[styles.xpText, { color: tokens.warning }]}>
-            +{data.xpGained} XP Conquistados
-          </Text>
-        </View>
+        {isPerfect && (
+          <Text style={styles.bonusTag}>Inclui bônus de +25 XP por gabaritar a sessão!</Text>
+        )}
       </View>
 
-      {/* GRADE DE MÉTRICAS */}
+      {/* 2. GRADE DE MÉTRICAS */}
       <View style={styles.metricsGrid}>
         {/* Taxa de Acerto */}
-        <View
-          style={[
-            styles.metricCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Text style={[styles.metricLabel, { color: tokens.textMuted }]}>Taxa de Acerto</Text>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Taxa de Acerto</Text>
           <Text
             style={[
               styles.metricValue,
-              { color: isGood ? tokens.success : tokens.warning },
+              { color: isGood ? aprovaFoxColors.success : aprovaFoxColors.amber },
             ]}
           >
             {Math.round(data.accuracy)}%
           </Text>
-          <Text style={[styles.metricSub, { color: tokens.textMuted }]}>
+          <Text style={styles.metricSub}>
             {data.correct} de {data.attempts} corretas
           </Text>
         </View>
 
         {/* Sequência Atual */}
-        <View
-          style={[
-            styles.metricCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Text style={[styles.metricLabel, { color: tokens.textMuted }]}>Sequência Ativa</Text>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Sequência Ativa</Text>
           <View style={styles.streakRow}>
-            <Text style={styles.fireEmoji}>🔥</Text>
-            <Text style={[styles.metricValue, { color: tokens.warning }]}>{streak}</Text>
+            <Ionicons name="flame" size={22} color={aprovaFoxColors.amber} />
+            <Text style={[styles.metricValue, { color: aprovaFoxColors.amber }]}>{streak}</Text>
           </View>
-          <Text style={[styles.metricSub, { color: tokens.textMuted }]}>
+          <Text style={styles.metricSub}>
             {streak > 1 ? `${streak} dias consecutivos` : '1º dia de foco'}
           </Text>
         </View>
       </View>
 
-      {/* META DIÁRIA */}
-      <View
-        style={[
-          styles.goalCard,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
+      {/* 3. META DIÁRIA */}
+      <View style={styles.goalCard}>
         <View style={styles.goalHeader}>
           <View style={styles.goalTitleRow}>
-            <Ionicons name="flag" size={18} color={tokens.primary} />
-            <Text style={[styles.goalTitle, { color: tokens.textPrimary }]}>
-              Meta Diária de Questões
-            </Text>
+            <Ionicons name="flag" size={17} color={aprovaFoxColors.violet} />
+            <Text style={styles.goalTitle}>Meta Diária de Questões</Text>
           </View>
-          <Text style={[styles.goalFraction, { color: tokens.textMuted }]}>
+          <Text style={styles.goalFraction}>
             {questionsToday} / {dailyGoal}
           </Text>
         </View>
 
-        <View style={[styles.progressTrack, { backgroundColor: tokens.surface }]}>
+        <View style={styles.progressTrack}>
           <View
             style={[
               styles.progressFill,
               {
                 width: `${goalPercent}%`,
-                backgroundColor: goalPercent >= 100 ? tokens.success : tokens.primary,
+                backgroundColor: goalPercent >= 100 ? aprovaFoxColors.success : aprovaFoxColors.violet,
               },
             ]}
           />
         </View>
 
-        <Text style={[styles.goalComment, { color: tokens.textMuted }]}>
+        <Text style={styles.goalComment}>
           {goalPercent >= 100
-            ? '🎉 Parabéns! Meta do dia atingida com sucesso!'
-            : `Faltam apenas ${Math.max(0, dailyGoal - questionsToday)} questões para cumprir sua meta hoje.`}
+            ? '🎉 Parabéns! Meta de hoje cumprida com louvor pela AprovaFox!'
+            : `Faltam ${Math.max(0, dailyGoal - questionsToday)} questões para cumprir sua meta hoje.`}
         </Text>
       </View>
 
-      {/* TÓPICOS PARA ATENÇÃO (SE HOUVE ERROS) */}
+      {/* 4. TÓPICOS PARA REVISÃO (SE HOUVE ERROS) */}
       {data.errorTopics.length > 0 && (
-        <View
-          style={[
-            styles.topicsCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
+        <View style={styles.topicsCard}>
           <View style={styles.topicsHeader}>
-            <Ionicons name="alert-circle" size={18} color={tokens.danger} />
-            <Text style={[styles.topicsTitle, { color: tokens.textPrimary }]}>
-              Tópicos para Revisão
-            </Text>
+            <Ionicons name="alert-circle" size={18} color={aprovaFoxColors.danger} />
+            <Text style={styles.topicsTitle}>Tópicos para Revisão (SRS)</Text>
           </View>
-          <Text style={[styles.topicsSubtitle, { color: tokens.textMuted }]}>
-            Questões erradas foram enviadas para o SRS e retornarão no momento ideal.
+          <Text style={styles.topicsSubtitle}>
+            As questões erradas foram enviadas para o SRS e retornarão no intervalo de repetição ideal.
           </Text>
 
           <View style={styles.topicsList}>
             {data.errorTopics.map((item, index) => (
-              <View
-                key={`${item.topic}-${index}`}
-                style={[
-                  styles.topicRow,
-                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-                ]}
-              >
-                <Text
-                  style={[styles.topicName, { color: tokens.textPrimary }]}
-                  numberOfLines={1}
-                >
+              <View key={`${item.topic}-${index}`} style={styles.topicRow}>
+                <Text style={styles.topicName} numberOfLines={1}>
                   {item.topic}
                 </Text>
-                <View style={[styles.topicBadge, { backgroundColor: tokens.dangerSoft }]}>
-                  <Text style={[styles.topicBadgeText, { color: tokens.danger }]}>
+                <View style={styles.topicBadge}>
+                  <Text style={styles.topicBadgeText}>
                     {item.count} {item.count === 1 ? 'erro' : 'erros'}
                   </Text>
                 </View>
@@ -237,18 +171,18 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
         </View>
       )}
 
-      {/* BOTÕES DE AÇÃO */}
+      {/* 5. BOTÕES DE AÇÃO */}
       <View style={styles.actionButtons}>
         <TouchableOpacity
           onPress={() => {
             triggerLightHaptic();
             onContinue();
           }}
-          activeOpacity={0.85}
-          style={[styles.primaryBtn, { backgroundColor: tokens.primary }]}
+          activeOpacity={0.88}
+          style={styles.primaryBtn}
         >
           <Text style={styles.primaryBtnText}>Próxima Sessão</Text>
-          <Ionicons name="arrow-forward" size={18} color="#ffffff" />
+          <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
         </TouchableOpacity>
 
         {data.errors > 0 && onReviewErrors && (
@@ -257,18 +191,12 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
               triggerLightHaptic();
               onReviewErrors();
             }}
-            activeOpacity={0.85}
-            style={[
-              styles.secondaryBtn,
-              {
-                backgroundColor: tokens.dangerSoft,
-                borderColor: tokens.danger,
-              },
-            ]}
+            activeOpacity={0.88}
+            style={styles.secondaryBtn}
           >
-            <Ionicons name="refresh-circle" size={18} color={tokens.danger} />
-            <Text style={[styles.secondaryBtnText, { color: tokens.danger }]}>
-              Revisar Erros Agora ({data.errors})
+            <Ionicons name="refresh-circle" size={18} color={aprovaFoxColors.danger} />
+            <Text style={styles.secondaryBtnText}>
+              Revisar Erros da Rodada ({data.errors})
             </Text>
           </TouchableOpacity>
         )}
@@ -278,16 +206,11 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
             triggerLightHaptic();
             onGoHome();
           }}
-          activeOpacity={0.85}
-          style={[
-            styles.outlineBtn,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
+          activeOpacity={0.88}
+          style={styles.outlineBtn}
         >
-          <Ionicons name="home-outline" size={18} color={tokens.textPrimary} />
-          <Text style={[styles.outlineBtnText, { color: tokens.textPrimary }]}>
-            Voltar ao Início
-          </Text>
+          <Ionicons name="home-outline" size={17} color={aprovaFoxColors.text} />
+          <Text style={styles.outlineBtnText}>Voltar ao Início</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -300,46 +223,31 @@ const styles = StyleSheet.create({
     paddingTop: spacing.block,
     paddingBottom: 40,
     gap: 16,
+    backgroundColor: aprovaFoxColors.night,
   },
-  heroCard: {
-    padding: 24,
-    borderRadius: radius.card,
+  xpCard: {
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.amber,
     borderWidth: 1.5,
+    borderRadius: radius.card,
+    padding: spacing.md,
     alignItems: 'center',
-    gap: 12,
-  },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroTitle: {
-    fontSize: 22,
-    fontWeight: weights.title,
-    textAlign: 'center',
-  },
-  heroSubtitle: {
-    fontSize: typography.body,
-    fontWeight: weights.body,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 8,
+    gap: 6,
   },
   xpBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    marginTop: 4,
   },
   xpText: {
-    fontSize: 15,
-    fontWeight: weights.title,
+    fontSize: 18,
+    fontWeight: weights.display,
+    color: aprovaFoxColors.amber,
+  },
+  bonusTag: {
+    fontSize: 11,
+    fontWeight: weights.meta,
+    color: aprovaFoxColors.amberLight,
   },
   metricsGrid: {
     flexDirection: 'row',
@@ -347,38 +255,41 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    padding: 16,
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     borderRadius: radius.card,
-    borderWidth: 1,
+    padding: 16,
     alignItems: 'center',
     gap: 4,
   },
   metricLabel: {
     fontSize: typography.caption,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.textMuted,
   },
   streakRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  fireEmoji: {
-    fontSize: 22,
-  },
   metricValue: {
     fontSize: 26,
-    fontWeight: weights.title,
+    fontWeight: weights.display,
   },
   metricSub: {
     fontSize: typography.caption,
-    fontWeight: weights.body,
+    fontWeight: weights.meta,
+    color: aprovaFoxColors.textSecondary,
     marginTop: 2,
   },
   goalCard: {
-    padding: 18,
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     borderRadius: radius.card,
-    borderWidth: 1,
-    gap: 12,
+    padding: spacing.md,
+    gap: 10,
   },
   goalHeader: {
     flexDirection: 'row',
@@ -391,31 +302,37 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   goalTitle: {
-    fontSize: typography.body,
+    fontSize: typography.label,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
   },
   goalFraction: {
     fontSize: typography.caption,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.textSecondary,
   },
   progressTrack: {
-    height: 8,
-    borderRadius: 4,
+    height: 7,
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderRadius: 3.5,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 3.5,
   },
   goalComment: {
-    fontSize: typography.caption,
-    fontWeight: weights.body,
-    lineHeight: 18,
+    fontSize: 12,
+    fontWeight: weights.meta,
+    color: aprovaFoxColors.textMuted,
+    lineHeight: 16,
   },
   topicsCard: {
-    padding: 18,
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     borderRadius: radius.card,
-    borderWidth: 1,
+    padding: spacing.md,
     gap: 10,
   },
   topicsHeader: {
@@ -424,33 +341,39 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   topicsTitle: {
-    fontSize: typography.body,
+    fontSize: typography.label,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
   },
   topicsSubtitle: {
-    fontSize: typography.caption,
-    lineHeight: 16,
+    fontSize: 11,
+    color: aprovaFoxColors.textSecondary,
+    lineHeight: 15,
   },
   topicsList: {
     gap: 8,
     marginTop: 4,
   },
   topicRow: {
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1,
+    borderRadius: radius.control,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: radius.control,
-    borderWidth: 1,
   },
   topicName: {
     flex: 1,
-    fontSize: 13,
-    fontWeight: weights.body,
+    fontSize: 12,
+    fontWeight: weights.meta,
+    color: aprovaFoxColors.text,
     marginRight: 8,
   },
   topicBadge: {
+    backgroundColor: aprovaFoxColors.dangerSoft,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radius.pill,
@@ -458,53 +381,61 @@ const styles = StyleSheet.create({
   topicBadgeText: {
     fontSize: 11,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.danger,
   },
   actionButtons: {
     gap: 10,
-    marginTop: 8,
+    marginTop: 6,
   },
   primaryBtn: {
-    height: 52,
+    height: 50,
+    backgroundColor: aprovaFoxColors.violet,
     borderRadius: radius.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowColor: aprovaFoxColors.violet,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 3,
   },
   primaryBtnText: {
-    color: '#ffffff',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 15,
     fontWeight: weights.title,
   },
   secondaryBtn: {
-    height: 48,
+    height: 46,
+    backgroundColor: aprovaFoxColors.dangerSoft,
+    borderColor: aprovaFoxColors.danger,
+    borderWidth: 1,
     borderRadius: radius.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    borderWidth: 1,
   },
   secondaryBtnText: {
-    fontSize: 14,
+    color: aprovaFoxColors.danger,
+    fontSize: 13,
     fontWeight: weights.title,
   },
   outlineBtn: {
-    height: 48,
+    height: 46,
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1,
     borderRadius: radius.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    borderWidth: 1,
   },
   outlineBtnText: {
-    fontSize: 14,
-    fontWeight: weights.body,
+    color: aprovaFoxColors.text,
+    fontSize: 13,
+    fontWeight: weights.meta,
   },
 });
