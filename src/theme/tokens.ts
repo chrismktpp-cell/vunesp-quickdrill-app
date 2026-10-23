@@ -1,3 +1,6 @@
+import { aprovaFoxColors, aprovaFoxTheme } from './aprovafox';
+export { aprovaFoxColors, aprovaFoxTheme };
+
 export interface ThemeColors {
   // Backgrounds
   bg: string;
@@ -53,53 +56,57 @@ export interface ThemeColors {
   navBorder: string;
 }
 
+/**
+ * Modo Noturno Oficial AprovaFox (Fonte Única de Verdade)
+ * #0B1020 + #18223A + #7657F6 + #FFB547
+ */
 export const darkTheme: ThemeColors = {
-  bg: '#090d16',
-  bgSecondary: '#0f172a',
-  cardBg: '#131b2e',
-  cardBgHover: '#18233c',
-  cardBorder: '#1e293b',
-  cardBorderSubtle: '#26344d',
+  bg: aprovaFoxColors.night,
+  bgSecondary: aprovaFoxColors.nightElevated,
+  cardBg: aprovaFoxColors.surface,
+  cardBgHover: aprovaFoxColors.surfaceHover,
+  cardBorder: aprovaFoxColors.border,
+  cardBorderSubtle: aprovaFoxColors.borderSubtle,
 
-  textPrimary: '#f8fafc',
-  textSecondary: '#cbd5e1',
-  textMuted: '#94a3b8',
-  textInverse: '#090d16',
+  textPrimary: aprovaFoxColors.text,
+  textSecondary: aprovaFoxColors.textSecondary,
+  textMuted: aprovaFoxColors.textMuted,
+  textInverse: aprovaFoxColors.textOnAccent,
 
-  primary: '#38bdf8',
-  primaryLight: '#7dd3fc',
-  primaryDark: '#0284c7',
-  primarySoft: 'rgba(56, 189, 248, 0.12)',
-  primaryGlow: 'rgba(56, 189, 248, 0.25)',
+  primary: aprovaFoxColors.violet,
+  primaryLight: aprovaFoxColors.violetLight,
+  primaryDark: '#5E3CE3',
+  primarySoft: aprovaFoxColors.violetSoft,
+  primaryGlow: aprovaFoxColors.violetGlow,
 
-  success: '#10b981',
-  successDark: '#059669',
-  successSoft: 'rgba(16, 185, 129, 0.14)',
-  successBorder: '#059669',
+  success: aprovaFoxColors.success,
+  successDark: aprovaFoxColors.successBorder,
+  successSoft: aprovaFoxColors.successSoft,
+  successBorder: aprovaFoxColors.successBorder,
 
-  warning: '#f59e0b',
-  warningDark: '#d97706',
-  warningSoft: 'rgba(245, 158, 11, 0.14)',
-  warningBorder: '#d97706',
+  warning: aprovaFoxColors.amber,
+  warningDark: '#E09832',
+  warningSoft: aprovaFoxColors.amberSoft,
+  warningBorder: aprovaFoxColors.amber,
 
-  danger: '#f43f5e',
-  dangerDark: '#e11d48',
-  dangerSoft: 'rgba(244, 63, 94, 0.14)',
-  dangerBorder: '#e11d48',
+  danger: aprovaFoxColors.danger,
+  dangerDark: aprovaFoxColors.dangerBorder,
+  dangerSoft: aprovaFoxColors.dangerSoft,
+  dangerBorder: aprovaFoxColors.dangerBorder,
 
-  purple: '#a855f7',
-  purpleDark: '#7c3aed',
-  purpleSoft: 'rgba(168, 85, 247, 0.14)',
+  purple: aprovaFoxColors.violet,
+  purpleDark: '#5E3CE3',
+  purpleSoft: aprovaFoxColors.violetSoft,
 
-  info: '#6366f1',
-  infoSoft: 'rgba(99, 102, 241, 0.14)',
+  info: aprovaFoxColors.info,
+  infoSoft: aprovaFoxColors.infoSoft,
 
-  surface: '#172238',
-  surfaceSubtle: '#10192d',
-  divider: 'rgba(148, 163, 184, 0.12)',
+  surface: aprovaFoxColors.surface,
+  surfaceSubtle: aprovaFoxColors.nightElevated,
+  divider: aprovaFoxColors.border,
 
-  navBg: '#0c1322',
-  navBorder: '#1a243a',
+  navBg: aprovaFoxColors.nav,
+  navBorder: aprovaFoxColors.navBorder,
 };
 
 export const lightTheme: ThemeColors = {

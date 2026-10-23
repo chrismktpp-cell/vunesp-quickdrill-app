@@ -1,0 +1,58 @@
+/**
+ * AprovaFox Web Stylesheet & Variables
+ * "Estude esperto. Passe preparado."
+ */
+
+:root {
+  color-scheme: dark;
+
+  --af-night: #0B1020;
+  --af-night-elevated: #121A2E;
+  --af-surface: #18223A;
+  --af-surface-hover: #202D4A;
+  --af-surface-pressed: #293653;
+  --af-border: #293653;
+  --af-border-subtle: rgba(170, 182, 211, 0.14);
+
+  --af-text: #F4F7FF;
+  --af-text-secondary: #AAB6D3;
+  --af-text-muted: #71809F;
+  --af-text-disabled: #4B5873;
+  --af-text-on-accent: #0B1020;
+
+  --af-violet: #7657F6;
+  --af-violet-light: #9B87FF;
+  --af-violet-soft: rgba(118, 87, 246, 0.16);
+  --af-violet-glow: rgba(118, 87, 246, 0.30);
+
+  --af-amber: #FFB547;
+  --af-amber-light: #FFD27A;
+  --af-amber-soft: rgba(255, 181, 71, 0.16);
+
+  --af-success: #42D392;
+  --af-success-soft: rgba(66, 211, 146, 0.16);
+  --af-success-border: #2AAE75;
+
+  --af-info: #55B8FF;
+  --af-info-soft: rgba(85, 184, 255, 0.16);
+
+  --af-danger: #FF6B7A;
+  --af-danger-soft: rgba(255, 107, 122, 0.16);
+  --af-danger-border: #D95263;
+
+  --af-warning: #FFB547;
+  --af-warning-soft: rgba(255, 181, 71, 0.16);
+
+  --af-nav: #0E1629;
+  --af-nav-border: #202D4A;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
