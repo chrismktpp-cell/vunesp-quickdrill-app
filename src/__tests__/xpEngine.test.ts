@@ -130,3 +130,4 @@ describe('xpEngine - Gamificação e Progressão do Concurseiro', () => {
     expect(fogo3?.desbloqueada).toBe(true);
   });
 });
+
