@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Alert,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -141,11 +142,25 @@ export default function App() {
     correct: 0,
   });
 
-  // Carrega persistência inicial
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Carrega persistência inicial de forma atômica e coordenada
   useEffect(() => {
-    loadStoredTheme().then((t) => setTheme(t));
-    loadInitialStats().then((s) => setStats(s));
-    loadFavoriteIds().then((favs) => setFavorites(favs));
+    Promise.all([
+      loadStoredTheme(),
+      loadInitialStats(),
+      loadFavoriteIds(),
+    ])
+      .then(([t, s, favs]) => {
+        setTheme(t);
+        setStats(s);
+        setFavorites(favs);
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        console.error('Erro na carga inicial do storage:', err);
+        setIsLoaded(true);
+      });
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -568,6 +583,38 @@ export default function App() {
 
   const nivelInfo = useMemo(() => calcularNivel(stats.xp || 0), [stats.xp]);
 
+  if (!isLoaded) {
+    return (
+      <View
+        style={[
+          styles.safeArea,
+          {
+            backgroundColor: tokens.bg,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        ]}
+      >
+        <AprovaFoxLogo size={72} />
+        <ActivityIndicator
+          size="large"
+          color={aprovaFoxColors.amber}
+          style={{ marginTop: 24 }}
+        />
+        <Text
+          style={{
+            marginTop: 14,
+            fontSize: 16,
+            fontWeight: '700',
+            color: tokens.textPrimary,
+          }}
+        >
+          Carregando VUNESP QuickDrill...
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: tokens.bg }]}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
@@ -803,7 +850,7 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'simulado' && (
+            <View style={{ flex: 1, display: activeTab === 'simulado' ? 'flex' : 'none' }}>
               <SimuladoScreen
                 questions={questionsData as Question[]}
                 simuladosHistorico={stats.simuladosHistorico}
@@ -813,7 +860,7 @@ export default function App() {
                 isDark={isDark}
                 getCategoryColor={getCategoryColor}
               />
-            )}
+            </View>
 
             {activeTab === 'progresso' && (
               <DashboardScreen

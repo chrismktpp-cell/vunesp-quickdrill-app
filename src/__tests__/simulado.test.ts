@@ -114,7 +114,7 @@ describe('Simulado Service', () => {
     expect(d40.classificacao).toBe('Crítico');
   });
 
-  it('deve converter erros e questões em branco do simulado para a errorQueue e Caixa 1 do SRS', () => {
+  it('deve converter apenas erros efetivamente respondidos para a errorQueue e Caixa 1 do SRS, sem punir questões em branco', () => {
     const timestampTeste = 1760880000000;
     const initialStats: UserStats = {
       attempts: [],
@@ -129,6 +129,16 @@ describe('Simulado Service', () => {
           intervaloDias: 7,
           proximaRevisao: timestampTeste + 7 * 86400000,
           historicoRepeticoes: 3,
+          lapses: 0,
+          status: 'em_revisao',
+          ultimaRevisao: timestampTeste - 86400000,
+        },
+        's-3': {
+          perguntaId: 's-3',
+          caixa: 4,
+          intervaloDias: 14,
+          proximaRevisao: timestampTeste + 14 * 86400000,
+          historicoRepeticoes: 4,
           lapses: 0,
           status: 'em_revisao',
           ultimaRevisao: timestampTeste - 86400000,
@@ -150,8 +160,8 @@ describe('Simulado Service', () => {
       detalhesPorCategoria: {} as any,
       respostas: [
         { perguntaId: 's-1', selectedOptionIndex: 0, isCorrect: true }, // Acerto
-        { perguntaId: 's-2', selectedOptionIndex: 0, isCorrect: false }, // Erro
-        { perguntaId: 's-3', selectedOptionIndex: null, isCorrect: false }, // Em branco
+        { perguntaId: 's-2', selectedOptionIndex: 0, isCorrect: false }, // Erro efetivo (opção errada)
+        { perguntaId: 's-3', selectedOptionIndex: null, isCorrect: false }, // Em branco (tempo esgotado/pulada)
       ],
     };
 
@@ -161,9 +171,10 @@ describe('Simulado Service', () => {
       timestampTeste
     );
 
-    expect(totalConvertidos).toBe(2);
+    // Apenas a questão s-2 (efetivamente errada) é convertida
+    expect(totalConvertidos).toBe(1);
     expect(newStats.errorQueue).toContain('s-2');
-    expect(newStats.errorQueue).toContain('s-3');
+    expect(newStats.errorQueue).not.toContain('s-3'); // Em branco NÃO vai para errorQueue
     expect(newStats.errorQueue).toContain('s-99'); // manteve pré-existente sem duplicar
     expect(newStats.errorQueue).not.toContain('s-1');
 
@@ -174,11 +185,11 @@ describe('Simulado Service', () => {
     expect(srs2.status).toBe('pendente');
     expect(srs2.lapses).toBe(1);
 
-    // s-3 foi inserida no SRS na caixa 1 e pendente
+    // s-3 (em branco) manteve sua caixa 4 intacta sem degradação injusta
     const srs3 = newStats.revisoesSRS!['s-3'];
-    expect(srs3.caixa).toBe(1);
-    expect(srs3.intervaloDias).toBe(1);
-    expect(srs3.status).toBe('pendente');
+    expect(srs3.caixa).toBe(4);
+    expect(srs3.intervaloDias).toBe(14);
+    expect(srs3.status).toBe('em_revisao');
   });
 });
 

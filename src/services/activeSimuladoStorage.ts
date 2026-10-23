@@ -71,3 +71,4 @@ export async function limparSimuladoAtivo(): Promise<void> {
     console.warn('Erro ao limpar simulado em andamento:', err);
   }
 }
+

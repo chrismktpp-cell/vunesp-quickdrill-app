@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -21,6 +21,7 @@ import type { QuestionFilters } from '../services/filterEngine';
 import { FilaDoDiaBanner } from './FilaDoDiaBanner';
 import { triggerLightHaptic } from '../utils/haptics';
 import { radius, typography, weights, spacing } from '../theme/tokens';
+import { getDeterministicOptionOrder } from '../utils/shuffleOptions';
 
 export interface DrillScreenProps {
   questionsData: Question[];
@@ -120,6 +121,12 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   // Cronômetro de tempo gasto na questão
   const questionStartTimeRef = useRef<number>(Date.now());
   const [pendingOptionIndex, setPendingOptionIndex] = useState<number | null>(null);
+
+  // Permutação determinística de alternativas para remover o viés de 67% na alternativa A
+  const optionOrder = useMemo(() => {
+    if (!currentQuestion) return [];
+    return getDeterministicOptionOrder(currentQuestion.id, currentQuestion.options.length);
+  }, [currentQuestion?.id, currentQuestion?.options?.length]);
 
   useEffect(() => {
     questionStartTimeRef.current = Date.now();
@@ -517,12 +524,13 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
           {/* Alternativas em botões grandes e táteis com 4 estados distintos */}
           <View style={styles.optionsList}>
-            {currentQuestion!.options.map((option, idx) => {
-              const letter = String.fromCharCode(65 + idx);
+            {optionOrder.map((originalIdx, displayIdx) => {
+              const option = currentQuestion!.options[originalIdx];
+              const letter = String.fromCharCode(65 + displayIdx);
               const isConfirmed = isAnswered;
-              const isSelectedPending = pendingOptionIndex === idx;
-              const isConfirmedSelected = selectedOptionIndex === idx;
-              const isCorrectOption = idx === currentQuestion!.correctIndex;
+              const isSelectedPending = pendingOptionIndex === originalIdx;
+              const isConfirmedSelected = selectedOptionIndex === originalIdx;
+              const isCorrectOption = originalIdx === currentQuestion!.correctIndex;
 
               let optBg = tokens.cardBg;
               let optBorder = tokens.cardBorder;
@@ -563,8 +571,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
               return (
                 <TouchableOpacity
-                  key={option}
-                  onPress={() => handleSelectPendingOption(idx)}
+                  key={`${currentQuestion!.id}-opt-${originalIdx}`}
+                  onPress={() => handleSelectPendingOption(originalIdx)}
                   disabled={isAnswered}
                   activeOpacity={0.85}
                   style={[

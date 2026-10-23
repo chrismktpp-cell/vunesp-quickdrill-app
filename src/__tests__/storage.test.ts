@@ -305,13 +305,14 @@ describe('Storage & Performance Optimizations (V2 Envelope & Mutex)', () => {
       expect(podado.blindSpotQueue).toEqual(['crase-01']);
       expect(podado.errorQueue).toEqual(['crase-02']);
       expect(podado.revisoesSRS?.['crase-01']).toBeDefined();
-      expect(podado.revisoesSRS?.['id-orfao-srs']).toBeUndefined();
+      // Não apaga revisões históricas do SRS caso questões sejam renomeadas
+      expect(podado.revisoesSRS?.['id-orfao-srs']).toBeDefined();
       // Não apaga acumuladores
       expect(podado.totalAcertos).toBe(50);
       expect(podado.totalErros).toBe(20);
     });
 
-    it('loadInitialStats descarta chaves com gen divergente da meta', async () => {
+    it('loadInitialStats preserva chaves com segurança mesmo se gen divergir da meta', async () => {
       const metaEnvelope = wrapEnvelope(
         {
           gen: 10,
@@ -354,10 +355,60 @@ describe('Storage & Performance Optimizations (V2 Envelope & Mutex)', () => {
 
       const loaded = await loadInitialStats();
       expect(loaded.gen).toBe(10);
-      // SRS consistente foi mantido
+      // SRS mantido
       expect(loaded.revisoesSRS?.['crase-01']).toBeDefined();
-      // Attempts divergente foi descartado (vazio)
-      expect(loaded.attempts).toEqual([]);
+      // Attempts não é descartado destrutivamente
+      expect(loaded.attempts.length).toBe(1);
+      expect(loaded.attempts[0].questionId).toBe('crase-01');
+    });
+
+    it('regressão audit: simulado + resposta + reload preserva todo o progresso atomicamente', async () => {
+      // 1. Carga inicial
+      let currentStats = await loadInitialStats();
+      expect(currentStats.attempts).toEqual([]);
+      expect(currentStats.simuladosHistorico).toEqual([]);
+
+      // 2. Salva simulado
+      const simuladoResultado: SimuladoResultado = {
+        id: 'sim-teste-1',
+        titulo: 'Simulado Teste',
+        dataHora: Date.now(),
+        tempoTotalGastoSegundos: 300,
+        duracaoTotalSegundos: 900,
+        totalQuestoes: 5,
+        acertos: 4,
+        erros: 1,
+        emBranco: 0,
+        pontuacaoPercentual: 80,
+        detalhesPorCategoria: {} as any,
+        respostas: [
+          { perguntaId: 'crase-01', selectedOptionIndex: 0, isCorrect: true },
+        ],
+      };
+
+      currentStats = await saveSimuladoToStorage(currentStats, simuladoResultado);
+      expect(currentStats.simuladosHistorico?.length).toBe(1);
+
+      // 3. Responde uma questão avulsa
+      const { newStats } = aplicarResposta(currentStats, {
+        questionId: 'crase-01',
+        category: 'Crase (VUNESP)',
+        selectedOptionIndex: 0,
+        isCorrect: true,
+        certainty: 3,
+      });
+      await saveAttemptToStorage(newStats);
+
+      // 4. Recarrega do storage simulando reabertura do app
+      const reloaded = await loadInitialStats();
+
+      // NADA deve ser zerado!
+      expect(reloaded.simuladosHistorico?.length).toBe(1);
+      expect(reloaded.simuladosHistorico?.[0].id).toBe('sim-teste-1');
+      expect(reloaded.attempts.length).toBe(1);
+      expect(reloaded.attempts[0].questionId).toBe('crase-01');
+      expect(reloaded.revisoesSRS?.['crase-01']).toBeDefined();
+      expect(reloaded.totalAcertos).toBe(1);
     });
   });
 

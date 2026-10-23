@@ -353,15 +353,10 @@ export function aplicarResposta(
 export function podarOrfaosSRS(stats: UserStats): UserStats {
   const validIds = new Set(questionsData.map((q: any) => q.id));
 
-  const cleanSRS: Record<string, RevisaoSRS> = {};
-  if (stats.revisoesSRS) {
-    for (const [id, rev] of Object.entries(stats.revisoesSRS)) {
-      if (validIds.has(id)) {
-        cleanSRS[id] = rev;
-      }
-    }
-  }
+  // Preserva integralmente o histórico de revisões SRS (sem perda de dados caso questões sejam renomeadas)
+  const cleanSRS: Record<string, RevisaoSRS> = { ...(stats.revisoesSRS || {}) };
 
+  // Apenas as filas ativas imediatas de treino filtram IDs válidos para evitar erros em tempo de execução
   const cleanBlindSpotQueue = (stats.blindSpotQueue || []).filter((id) => validIds.has(id));
   const cleanErrorQueue = (stats.errorQueue || []).filter((id) => validIds.has(id));
 
@@ -430,16 +425,18 @@ export async function loadInitialStats(): Promise<UserStats> {
       const metaGen = envMeta?.gen ?? envMeta?.data?.gen ?? 1;
       const meta = envMeta?.data || envMeta || {};
 
-      // Validação de geração única: se o gen gravado diferir do gen da meta, descarta a divergente
-      let srs = envSrs && (envSrs.gen === metaGen || !envSrs.gen) ? (envSrs.data || envSrs) : {};
-      let attempts =
-        envAttempts && (envAttempts.gen === metaGen || !envAttempts.gen)
-          ? (Array.isArray(envAttempts.data) ? envAttempts.data : Array.isArray(envAttempts) ? envAttempts : [])
-          : [];
-      let simulados =
-        envSimulados && (envSimulados.gen === metaGen || !envSimulados.gen)
-          ? (Array.isArray(envSimulados.data) ? envSimulados.data : Array.isArray(envSimulados) ? envSimulados : [])
-          : [];
+      // Carga não-destrutiva: dados persistidos nunca são descartados por divergência de gen
+      let srs = envSrs?.data || envSrs || {};
+      let attempts = Array.isArray(envAttempts?.data)
+        ? envAttempts.data
+        : Array.isArray(envAttempts)
+        ? envAttempts
+        : [];
+      let simulados = Array.isArray(envSimulados?.data)
+        ? envSimulados.data
+        : Array.isArray(envSimulados)
+        ? envSimulados
+        : [];
 
       const cleanSRS: Record<string, RevisaoSRS> = {};
       if (srs && typeof srs === 'object') {
@@ -543,48 +540,67 @@ export async function loadInitialStats(): Promise<UserStats> {
 }
 
 /**
- * Persiste a resposta através da fila de escrita em ordem sequencial estrita:
- * 1. srs
- * 2. attempts
- * 3. meta (commit final com o novo gen)
+ * Constrói o objeto meta serializável para persistência.
  */
-export function saveAttemptToStorage(newStats: UserStats): Promise<void> {
+function metaOf(stats: UserStats, gen: number) {
+  return {
+    gen,
+    streak: stats.streak ?? 0,
+    bestStreak: stats.bestStreak ?? 0,
+    blindSpotQueue: stats.blindSpotQueue || [],
+    errorQueue: stats.errorQueue || [],
+    totalAcertos: stats.totalAcertos ?? 0,
+    totalErros: stats.totalErros ?? 0,
+    porCategoria: stats.porCategoria || ({} as any),
+    xp: stats.xp ?? 0,
+    nivel: stats.nivel ?? 1,
+    metaDiaria: stats.metaDiaria ?? META_DIARIA_PADRAO,
+    questoesHoje: stats.questoesHoje ?? 0,
+    dataUltimoEstudo: stats.dataUltimoEstudo,
+    conquistasDesbloqueadas: stats.conquistasDesbloqueadas || [],
+  };
+}
+
+/**
+ * Persiste atomicamente todas as chaves versionadas V2 via multiSet.
+ * Garante que meta, srs, attempts e simulados compartilhem rigorosamente o mesmo gen,
+ * prevenindo qualquer divergência ou perda de dados.
+ */
+export function persistStats(stats: UserStats): Promise<UserStats> {
+  const nextGen = (stats.gen || 0) + 1;
+  const updatedStats: UserStats = {
+    ...stats,
+    gen: nextGen,
+  };
+
+  const cappedAttempts = (updatedStats.attempts || []).slice(0, MAX_ATTEMPTS);
+  const cappedSimulados = (updatedStats.simuladosHistorico || []).slice(0, MAX_SIMULADOS);
+  const meta = metaOf(updatedStats, nextGen);
+
   return enqueueWrite(async () => {
     try {
-      const nextGen = (newStats.gen || 0) + 1;
-      newStats.gen = nextGen;
-
-      const meta = {
-        gen: nextGen,
-        streak: newStats.streak,
-        bestStreak: newStats.bestStreak,
-        blindSpotQueue: newStats.blindSpotQueue,
-        errorQueue: newStats.errorQueue,
-        totalAcertos: newStats.totalAcertos,
-        totalErros: newStats.totalErros,
-        porCategoria: newStats.porCategoria,
-        xp: newStats.xp ?? 0,
-        nivel: newStats.nivel ?? 1,
-        metaDiaria: newStats.metaDiaria ?? META_DIARIA_PADRAO,
-        questoesHoje: newStats.questoesHoje ?? 0,
-        dataUltimoEstudo: newStats.dataUltimoEstudo,
-        conquistasDesbloqueadas: newStats.conquistasDesbloqueadas || [],
-      };
-
-      const cappedAttempts = (newStats.attempts || []).slice(0, MAX_ATTEMPTS);
-
-      // Ordem rigorosa: srs, attempts, meta por último (commit)
-      await AsyncStorage.setItem(KEY_SRS_V2, wrapEnvelope(newStats.revisoesSRS || {}, nextGen));
-      await AsyncStorage.setItem(KEY_ATTEMPTS_V2, wrapEnvelope(cappedAttempts, nextGen));
-      await AsyncStorage.setItem(KEY_META_V2, wrapEnvelope(meta, nextGen));
+      await AsyncStorage.multiSet([
+        [KEY_META_V2, wrapEnvelope(meta, nextGen)],
+        [KEY_SRS_V2, wrapEnvelope(updatedStats.revisoesSRS || {}, nextGen)],
+        [KEY_ATTEMPTS_V2, wrapEnvelope(cappedAttempts, nextGen)],
+        [KEY_SIMULADOS_V2, wrapEnvelope(cappedSimulados, nextGen)],
+      ]);
     } catch (e) {
-      console.error('Error saving attempt to AsyncStorage', e);
+      console.error('Error persisting stats to AsyncStorage', e);
     }
+    return updatedStats;
   });
 }
 
 /**
- * Persiste simulados com incremento de gen e commit na meta.
+ * Persiste a resposta através da fila de escrita atômica unificada.
+ */
+export async function saveAttemptToStorage(newStats: UserStats): Promise<void> {
+  await persistStats(newStats);
+}
+
+/**
+ * Persiste simulados com salvamento atômico de todo o estado através de persistStats.
  */
 export function saveSimuladoToStorage(
   prevStats: UserStats,
@@ -599,35 +615,13 @@ export function saveSimuladoToStorage(
     })),
   };
 
-  const nextGen = (prevStats.gen || 0) + 1;
   const historico = [normalizado, ...(prevStats.simuladosHistorico || [])].slice(0, MAX_SIMULADOS);
   const updatedStats: UserStats = {
     ...prevStats,
     simuladosHistorico: historico,
-    gen: nextGen,
   };
 
-  enqueueWrite(async () => {
-    try {
-      const meta = {
-        gen: nextGen,
-        streak: updatedStats.streak,
-        bestStreak: updatedStats.bestStreak,
-        blindSpotQueue: updatedStats.blindSpotQueue,
-        errorQueue: updatedStats.errorQueue,
-        totalAcertos: updatedStats.totalAcertos,
-        totalErros: updatedStats.totalErros,
-        porCategoria: updatedStats.porCategoria,
-      };
-
-      await AsyncStorage.setItem(KEY_SIMULADOS_V2, wrapEnvelope(historico, nextGen));
-      await AsyncStorage.setItem(KEY_META_V2, wrapEnvelope(meta, nextGen));
-    } catch (e) {
-      console.error('Error saving simulado to AsyncStorage', e);
-    }
-  });
-
-  return Promise.resolve(updatedStats);
+  return persistStats(updatedStats);
 }
 
 export async function clearUserStats(): Promise<UserStats> {

@@ -190,8 +190,10 @@ export function obterDiagnosticoSimulado(pontuacaoPercentual: number): {
 }
 
 /**
- * Converte as questões erradas ou em branco de um simulado em atualizações
- * para a errorQueue e para a Caixa 1 do SRS (status: 'pendente', intervaloDias: 1).
+ * Converte apenas as questões efetivamente erradas (respondidas com opção incorreta)
+ * de um simulado em atualizações para a errorQueue e para a Caixa 1 do SRS.
+ * Questões deixadas em branco (não respondidas/tempo esgotado) NÃO degradam cartões SRS
+ * já dominados pelo usuário.
  */
 export function converterErrosSimuladoParaSRS(
   resultado: SimuladoResultado,
@@ -199,7 +201,7 @@ export function converterErrosSimuladoParaSRS(
   timestamp: number = Date.now()
 ): { newStats: UserStats; totalConvertidos: number } {
   const falhas = (resultado.respostas || []).filter(
-    (r) => !r.isCorrect || r.selectedOptionIndex === null
+    (r) => r.selectedOptionIndex !== null && !r.isCorrect
   );
 
   if (falhas.length === 0) {

@@ -29,6 +29,7 @@ import {
   ActiveSimuladoData,
 } from '../services/activeSimuladoStorage';
 import { triggerLightHaptic } from '../utils/haptics';
+import { getDeterministicOptionOrder } from '../utils/shuffleOptions';
 
 interface SimuladoScreenProps {
   questions: Question[];
@@ -91,6 +92,24 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
   const totalDurationSecondsRef = useRef<number>(0);
+  const finishedRef = useRef<boolean>(false);
+
+  // Ref sempre atualizada para evitar stale closure no timer sem reiniciar o setInterval a cada resposta
+  const latestRef = useRef({
+    examQuestions,
+    respostas,
+    selectedConfig,
+    onSalvarResultado,
+  });
+
+  useEffect(() => {
+    latestRef.current = {
+      examQuestions,
+      respostas,
+      selectedConfig,
+      onSalvarResultado,
+    };
+  });
 
   // 1. Verificação defensiva de simulado salvo em andamento ao montar
   useEffect(() => {
@@ -134,6 +153,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
 
   const handleRetomarSimulado = (saved: ActiveSimuladoData) => {
     triggerLightHaptic();
+    finishedRef.current = false;
     const elapsed = Math.floor((Date.now() - saved.startedAt) / 1000);
     const remaining = Math.max(0, saved.totalDurationSeconds - elapsed);
     setExamQuestions(saved.questions);
@@ -153,38 +173,51 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
     setActiveSimuladoRecuperado(null);
   };
 
-  const finalizarProva = useCallback(
-    (porTempoEsgotado = false) => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      limparSimuladoAtivo();
+  const finalizarProva = useCallback((porTempoEsgotado = false) => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
 
-      const tempoTotalGasto = Math.min(
-        totalDurationSecondsRef.current || selectedConfig.duracaoMinutos * 60,
-        Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000))
-      );
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    void limparSimuladoAtivo();
 
-      const resultado = calcularResultadoSimulado(
-        examQuestions,
-        respostas,
-        tempoTotalGasto,
-        selectedConfig
-      );
+    const {
+      examQuestions: currentExamQuestions,
+      respostas: currentRespostas,
+      selectedConfig: currentConfig,
+      onSalvarResultado: currentOnSalvar,
+    } = latestRef.current;
 
-      setUltimoResultado(resultado);
-      onSalvarResultado(resultado);
-      setStage('result');
+    const tempoTotalGasto = Math.min(
+      totalDurationSecondsRef.current || currentConfig.duracaoMinutos * 60,
+      Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000))
+    );
 
-      if (porTempoEsgotado) {
-        Alert.alert('Tempo Esgotado!', 'O tempo do simulado acabou. Veja seu desempenho.');
-      }
-    },
-    [examQuestions, respostas, selectedConfig, onSalvarResultado]
-  );
+    const resultado = calcularResultadoSimulado(
+      currentExamQuestions,
+      currentRespostas,
+      tempoTotalGasto,
+      currentConfig
+    );
+
+    setUltimoResultado(resultado);
+    currentOnSalvar(resultado);
+    setStage('result');
+
+    if (porTempoEsgotado) {
+      Alert.alert('Tempo Esgotado!', 'O tempo do simulado acabou. Veja seu desempenho.');
+    }
+  }, []);
 
   // Timer countdown baseado em wall-clock (Date.now() - startTime) sem drift
   useEffect(() => {
     if (stage !== 'running') {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
       return;
     }
 
@@ -194,7 +227,10 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
       const remaining = Math.max(0, totalDurationSecondsRef.current - elapsed);
       setSecondsRemaining(remaining);
       if (remaining <= 0) {
-        if (timerRef.current) clearInterval(timerRef.current);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
         finalizarProva(true);
       }
     };
@@ -209,7 +245,10 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
     });
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
       subscription.remove();
     };
   }, [stage, finalizarProva]);
@@ -234,6 +273,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
 
   const handleIniciarSimulado = () => {
     triggerLightHaptic();
+    finishedRef.current = false;
     const selecionadas = gerarQuestoesSimulado(questions, selectedConfig.quantidadeQuestoes);
     if (selecionadas.length === 0) {
       Alert.alert('Aviso', 'Não há questões disponíveis para o simulado.');
@@ -687,14 +727,15 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
 
             {/* Alternativas */}
             <View style={styles.optionsList}>
-              {currentQ.options.map((option, optIdx) => {
-                const isSelected = respAtual?.selectedOptionIndex === optIdx;
-                const letter = String.fromCharCode(65 + optIdx); // A, B, C...
+              {getDeterministicOptionOrder(currentQ.id, currentQ.options.length).map((originalIdx, displayIdx) => {
+                const isSelected = respAtual?.selectedOptionIndex === originalIdx;
+                const letter = String.fromCharCode(65 + displayIdx); // A, B, C...
+                const option = currentQ.options[originalIdx];
 
                 return (
                   <TouchableOpacity
-                    key={optIdx}
-                    onPress={() => handleSelectOption(currentQ.id, optIdx)}
+                    key={originalIdx}
+                    onPress={() => handleSelectOption(currentQ.id, originalIdx)}
                     style={[
                       styles.optionButton,
                       {
@@ -889,9 +930,17 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
           if (!pergunta) return null;
 
           const { selectedOptionIndex, isCorrect } = item;
+          const optOrder = getDeterministicOptionOrder(pergunta.id, pergunta.options.length);
+          const displayIdxUser =
+            selectedOptionIndex !== null && selectedOptionIndex !== undefined
+              ? optOrder.indexOf(selectedOptionIndex)
+              : -1;
+          const displayIdxGabarito = optOrder.indexOf(pergunta.correctIndex);
+
           const letterUser =
-            selectedOptionIndex !== null ? String.fromCharCode(65 + selectedOptionIndex) : 'Em Branco';
-          const letterGabarito = String.fromCharCode(65 + pergunta.correctIndex);
+            displayIdxUser !== -1 ? String.fromCharCode(65 + displayIdxUser) : 'Em Branco';
+          const letterGabarito =
+            displayIdxGabarito !== -1 ? String.fromCharCode(65 + displayIdxGabarito) : '?';
 
           return (
             <View
