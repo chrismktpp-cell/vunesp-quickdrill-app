@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -70,6 +70,10 @@ export interface DrillScreenProps {
     text: string;
     border: string;
   };
+  // Propriedades para sessões gamificadas (opcionais para manter compatibilidade)
+  isSessionMode?: boolean;
+  sessionTitle?: string;
+  onExitSession?: () => void;
 }
 
 export const DrillScreen: React.FC<DrillScreenProps> = ({
@@ -109,21 +113,36 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   legacyColors,
   isDark,
   categories,
+  isSessionMode = false,
+  sessionTitle,
+  onExitSession,
 }) => {
   // Cronômetro de tempo gasto na questão
   const questionStartTimeRef = useRef<number>(Date.now());
+  const [pendingOptionIndex, setPendingOptionIndex] = useState<number | null>(null);
 
   useEffect(() => {
     questionStartTimeRef.current = Date.now();
+    setPendingOptionIndex(null);
   }, [currentQuestion?.id, currentIndex]);
 
-  const handleSelectOption = (idx: number) => {
+  const handleSelectPendingOption = (idx: number) => {
+    if (isAnswered) return;
+    triggerLightHaptic();
+    setPendingOptionIndex(idx);
+  };
+
+  const handleConfirmAnswer = () => {
+    if (pendingOptionIndex === null || isAnswered) return;
     const tempoGastoMs = Math.max(0, Date.now() - questionStartTimeRef.current);
-    onAnswer(idx, tempoGastoMs);
+    onAnswer(pendingOptionIndex, tempoGastoMs);
   };
 
   const progressRatio =
     filteredQuestions.length > 0 ? (currentIndex + 1) / filteredQuestions.length : 0;
+
+  const isLastQuestion =
+    filteredQuestions.length > 0 && currentIndex === filteredQuestions.length - 1;
 
   // Render text statement com destaque para lacuna [ ? ]
   const renderStatement = (text: string) => {
@@ -148,181 +167,208 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      {/* Onboarding de primeira abertura (dispensável, 3 linhas, botão Começar) */}
-      {showOnboarding && (
-        <View
-          style={[
-            styles.onboardingCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <View style={styles.onboardingLines}>
-            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
-              • Chute, dúvida e certeza mudam a revisão.
-            </Text>
-            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
-              • Certeza + erro vira ponto cego e volta logo.
-            </Text>
-            <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
-              • Dúvida acertada não conta como domínio.
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              onDismissOnboarding?.();
-            }}
-            activeOpacity={0.85}
-            style={[styles.onboardingBtn, { backgroundColor: tokens.primary }]}
-          >
-            <Text style={styles.onboardingBtnText}>Começar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* 1. Banner Fila do Dia (64px, bloco único) */}
-      <FilaDoDiaBanner
-        fila={filaDoDia}
-        isFilaActive={isFilaSRSActive}
-        onToggleFila={() => {
-          setIsFilaSRSActive((prev) => !prev);
-          setCurrentIndex(0);
-        }}
-        colors={legacyColors}
-        isDark={isDark}
-      />
-
-      {/* 2. Linha de controles (32px) */}
-      <View style={styles.controlsRow}>
-        <View style={styles.controlsLeft}>
-          {/* Chip da categoria ativa */}
-          <View
-            style={[
-              styles.controlChip,
-              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-            ]}
-          >
-            <Text style={[styles.controlChipText, { color: tokens.textPrimary }]}>
-              {selectedCategory === 'all' ? 'Todas' : selectedCategory.split(' ')[0]}
-            </Text>
-          </View>
-
-          {/* Chip da dificuldade */}
-          <View
-            style={[
-              styles.controlChip,
-              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-            ]}
-          >
-            <Text style={[styles.controlChipText, { color: tokens.textMuted }]}>
-              {filtros?.dificuldade && filtros.dificuldade !== 'all'
-                ? filtros.dificuldade
-                : currentQuestion
-                ? currentQuestion.difficulty
-                : 'Todas'}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.controlsRight}>
-          {/* Botão Shuffle */}
-          {onShuffle && (
-            <TouchableOpacity
-              onPress={onShuffle}
-              activeOpacity={0.85}
-              style={[
-                styles.controlIconBtn,
-                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-              ]}
-              accessibilityLabel="Embaralhar questões"
-            >
-              <Ionicons name="shuffle" size={16} color={tokens.textMuted} />
-            </TouchableOpacity>
-          )}
-
-          {/* Botão Atalho Mural de Macetes */}
-          {onOpenMural && (
+      {/* MODO SESSÃO: BARRA SUPERIOR DEDICADA */}
+      {isSessionMode ? (
+        <View style={styles.sessionHeaderRow}>
+          {onExitSession && (
             <TouchableOpacity
               onPress={() => {
                 triggerLightHaptic();
-                onOpenMural();
+                onExitSession();
               }}
               activeOpacity={0.85}
               style={[
-                styles.maceteQuickBtn,
-                {
-                  backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
-                  borderColor: tokens.warning,
-                },
+                styles.exitBtn,
+                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
               ]}
-              accessibilityLabel="Ver mural de macetes"
+              accessibilityLabel="Pausar ou sair da sessão"
             >
-              <Ionicons name="bulb" size={15} color={tokens.warning} />
-              <Text style={[styles.maceteQuickText, { color: tokens.warning }]}>Macetes</Text>
+              <Ionicons name="close" size={20} color={tokens.textPrimary} />
             </TouchableOpacity>
           )}
 
-          {/* Botão Filtros */}
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              onOpenFiltersModal();
-            }}
-            activeOpacity={0.85}
+          <View style={styles.sessionHeaderInfo}>
+            {sessionTitle && (
+              <Text
+                style={[styles.sessionHeaderTitle, { color: tokens.textPrimary }]}
+                numberOfLines={1}
+              >
+                {sessionTitle}
+              </Text>
+            )}
+            <View style={[styles.sessionProgressTrack, { backgroundColor: tokens.surface }]}>
+              <View
+                style={[
+                  styles.sessionProgressFill,
+                  {
+                    width: `${Math.round(progressRatio * 100)}%`,
+                    backgroundColor: tokens.primary,
+                  },
+                ]}
+              />
+            </View>
+          </View>
+
+          <View
             style={[
-              styles.controlIconBtn,
+              styles.sessionCounterBadge,
               { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
             ]}
-            accessibilityLabel="Abrir filtros"
           >
-            <Ionicons name="options-outline" size={16} color={tokens.primary} />
-          </TouchableOpacity>
+            <Text style={[styles.sessionCounterText, { color: tokens.primary }]}>
+              {currentIndex + 1}/{filteredQuestions.length}
+            </Text>
+          </View>
         </View>
-      </View>
+      ) : (
+        <>
+          {/* Onboarding de primeira abertura (dispensável, 3 linhas, botão Começar) */}
+          {showOnboarding && (
+            <View
+              style={[
+                styles.onboardingCard,
+                { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
+              ]}
+            >
+              <View style={styles.onboardingLines}>
+                <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+                  • Chute, dúvida e certeza mudam a revisão.
+                </Text>
+                <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+                  • Certeza + erro vira ponto cego e volta logo.
+                </Text>
+                <Text style={[styles.onboardingLine, { color: tokens.textPrimary }]}>
+                  • Dúvida acertada não conta como domínio.
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  triggerLightHaptic();
+                  onDismissOnboarding?.();
+                }}
+                activeOpacity={0.85}
+                style={[styles.onboardingBtn, { backgroundColor: tokens.primary }]}
+              >
+                <Text style={styles.onboardingBtnText}>Começar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-      {/* 3. Carrossel de Categorias (32px de altura) */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoryScroll}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            triggerLightHaptic();
-            setSelectedCategory('all');
-          }}
-          activeOpacity={0.85}
-          style={[
-            styles.categoryPill,
-            selectedCategory === 'all'
-              ? { backgroundColor: tokens.primary, borderColor: tokens.primary }
-              : { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Text
-            style={[
-              styles.categoryPillText,
-              { color: selectedCategory === 'all' ? '#ffffff' : tokens.textMuted },
-            ]}
+          {/* 1. Banner Fila do Dia (64px, bloco único) */}
+          <FilaDoDiaBanner
+            fila={filaDoDia}
+            isFilaActive={isFilaSRSActive}
+            onToggleFila={() => {
+              setIsFilaSRSActive((prev) => !prev);
+              setCurrentIndex(0);
+            }}
+            colors={legacyColors}
+            isDark={isDark}
+          />
+
+          {/* 2. Linha de controles (32px) */}
+          <View style={styles.controlsRow}>
+            <View style={styles.controlsLeft}>
+              {/* Chip da categoria ativa */}
+              <View
+                style={[
+                  styles.controlChip,
+                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                ]}
+              >
+                <Text style={[styles.controlChipText, { color: tokens.textPrimary }]}>
+                  {selectedCategory === 'all' ? 'Todas' : selectedCategory.split(' ')[0]}
+                </Text>
+              </View>
+
+              {/* Chip da dificuldade */}
+              <View
+                style={[
+                  styles.controlChip,
+                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                ]}
+              >
+                <Text style={[styles.controlChipText, { color: tokens.textMuted }]}>
+                  {filtros?.dificuldade && filtros.dificuldade !== 'all'
+                    ? filtros.dificuldade
+                    : currentQuestion
+                    ? currentQuestion.difficulty
+                    : 'Todas'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.controlsRight}>
+              {/* Botão Shuffle */}
+              {onShuffle && (
+                <TouchableOpacity
+                  onPress={onShuffle}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.controlIconBtn,
+                    { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                  ]}
+                  accessibilityLabel="Embaralhar questões"
+                >
+                  <Ionicons name="shuffle" size={16} color={tokens.textMuted} />
+                </TouchableOpacity>
+              )}
+
+              {/* Botão Atalho Mural de Macetes */}
+              {onOpenMural && (
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerLightHaptic();
+                    onOpenMural();
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.maceteQuickBtn,
+                    {
+                      backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+                      borderColor: tokens.warning,
+                    },
+                  ]}
+                  accessibilityLabel="Ver mural de macetes"
+                >
+                  <Ionicons name="bulb" size={15} color={tokens.warning} />
+                  <Text style={[styles.maceteQuickText, { color: tokens.warning }]}>Macetes</Text>
+                </TouchableOpacity>
+              )}
+
+              {/* Botão Filtros */}
+              <TouchableOpacity
+                onPress={() => {
+                  triggerLightHaptic();
+                  onOpenFiltersModal();
+                }}
+                activeOpacity={0.85}
+                style={[
+                  styles.controlIconBtn,
+                  { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                ]}
+                accessibilityLabel="Abrir filtros"
+              >
+                <Ionicons name="options-outline" size={16} color={tokens.primary} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* 3. Carrossel de Categorias (32px de altura) */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScroll}
           >
-            Todas ({questionsData.length})
-          </Text>
-        </TouchableOpacity>
-
-        {categories.map((cat) => {
-          const isSel = selectedCategory === cat;
-          const count = questionsData.filter((q) => q.category === cat).length;
-          return (
             <TouchableOpacity
-              key={cat}
               onPress={() => {
                 triggerLightHaptic();
-                setSelectedCategory(cat);
+                setSelectedCategory('all');
               }}
               activeOpacity={0.85}
               style={[
                 styles.categoryPill,
-                isSel
+                selectedCategory === 'all'
                   ? { backgroundColor: tokens.primary, borderColor: tokens.primary }
                   : { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
               ]}
@@ -330,35 +376,65 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
               <Text
                 style={[
                   styles.categoryPillText,
-                  { color: isSel ? '#ffffff' : tokens.textMuted },
+                  { color: selectedCategory === 'all' ? '#ffffff' : tokens.textMuted },
                 ]}
               >
-                {cat.split(' ')[0]} ({count})
+                Todas ({questionsData.length})
               </Text>
             </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
 
-      {/* 4. Barra de progresso de 3px com fração meta 12 à direita */}
-      <View style={styles.progressRow}>
-        <View style={[styles.progressTrack, { backgroundColor: tokens.surface }]}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${Math.round(progressRatio * 100)}%`,
-                backgroundColor: tokens.primary,
-              },
-            ]}
-          />
-        </View>
-        <Text style={[styles.progressFraction, { color: tokens.textMuted }]}>
-          {filteredQuestions.length > 0
-            ? `${currentIndex + 1}/${filteredQuestions.length}`
-            : '0/0'}
-        </Text>
-      </View>
+            {categories.map((cat) => {
+              const isSel = selectedCategory === cat;
+              const count = questionsData.filter((q) => q.category === cat).length;
+              return (
+                <TouchableOpacity
+                  key={cat}
+                  onPress={() => {
+                    triggerLightHaptic();
+                    setSelectedCategory(cat);
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.categoryPill,
+                    isSel
+                      ? { backgroundColor: tokens.primary, borderColor: tokens.primary }
+                      : { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.categoryPillText,
+                      { color: isSel ? '#ffffff' : tokens.textMuted },
+                    ]}
+                  >
+                    {cat.split(' ')[0]} ({count})
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {/* 4. Barra de progresso */}
+          <View style={styles.progressRow}>
+            <View style={[styles.progressTrack, { backgroundColor: tokens.surface }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: `${Math.round(progressRatio * 100)}%`,
+                    backgroundColor: tokens.primary,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[styles.progressFraction, { color: tokens.textMuted }]}>
+              {filteredQuestions.length > 0
+                ? `${currentIndex + 1}/${filteredQuestions.length}`
+                : '0/0'}
+            </Text>
+          </View>
+        </>
+      )}
 
       {/* 5. CARD ÚNICO — A questão é o herói */}
       {filteredQuestions.length === 0 ? (
@@ -399,7 +475,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
           ]}
         >
-          {/* Header do Card: Subtópico + Dificuldade à esquerda, Estrela de favorito à direita (22px) */}
+          {/* Header do Card: Subtópico + Dificuldade à esquerda, Estrela de favorito à direita */}
           <View style={styles.cardMetaRow}>
             <View style={styles.cardMetaLeft}>
               <Text style={[styles.metaText, { color: tokens.textMuted }]}>
@@ -439,37 +515,56 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             {renderStatement(currentQuestion!.statement)}
           </View>
 
-          {/* Alternativas: linhas com letra em círculo de 28. Sem chevron */}
+          {/* Alternativas em botões grandes e táteis com 4 estados distintos */}
           <View style={styles.optionsList}>
             {currentQuestion!.options.map((option, idx) => {
               const letter = String.fromCharCode(65 + idx);
-              const isSelected = selectedOptionIndex === idx;
+              const isConfirmed = isAnswered;
+              const isSelectedPending = pendingOptionIndex === idx;
+              const isConfirmedSelected = selectedOptionIndex === idx;
               const isCorrectOption = idx === currentQuestion!.correctIndex;
 
               let optBg = tokens.cardBg;
               let optBorder = tokens.cardBorder;
+              let optBorderWidth = 1;
+              let letterBg = tokens.surface;
+              let letterColor = tokens.textPrimary;
+              let rightIcon: any = null;
 
-              if (!isAnswered) {
-                if (isSelected) {
-                  optBg = tokens.primarySoft;
+              if (!isConfirmed) {
+                // Estado 1: Não selecionado (default)
+                // Estado 2: Selecionado pré-confirmação
+                if (isSelectedPending) {
+                  optBg = isDark ? 'rgba(37, 99, 235, 0.15)' : '#eff6ff';
                   optBorder = tokens.primary;
+                  optBorderWidth = 2;
+                  letterBg = tokens.primary;
+                  letterColor = '#ffffff';
                 }
               } else {
+                // Estado 3: Correto
+                // Estado 4: Incorreto
                 if (isCorrectOption) {
                   optBg = tokens.successSoft;
                   optBorder = tokens.success;
-                } else if (isSelected && !isCorrectOption) {
+                  optBorderWidth = 2;
+                  letterBg = tokens.success;
+                  letterColor = '#ffffff';
+                  rightIcon = <Ionicons name="checkmark-circle" size={20} color={tokens.success} />;
+                } else if (isConfirmedSelected && !isCorrectOption) {
                   optBg = tokens.dangerSoft;
                   optBorder = tokens.danger;
+                  optBorderWidth = 2;
+                  letterBg = tokens.danger;
+                  letterColor = '#ffffff';
+                  rightIcon = <Ionicons name="close-circle" size={20} color={tokens.danger} />;
                 }
               }
 
               return (
                 <TouchableOpacity
                   key={option}
-                  onPress={() => {
-                    if (!isAnswered) handleSelectOption(idx);
-                  }}
+                  onPress={() => handleSelectPendingOption(idx)}
                   disabled={isAnswered}
                   activeOpacity={0.85}
                   style={[
@@ -477,25 +572,30 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                     {
                       backgroundColor: optBg,
                       borderColor: optBorder,
+                      borderWidth: optBorderWidth,
                     },
                   ]}
                 >
-                  <View style={[styles.letterCircle, { backgroundColor: tokens.surface }]}>
-                    <Text style={[styles.letterText, { color: tokens.textPrimary }]}>
+                  <View style={[styles.letterCircle, { backgroundColor: letterBg }]}>
+                    <Text style={[styles.letterText, { color: letterColor }]}>
                       {letter}
                     </Text>
                   </View>
                   <Text style={[styles.optionText, { color: tokens.textPrimary }]}>
                     {option}
                   </Text>
+                  {rightIcon && <View style={styles.optionRightIcon}>{rightIcon}</View>}
                 </TouchableOpacity>
               );
             })}
           </View>
 
-          {/* Bloco de Certeza (fica abaixo das alternativas e some após responder) */}
+          {/* BLOCO DE CERTEZA & BOTÃO CONFIRMAR (ANTES DE RESPONDER) */}
           {!isAnswered ? (
             <View style={styles.certaintySection}>
+              <Text style={[styles.certaintySectionTitle, { color: tokens.textMuted }]}>
+                Seu nível de confiança nesta resposta:
+              </Text>
               <View style={styles.certaintySegments}>
                 {/* Chute */}
                 <TouchableOpacity
@@ -521,7 +621,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                       { color: selectedCertainty === 1 ? '#ffffff' : tokens.textMuted },
                     ]}
                   >
-                    Chute
+                    🎲 Chute
                   </Text>
                 </TouchableOpacity>
 
@@ -549,7 +649,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                       { color: selectedCertainty === 2 ? '#ffffff' : tokens.textMuted },
                     ]}
                   >
-                    Dúvida
+                    🤔 Dúvida
                   </Text>
                 </TouchableOpacity>
 
@@ -577,12 +677,41 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                       { color: selectedCertainty === 3 ? '#ffffff' : tokens.textMuted },
                     ]}
                   >
-                    Certeza
+                    🎯 Certeza
                   </Text>
                 </TouchableOpacity>
               </View>
 
-              {/* Pular é texto 14 textMuted, sem botão preenchido */}
+              {/* Botão de Confirmação Separado */}
+              <TouchableOpacity
+                onPress={handleConfirmAnswer}
+                disabled={pendingOptionIndex === null}
+                activeOpacity={0.85}
+                style={[
+                  styles.confirmBtn,
+                  {
+                    backgroundColor:
+                      pendingOptionIndex !== null ? tokens.primary : tokens.surface,
+                    opacity: pendingOptionIndex !== null ? 1 : 0.6,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.confirmBtnText,
+                    {
+                      color: pendingOptionIndex !== null ? '#ffffff' : tokens.textMuted,
+                    },
+                  ]}
+                >
+                  Confirmar Resposta
+                </Text>
+                {pendingOptionIndex !== null && (
+                  <Ionicons name="checkmark" size={18} color="#ffffff" />
+                )}
+              </TouchableOpacity>
+
+              {/* Pular questão */}
               <TouchableOpacity
                 onPress={onSkip}
                 activeOpacity={0.85}
@@ -594,9 +723,9 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
               </TouchableOpacity>
             </View>
           ) : (
-            /* FEEDBACK NO MESMO CARD */
+            /* FEEDBACK NO MESMO CARD APÓS CONFIRMAR */
             <View style={styles.feedbackSection}>
-              {/* Faixa única de 1 linha */}
+              {/* Faixa única de feedback */}
               {feedbackTip ? (
                 <View
                   style={[
@@ -627,24 +756,24 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 lastClassification === 'lucky_guess' ? (
                   <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.warningSoft }]}>
                     <Text style={[styles.feedbackBannerText, { color: tokens.warning }]}>
-                      Acertou sem certeza
+                      Acertou sem certeza · agendado para consolidação
                     </Text>
                   </View>
                 ) : (
                   <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.successSoft }]}>
                     <Text style={[styles.feedbackBannerText, { color: tokens.success }]}>
-                      Certa
+                      ✓ Resposta Correta! +10 XP
                     </Text>
                   </View>
                 )
               ) : (
                 <View style={[styles.feedbackBannerRow, { backgroundColor: tokens.dangerSoft }]}>
                   <Text style={[styles.feedbackBannerText, { color: tokens.danger }]}>
-                    Errada
+                    ✗ Resposta Incorreta
                   </Text>
                   {lastClassification === 'blind_spot' && (
                     <Text style={[styles.feedbackSubText, { color: tokens.danger }]}>
-                      Ponto cego · volta amanhã
+                      Ponto cego detectado (certeza + erro) · volta amanhã
                     </Text>
                   )}
                 </View>
@@ -662,7 +791,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 ]}
               >
                 <View style={styles.maceteHeader}>
-                  <Ionicons name="bulb" size={17} color={tokens.warning} />
+                  <Ionicons name="bulb" size={18} color={tokens.warning} />
                   <Text style={[styles.maceteLabel, { color: tokens.warning }]}>
                     MACETE & RAIO-X DA QUESTÃO
                   </Text>
@@ -696,13 +825,25 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 )}
               </View>
 
-              {/* Botão Próxima: full-width, 48 de altura, primary, radius 12, texto "Próxima" */}
+              {/* Botão Próxima / Concluir Sessão */}
               <TouchableOpacity
                 onPress={onNext}
                 activeOpacity={0.85}
-                style={[styles.nextBtn, { backgroundColor: tokens.primary }]}
+                style={[
+                  styles.nextBtn,
+                  {
+                    backgroundColor: isLastQuestion ? tokens.success : tokens.primary,
+                  },
+                ]}
               >
-                <Text style={styles.nextBtnText}>Próxima</Text>
+                <Text style={styles.nextBtnText}>
+                  {isLastQuestion ? 'Concluir Sessão' : 'Próxima Questão'}
+                </Text>
+                <Ionicons
+                  name={isLastQuestion ? 'checkmark-circle' : 'arrow-forward'}
+                  size={18}
+                  color="#ffffff"
+                />
               </TouchableOpacity>
             </View>
           )}
@@ -710,11 +851,13 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
       )}
 
       {/* Sessão footer */}
-      <View style={styles.sessionFooter}>
-        <Text style={[styles.sessionFooterText, { color: tokens.textMuted }]}>
-          Sessão: {sessionStats.attempts} respostas · {sessionStats.correct} acertos
-        </Text>
-      </View>
+      {!isSessionMode && (
+        <View style={styles.sessionFooter}>
+          <Text style={[styles.sessionFooterText, { color: tokens.textMuted }]}>
+            Sessão: {sessionStats.attempts} respostas · {sessionStats.correct} acertos
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -723,8 +866,49 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.block,
-    paddingBottom: 24,
+    paddingBottom: 32,
     gap: spacing.block,
+  },
+  sessionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 4,
+  },
+  exitBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sessionHeaderInfo: {
+    flex: 1,
+    gap: 6,
+  },
+  sessionHeaderTitle: {
+    fontSize: 13,
+    fontWeight: weights.meta,
+  },
+  sessionProgressTrack: {
+    height: 8,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  sessionProgressFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  sessionCounterBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  sessionCounterText: {
+    fontSize: 13,
+    fontWeight: weights.title,
   },
   onboardingCard: {
     padding: 16,
@@ -756,7 +940,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 32,
   },
   controlsLeft: {
     flexDirection: 'row',
@@ -769,40 +952,47 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   controlChip: {
-    height: 32,
     paddingHorizontal: 10,
-    borderRadius: radius.chip,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   controlChipText: {
-    fontSize: typography.meta,
+    fontSize: typography.caption,
     fontWeight: weights.meta,
   },
   controlIconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.chip,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  maceteQuickBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  maceteQuickText: {
+    fontSize: 12,
+    fontWeight: weights.title,
   },
   categoryScroll: {
-    height: 32,
-    alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   categoryPill: {
-    height: 32,
     paddingHorizontal: 12,
-    borderRadius: radius.chip,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   categoryPillText: {
-    fontSize: typography.meta,
+    fontSize: 12,
     fontWeight: weights.meta,
   },
   progressRow: {
@@ -812,152 +1002,178 @@ const styles = StyleSheet.create({
   },
   progressTrack: {
     flex: 1,
-    height: 3,
-    borderRadius: 1.5,
+    height: 6,
+    borderRadius: 3,
     overflow: 'hidden',
   },
   progressFill: {
-    height: 3,
-    borderRadius: 1.5,
+    height: '100%',
+    borderRadius: 3,
   },
   progressFraction: {
-    fontSize: typography.meta,
+    fontSize: 12,
     fontWeight: weights.meta,
   },
-  questionCard: {
+  emptyCard: {
+    padding: 32,
     borderRadius: radius.card,
     borderWidth: 1,
-    padding: 16,
-    gap: spacing.block,
+    alignItems: 'center',
+    gap: 12,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: weights.title,
+    textAlign: 'center',
+  },
+  emptyDesc: {
+    fontSize: typography.body,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  emptyActionBtn: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: radius.control,
+    marginTop: 8,
+  },
+  emptyActionBtnText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: weights.title,
+  },
+  questionCard: {
+    padding: 18,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    gap: 16,
   },
   cardMetaRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   cardMetaLeft: {
     flex: 1,
   },
   metaText: {
-    fontSize: typography.meta,
+    fontSize: typography.caption,
     fontWeight: weights.meta,
   },
   supportTextBox: {
-    padding: 10,
-    borderRadius: radius.chip,
+    padding: 12,
+    borderRadius: radius.control,
     borderWidth: 1,
   },
   supportTextContent: {
-    fontSize: typography.meta,
-    fontWeight: weights.meta,
+    fontSize: typography.caption,
     lineHeight: 18,
+    fontStyle: 'italic',
   },
-  statementBox: {
-    //
-  },
+  statementBox: {},
   statementText: {
     fontSize: typography.statement,
-    fontWeight: weights.title,
-    lineHeight: 28,
+    fontWeight: weights.statement,
+    lineHeight: typography.statementLineHeight,
   },
   optionsList: {
-    gap: 8,
+    gap: 10,
   },
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: radius.control,
-    borderWidth: 1.5,
+    padding: 14,
+    borderRadius: radius.card,
+    gap: 12,
   },
   letterCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   letterText: {
-    fontSize: typography.body,
-    fontWeight: weights.number,
+    fontSize: 14,
+    fontWeight: weights.title,
   },
   optionText: {
-    fontSize: typography.option,
-    fontWeight: weights.meta,
     flex: 1,
-    marginLeft: 10,
+    fontSize: 15,
+    fontWeight: weights.body,
+    lineHeight: 22,
+  },
+  optionRightIcon: {
+    marginLeft: 4,
   },
   certaintySection: {
-    marginTop: 4,
-    gap: 10,
+    gap: 12,
+    marginTop: 6,
+  },
+  certaintySectionTitle: {
+    fontSize: 12,
+    fontWeight: weights.meta,
   },
   certaintySegments: {
     flexDirection: 'row',
-    height: 40,
     gap: 8,
   },
   certaintySegment: {
     flex: 1,
-    height: 40,
-    borderRadius: radius.chip,
+    paddingVertical: 10,
+    borderRadius: radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
   certaintyText: {
-    fontSize: typography.body,
+    fontSize: 13,
+    fontWeight: weights.meta,
+  },
+  confirmBtn: {
+    height: 50,
+    borderRadius: radius.control,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  confirmBtnText: {
+    fontSize: 16,
     fontWeight: weights.title,
   },
   skipBtn: {
-    paddingVertical: 6,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 6,
   },
   skipBtnText: {
-    fontSize: typography.body,
-    fontWeight: weights.meta,
+    fontSize: 13,
+    fontWeight: weights.body,
   },
   feedbackSection: {
-    gap: 10,
-    marginTop: 4,
+    gap: 14,
   },
   feedbackBannerRow: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: radius.chip,
+    padding: 12,
+    borderRadius: radius.control,
+    gap: 4,
   },
   feedbackBannerText: {
-    fontSize: typography.body,
+    fontSize: 14,
     fontWeight: weights.title,
   },
   feedbackSubText: {
-    fontSize: typography.meta,
-    fontWeight: weights.meta,
-    marginTop: 2,
-  },
-  maceteQuickBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
-    height: 32,
-    borderRadius: radius.chip,
-    borderWidth: 1,
-  },
-  maceteQuickText: {
-    fontSize: typography.meta,
-    fontWeight: weights.title,
+    fontSize: 12,
   },
   maceteBox: {
-    padding: 12,
-    borderRadius: radius.card,
-    gap: 4,
+    padding: 16,
+    borderRadius: radius.control,
+    gap: 10,
   },
   maceteHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
+    gap: 8,
   },
   maceteLabel: {
     fontSize: 12,
@@ -965,44 +1181,45 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   maceteText: {
-    fontSize: typography.body,
-    fontWeight: weights.title,
+    fontSize: 14,
+    fontWeight: weights.body,
     lineHeight: 21,
+    fontStyle: 'italic',
   },
   trapAlertInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    padding: 8,
+    gap: 8,
+    padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    marginTop: 6,
   },
   trapAlertInnerText: {
-    fontSize: 12,
-    fontWeight: '700',
     flex: 1,
+    fontSize: 12,
+    fontWeight: weights.meta,
+    lineHeight: 16,
   },
   legalBasisRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    marginTop: 6,
+    gap: 6,
   },
   legalBasisText: {
-    fontSize: 12,
-    fontWeight: '500',
-    flex: 1,
+    fontSize: 11,
+    lineHeight: 15,
   },
   nextBtn: {
-    height: 48,
+    height: 50,
     borderRadius: radius.control,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
   },
   nextBtnText: {
     color: '#ffffff',
-    fontSize: typography.body,
+    fontSize: 16,
     fontWeight: weights.title,
   },
   sessionFooter: {
@@ -1010,39 +1227,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   sessionFooterText: {
-    fontSize: typography.meta,
-    fontWeight: weights.meta,
-  },
-  emptyCard: {
-    borderRadius: radius.card,
-    borderWidth: 1,
-    padding: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  emptyTitle: {
-    fontSize: typography.option,
-    fontWeight: weights.title,
-    textAlign: 'center',
-  },
-  emptyDesc: {
-    fontSize: typography.body,
-    fontWeight: weights.meta,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  emptyActionBtn: {
-    height: 40,
-    paddingHorizontal: 16,
-    borderRadius: radius.control,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
-  },
-  emptyActionBtnText: {
-    color: '#ffffff',
-    fontSize: typography.body,
-    fontWeight: weights.title,
+    fontSize: 12,
   },
 });
