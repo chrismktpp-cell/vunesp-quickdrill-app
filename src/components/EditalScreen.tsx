@@ -110,7 +110,7 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
           style={[
             styles.viewToggleBtn,
             visualizacao === 'trilha' && {
-              backgroundColor: '#58cc02',
+              backgroundColor: colors.primary,
             },
           ]}
         >

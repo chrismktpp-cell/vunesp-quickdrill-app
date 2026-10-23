@@ -44,24 +44,24 @@ interface TrilhaNode {
   subtitulo: string;
 }
 
-const DUO_PALETTE = {
-  // Dominado (Verde Duolingo)
-  success: '#58cc02',
-  successDark: '#46a302',
-  // Aberto / Atual (Azul Duolingo)
-  info: '#1cb0f6',
-  infoDark: '#1596d0',
-  // Lendário (Roxo Conquista)
-  legendary: '#ce82ff',
-  legendaryDark: '#9945ff',
-  // Travado (Cinza)
-  lockedLight: '#e5e5e5',
-  lockedDarkShadowLight: '#cfcfcf',
-  lockedDark: '#334155',
-  lockedDarkShadowDark: '#1e293b',
-  // Chefão Final (Ouro)
-  boss: '#ffc800',
-  bossDark: '#d99b00',
+const APROVAFOX_TRILHA_PALETTE = {
+  // Dominado (Verde AprovaFox)
+  success: '#42D392',
+  successDark: '#2AAE75',
+  // Aberto / Atual (Violeta AprovaFox)
+  info: '#7657F6',
+  infoDark: '#5E3CE3',
+  // Lendário (Âmbar Raposa)
+  legendary: '#FFB547',
+  legendaryDark: '#E09832',
+  // Travado (Superfícies Noturnas)
+  lockedLight: '#293653',
+  lockedDarkShadowLight: '#18223A',
+  lockedDark: '#293653',
+  lockedDarkShadowDark: '#121A2E',
+  // Chefão Final (Ouro Raposa)
+  boss: '#FFB547',
+  bossDark: '#E09832',
 };
 
 const X_OFFSETS = [0, 50, 25, -35, -55, -20, 40, 50, 0];
@@ -164,14 +164,14 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
     if (isBoss) {
       if (status === 'travado') {
         return {
-          top: isDark ? DUO_PALETTE.lockedDark : DUO_PALETTE.lockedLight,
-          bottom: isDark ? DUO_PALETTE.lockedDarkShadowDark : DUO_PALETTE.lockedDarkShadowLight,
+          top: isDark ? APROVAFOX_TRILHA_PALETTE.lockedDark : APROVAFOX_TRILHA_PALETTE.lockedLight,
+          bottom: isDark ? APROVAFOX_TRILHA_PALETTE.lockedDarkShadowDark : APROVAFOX_TRILHA_PALETTE.lockedDarkShadowLight,
           icon: isDark ? '#94a3b8' : '#71717a',
         };
       }
       return {
-        top: DUO_PALETTE.boss,
-        bottom: DUO_PALETTE.bossDark,
+        top: APROVAFOX_TRILHA_PALETTE.boss,
+        bottom: APROVAFOX_TRILHA_PALETTE.bossDark,
         icon: '#ffffff',
       };
     }
@@ -179,27 +179,27 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
     switch (status) {
       case 'lendario':
         return {
-          top: DUO_PALETTE.legendary,
-          bottom: DUO_PALETTE.legendaryDark,
+          top: APROVAFOX_TRILHA_PALETTE.legendary,
+          bottom: APROVAFOX_TRILHA_PALETTE.legendaryDark,
           icon: '#ffffff',
         };
       case 'dominado':
         return {
-          top: DUO_PALETTE.success,
-          bottom: DUO_PALETTE.successDark,
+          top: APROVAFOX_TRILHA_PALETTE.success,
+          bottom: APROVAFOX_TRILHA_PALETTE.successDark,
           icon: '#ffffff',
         };
       case 'aberto':
         return {
-          top: DUO_PALETTE.info,
-          bottom: DUO_PALETTE.infoDark,
+          top: APROVAFOX_TRILHA_PALETTE.info,
+          bottom: APROVAFOX_TRILHA_PALETTE.infoDark,
           icon: '#ffffff',
         };
       case 'travado':
       default:
         return {
-          top: isDark ? DUO_PALETTE.lockedDark : DUO_PALETTE.lockedLight,
-          bottom: isDark ? DUO_PALETTE.lockedDarkShadowDark : DUO_PALETTE.lockedDarkShadowLight,
+          top: isDark ? APROVAFOX_TRILHA_PALETTE.lockedDark : APROVAFOX_TRILHA_PALETTE.lockedLight,
+          bottom: isDark ? APROVAFOX_TRILHA_PALETTE.lockedDarkShadowDark : APROVAFOX_TRILHA_PALETTE.lockedDarkShadowLight,
           icon: isDark ? '#94a3b8' : '#71717a',
         };
     }
@@ -230,7 +230,7 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
 
           const isPathActive = node.status === 'dominado' || node.status === 'lendario';
           const strokeColor = isPathActive
-            ? DUO_PALETTE.success
+            ? APROVAFOX_TRILHA_PALETTE.success
             : isDark
             ? '#334155'
             : '#e5e5e5';
@@ -494,8 +494,8 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
                         {
                           backgroundColor:
                             selectedNode.tipo === 'boss'
-                              ? DUO_PALETTE.bossDark
-                              : DUO_PALETTE.successDark,
+                              ? APROVAFOX_TRILHA_PALETTE.bossDark
+                              : APROVAFOX_TRILHA_PALETTE.successDark,
                         },
                       ]}
                     >
@@ -505,8 +505,8 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
                           {
                             backgroundColor:
                               selectedNode.tipo === 'boss'
-                                ? DUO_PALETTE.boss
-                                : DUO_PALETTE.success,
+                                ? APROVAFOX_TRILHA_PALETTE.boss
+                                : APROVAFOX_TRILHA_PALETTE.success,
                           },
                         ]}
                       >
