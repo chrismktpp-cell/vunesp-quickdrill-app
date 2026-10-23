@@ -9,6 +9,7 @@ import type {
   SimuladoResultado,
 } from '../types/schema';
 import { processarRespostaSRS } from '../services/srsEngine';
+import { calcularXpResposta, calcularNivel, formatarDataCivil, META_DIARIA_PADRAO } from '../services/xpEngine';
 import questionsData from '../data/questions.json';
 
 // Chaves Versionadas V2 (com envelope { v: 2, gen: number, savedAt: number, data: T })
@@ -142,12 +143,20 @@ export function migrate(raw: unknown): UserStats {
     const data = parsed.data;
     const attempts = Array.isArray(data.attempts) ? data.attempts.slice(0, MAX_ATTEMPTS) : [];
     const acum = extrairAcumuladores(data, attempts);
+    const xpCalculado = typeof data.xp === 'number' ? data.xp : (acum.totalAcertos * 10 + acum.totalErros * 2);
+    const nivelCalculado = typeof data.nivel === 'number' ? data.nivel : calcularNivel(xpCalculado).nivel;
     return {
       ...data,
       attempts,
       totalAcertos: acum.totalAcertos,
       totalErros: acum.totalErros,
       porCategoria: acum.porCategoria,
+      xp: xpCalculado,
+      nivel: nivelCalculado,
+      metaDiaria: typeof data.metaDiaria === 'number' ? data.metaDiaria : META_DIARIA_PADRAO,
+      questoesHoje: typeof data.questoesHoje === 'number' ? data.questoesHoje : 0,
+      dataUltimoEstudo: typeof data.dataUltimoEstudo === 'string' ? data.dataUltimoEstudo : undefined,
+      conquistasDesbloqueadas: Array.isArray(data.conquistasDesbloqueadas) ? data.conquistasDesbloqueadas : [],
       gen: typeof parsed.gen === 'number' ? parsed.gen : (typeof data.gen === 'number' ? data.gen : 1),
     };
   }
@@ -307,6 +316,13 @@ export function aplicarResposta(
 
   const updatedAttempts = [newAttempt, ...(prevStats.attempts || [])].slice(0, MAX_ATTEMPTS);
 
+  // Gamificação: XP, nível e contador do dia
+  const xpGanho = calcularXpResposta(isCorrect, certainty);
+  const newXp = (prevStats.xp ?? 0) + xpGanho;
+  const nivelInfo = calcularNivel(newXp);
+  const hoje = formatarDataCivil(now);
+  const questoesHoje = prevStats.dataUltimoEstudo === hoje ? (prevStats.questoesHoje ?? 0) + 1 : 1;
+
   const newStats: UserStats = {
     attempts: updatedAttempts,
     streak: newStreak,
@@ -319,6 +335,12 @@ export function aplicarResposta(
     totalErros: newTotalErros,
     porCategoria,
     gen: prevStats.gen || 1,
+    xp: newXp,
+    nivel: nivelInfo.nivel,
+    questoesHoje,
+    dataUltimoEstudo: hoje,
+    metaDiaria: prevStats.metaDiaria || META_DIARIA_PADRAO,
+    conquistasDesbloqueadas: prevStats.conquistasDesbloqueadas || [],
   };
 
   return { newStats, classification, feedbackTip };
@@ -455,6 +477,12 @@ export async function loadInitialStats(): Promise<UserStats> {
         totalErros: acum.totalErros,
         porCategoria: acum.porCategoria,
         gen: metaGen,
+        xp: typeof meta.xp === 'number' ? meta.xp : (acum.totalAcertos * 10 + acum.totalErros * 2),
+        nivel: typeof meta.nivel === 'number' ? meta.nivel : calcularNivel(typeof meta.xp === 'number' ? meta.xp : (acum.totalAcertos * 10 + acum.totalErros * 2)).nivel,
+        metaDiaria: typeof meta.metaDiaria === 'number' ? meta.metaDiaria : META_DIARIA_PADRAO,
+        questoesHoje: typeof meta.questoesHoje === 'number' ? meta.questoesHoje : 0,
+        dataUltimoEstudo: typeof meta.dataUltimoEstudo === 'string' ? meta.dataUltimoEstudo : undefined,
+        conquistasDesbloqueadas: Array.isArray(meta.conquistasDesbloqueadas) ? meta.conquistasDesbloqueadas : [],
       };
 
       // Poda de órfãos
@@ -535,6 +563,12 @@ export function saveAttemptToStorage(newStats: UserStats): Promise<void> {
         totalAcertos: newStats.totalAcertos,
         totalErros: newStats.totalErros,
         porCategoria: newStats.porCategoria,
+        xp: newStats.xp ?? 0,
+        nivel: newStats.nivel ?? 1,
+        metaDiaria: newStats.metaDiaria ?? META_DIARIA_PADRAO,
+        questoesHoje: newStats.questoesHoje ?? 0,
+        dataUltimoEstudo: newStats.dataUltimoEstudo,
+        conquistasDesbloqueadas: newStats.conquistasDesbloqueadas || [],
       };
 
       const cappedAttempts = (newStats.attempts || []).slice(0, MAX_ATTEMPTS);
