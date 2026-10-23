@@ -49,22 +49,15 @@ import { SessionSummary, SessionSummaryData } from './src/components/SessionSumm
 import { FiltrosModal } from './src/components/FiltrosModal';
 import { gerarFilaDoDia } from './src/services/srsEngine';
 import { filtrarQuestoes, QuestionFilters } from './src/services/filterEngine';
+import { DEFAULT_FILTERS } from './src/constants/filters';
 import { converterErrosSimuladoParaSRS } from './src/services/simuladoService';
 import {
   calcularXpResposta,
   XP_BONUS_SESSAO_PERFEITA,
   calcularNivel,
 } from './src/services/xpEngine';
-
-const CATEGORIES: CategoryType[] = [
-  'Crase (VUNESP)',
-  'Sujeito Oracional e Transitividade',
-  'Gestão de Patrimônio e Bens Públicos',
-  'Nova Lei de Licitações (Lei 14.133/2021)',
-  'Matemática e Raciocínio Lógico',
-  'Língua Portuguesa (Agente Patrimonial)',
-  'Conhecimentos Específicos - Agente Patrimonial',
-];
+import { CATEGORIES } from './src/types/schema';
+import { getCategoryColor as getCategoryColorTheme } from './src/theme/categoryPalettes';
 
 // Fisher-Yates shuffle
 function shuffleArray<T>(array: T[]): T[] {
@@ -125,18 +118,7 @@ export default function App() {
 
   // Modal de Filtros Avançados
   const [filtrosModalOpen, setFiltrosModalOpen] = useState<boolean>(false);
-  const [filtros, setFiltros] = useState<QuestionFilters>({
-    category: 'all',
-    dificuldade: 'all',
-    statusEstudo: 'todas',
-    termoBusca: '',
-    banca: 'all',
-    orgao: 'all',
-    prova: 'all',
-    cargo: 'all',
-    cidade: 'all',
-    ano: 'all',
-  });
+  const [filtros, setFiltros] = useState<QuestionFilters>(DEFAULT_FILTERS);
 
   const [selectedCertainty, setSelectedCertainty] = useState<CertaintyLevel>(3);
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
@@ -559,32 +541,7 @@ export default function App() {
     subtle: tokens.surface,
   };
 
-  const getCategoryColor = (cat: CategoryType) => {
-    const modeKey = isDark ? 'dark' : 'light';
-    switch (cat) {
-      case 'Crase (VUNESP)':
-        return categoryColors.crase[modeKey];
-      case 'Sujeito Oracional e Transitividade':
-        return categoryColors.sujeito[modeKey];
-      case 'Gestão de Patrimônio e Bens Públicos':
-        return categoryColors.patrimonio[modeKey];
-      case 'Nova Lei de Licitações (Lei 14.133/2021)':
-        return categoryColors.licitacao[modeKey];
-      case 'Língua Portuguesa (Agente Patrimonial)':
-        return categoryColors.crase[modeKey];
-      case 'Matemática e Raciocínio Lógico':
-        return {
-          accent: isDark ? '#38bdf8' : '#0284c7',
-          soft: isDark ? 'rgba(56, 189, 248, 0.14)' : 'rgba(2, 132, 199, 0.10)',
-          border: isDark ? '#0284c7' : '#38bdf8',
-          badgeText: isDark ? '#bae6fd' : '#0369a1',
-        };
-      case 'Conhecimentos Específicos - Agente Patrimonial':
-        return categoryColors.patrimonio[modeKey];
-      default:
-        return categoryColors.crase[modeKey];
-    }
-  };
+  const getCategoryColor = (cat: CategoryType) => getCategoryColorTheme(cat, isDark);
 
   const getDifficultyColor = (diff: Question['difficulty']) => {
     switch (diff) {
@@ -738,7 +695,11 @@ export default function App() {
             onToggleFavorite={handleToggleFavorite}
             onOpenMural={() => setIsMuralOpen(true)}
             onOpenFiltersModal={() => setFiltrosModalOpen(true)}
-            onResetFilters={() => {}}
+            onResetFilters={() => {
+              setFiltros(DEFAULT_FILTERS);
+              setSelectedCategory('all');
+              setMode('all');
+            }}
             setCurrentIndex={() => {}}
             tokens={tokens}
             legacyColors={legacyColors}
@@ -1055,20 +1016,7 @@ export default function App() {
         onClose={() => setFiltrosModalOpen(false)}
         filtros={filtros}
         onChangeFiltros={(novos: QuestionFilters) => setFiltros(novos)}
-        onLimparFiltros={() =>
-          setFiltros({
-            category: 'all',
-            dificuldade: 'all',
-            statusEstudo: 'todas',
-            termoBusca: '',
-            banca: 'all',
-            orgao: 'all',
-            prova: 'all',
-            cargo: 'all',
-            cidade: 'all',
-            ano: 'all',
-          })
-        }
+        onLimparFiltros={() => setFiltros(DEFAULT_FILTERS)}
         totalEncontradas={filteredQuestions.length}
         categories={CATEGORIES}
         colors={legacyColors}

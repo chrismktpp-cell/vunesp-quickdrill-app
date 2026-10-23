@@ -16,6 +16,29 @@ export interface QuestionFilters {
 }
 
 /**
+ * Remove diacríticos/acentos e converte para minúsculas para comparação uniforme.
+ */
+export const normalizeText = (s?: string | number | null): string =>
+  (s ?? '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+
+/**
+ * Compara dois valores com suporte a 'all', undefined e insensibilidade a acentos/caixa.
+ */
+export const matchesFilter = (
+  value: string | number | undefined | null,
+  selected: string | number | undefined | null
+): boolean => {
+  if (!selected || selected === 'all') return true;
+  if (value === undefined || value === null || value === '') return false;
+  return normalizeText(value) === normalizeText(selected);
+};
+
+/**
  * Filtra as questões com base em múltiplos critérios táticos.
  */
 export function filtrarQuestoes(
@@ -37,12 +60,12 @@ export function filtrarQuestoes(
 
     // 2. Matéria
     if (filtros.materia && filtros.materia !== 'all') {
-      if (q.materia && q.materia !== filtros.materia) return false;
+      if (!matchesFilter(q.materia, filtros.materia)) return false;
     }
 
     // 3. Subtópico
     if (filtros.subtopic && filtros.subtopic !== 'all') {
-      if (q.subtopic !== filtros.subtopic) return false;
+      if (!matchesFilter(q.subtopic, filtros.subtopic)) return false;
     }
 
     // 4. Dificuldade
@@ -50,13 +73,13 @@ export function filtrarQuestoes(
       if (q.difficulty !== filtros.dificuldade) return false;
     }
 
-    // 5. Termo de Busca (enunciado, raioX ou opções)
+    // 5. Termo de Busca (normalizado contra acentos e maiúsculas)
     if (filtros.termoBusca && filtros.termoBusca.trim() !== '') {
-      const termo = filtros.termoBusca.trim().toLowerCase();
-      const bateEnunciado = q.statement.toLowerCase().includes(termo);
-      const bateRaioX = q.raioX.toLowerCase().includes(termo);
-      const bateSubtopico = q.subtopic.toLowerCase().includes(termo);
-      const bateOpcoes = q.options.some((opt) => opt.toLowerCase().includes(termo));
+      const termoNorm = normalizeText(filtros.termoBusca);
+      const bateEnunciado = normalizeText(q.statement).includes(termoNorm);
+      const bateRaioX = normalizeText(q.raioX).includes(termoNorm);
+      const bateSubtopico = normalizeText(q.subtopic).includes(termoNorm);
+      const bateOpcoes = q.options.some((opt) => normalizeText(opt).includes(termoNorm));
       if (!bateEnunciado && !bateRaioX && !bateSubtopico && !bateOpcoes) {
         return false;
       }
@@ -79,41 +102,35 @@ export function filtrarQuestoes(
 
     // 7. Banca / Organizadora
     if (filtros.banca && filtros.banca !== 'all') {
-      const qBanca = q.banca || 'VUNESP';
-      if (qBanca !== filtros.banca) return false;
+      const bancaEfetiva = q.banca || (q.category.includes('VUNESP') ? 'VUNESP' : undefined);
+      if (!matchesFilter(bancaEfetiva, filtros.banca)) return false;
     }
 
     // 8. Órgão
     if (filtros.orgao && filtros.orgao !== 'all') {
-      const qOrgao = q.orgao || 'Câmara Municipal de Itanhaém';
-      if (qOrgao !== filtros.orgao) return false;
+      if (!matchesFilter(q.orgao, filtros.orgao)) return false;
     }
 
     // 9. Concurso / Prova
     if (filtros.prova && filtros.prova !== 'all') {
-      const qProva = q.prova || 'Concurso Câmara de Itanhaém';
-      if (qProva !== filtros.prova) return false;
+      if (!matchesFilter(q.prova, filtros.prova)) return false;
     }
 
     // 10. Cargo
     if (filtros.cargo && filtros.cargo !== 'all') {
-      const qCargo = q.cargo || 'Agente de Segurança Legislativa';
-      if (qCargo !== filtros.cargo) return false;
+      if (!matchesFilter(q.cargo, filtros.cargo)) return false;
     }
 
     // 11. Cidade
     if (filtros.cidade && filtros.cidade !== 'all') {
-      const qCidade = q.cidade || 'Itanhaém';
-      if (qCidade !== filtros.cidade) return false;
+      if (!matchesFilter(q.cidade, filtros.cidade)) return false;
     }
 
     // 12. Ano
     if (filtros.ano && filtros.ano !== 'all') {
-      const qAno = q.ano || 2024;
-      if (qAno !== filtros.ano) return false;
+      if (!matchesFilter(q.ano, filtros.ano)) return false;
     }
 
     return true;
   });
 }
-

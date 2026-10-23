@@ -1,11 +1,16 @@
-export type CategoryType = 
-  | 'Crase (VUNESP)'
-  | 'Sujeito Oracional e Transitividade'
-  | 'Gestão de Patrimônio e Bens Públicos'
-  | 'Nova Lei de Licitações (Lei 14.133/2021)'
-  | 'Língua Portuguesa (Agente Patrimonial)'
-  | 'Matemática e Raciocínio Lógico'
-  | 'Conhecimentos Específicos - Agente Patrimonial';
+export const CATEGORIES_LIST = [
+  'Crase (VUNESP)',
+  'Sujeito Oracional e Transitividade',
+  'Gestão de Patrimônio e Bens Públicos',
+  'Nova Lei de Licitações (Lei 14.133/2021)',
+  'Língua Portuguesa (Agente Patrimonial)',
+  'Matemática e Raciocínio Lógico',
+  'Conhecimentos Específicos - Agente Patrimonial',
+] as const;
+
+export type CategoryType = (typeof CATEGORIES_LIST)[number];
+
+export const CATEGORIES: CategoryType[] = [...CATEGORIES_LIST];
 
 export type Banca = 'VUNESP' | 'FCC' | 'FGV' | 'Cebraspe' | 'Geral';
 
@@ -39,6 +44,7 @@ export interface Question {
   raioX: string;
   legalBasis?: string;
   difficulty: Dificuldade;
+  origem?: 'oficial' | 'autoral';
   banca?: Banca | string;
   materia?: Materia | string;
   ano?: number;
