@@ -239,6 +239,7 @@ export const typography = {
   body: 15,
   option: 16,
   statement: 17,
+  statementLineHeight: 24,
   subtitle: 18,
   title: 20,
   hero: 26,
@@ -246,7 +247,9 @@ export const typography = {
 
 export const weights = {
   normal: '400' as const,
+  body: '400' as const,
   meta: '500' as const,
+  statement: '600' as const,
   title: '600' as const,
   number: '700' as const,
   black: '800' as const,
