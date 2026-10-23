@@ -36,6 +36,8 @@ import {
 } from './src/utils/storage';
 import { triggerResponseHaptic, triggerLightHaptic } from './src/utils/haptics';
 import { darkTheme, lightTheme, categoryColors } from './src/theme/tokens';
+import { aprovaFoxColors } from './src/theme/aprovafox';
+import { AprovaFoxLogo } from './src/components/AprovaFoxLogo';
 import { MuralDeMacetes } from './src/components/MuralDeMacetes';
 import { SimuladoScreen } from './src/components/SimuladoScreen';
 import { EditalScreen } from './src/components/EditalScreen';
@@ -88,7 +90,7 @@ interface ActiveStudySession {
 }
 
 export default function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [stats, setStats] = useState<UserStats>({
     attempts: [],
     streak: 0,
@@ -622,11 +624,12 @@ export default function App() {
           ]}
         >
           <View style={styles.headerLeft}>
+            <AprovaFoxLogo size={32} />
             <Text style={[styles.headerTitle, { color: tokens.textPrimary }]}>
-              VUNESP QuickDrill
+              AprovaFox
             </Text>
-            <View style={[styles.tagBadge, { backgroundColor: tokens.primarySoft }]}>
-              <Text style={[styles.tagBadgeText, { color: tokens.primary }]}>
+            <View style={[styles.tagBadge, { backgroundColor: aprovaFoxColors.violetSoft }]}>
+              <Text style={[styles.tagBadgeText, { color: aprovaFoxColors.violetLight }]}>
                 Nível {nivelInfo.nivel}
               </Text>
             </View>
@@ -638,13 +641,13 @@ export default function App() {
               style={[
                 styles.xpBadgeHeader,
                 {
-                  backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
-                  borderColor: tokens.warning,
+                  backgroundColor: aprovaFoxColors.amberSoft,
+                  borderColor: aprovaFoxColors.amber,
                 },
               ]}
             >
-              <Ionicons name="sparkles" size={14} color={tokens.warning} />
-              <Text style={[styles.xpTextHeader, { color: tokens.warning }]}>
+              <Ionicons name="sparkles" size={14} color={aprovaFoxColors.amber} />
+              <Text style={[styles.xpTextHeader, { color: aprovaFoxColors.amber }]}>
                 {stats.xp || 0} XP
               </Text>
             </View>
@@ -653,11 +656,14 @@ export default function App() {
             <View
               style={[
                 styles.streakBadge,
-                { backgroundColor: tokens.warningSoft, borderColor: tokens.warningBorder },
+                {
+                  backgroundColor: aprovaFoxColors.amberSoft,
+                  borderColor: aprovaFoxColors.amber,
+                },
               ]}
             >
-              <Ionicons name="flame" size={15} color={tokens.warning} />
-              <Text style={[styles.streakText, { color: tokens.warning }]}>
+              <Ionicons name="flame" size={15} color={aprovaFoxColors.amber} />
+              <Text style={[styles.streakText, { color: aprovaFoxColors.amber }]}>
                 {stats.streak || 0}
               </Text>
             </View>

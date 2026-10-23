@@ -16,7 +16,8 @@ import { calcularNivel, avaliarConquistas } from '../services/xpEngine';
 import { triggerLightHaptic } from '../utils/haptics';
 import { exportarBackupArquivo, selecionarArquivoWeb } from '../utils/backupService';
 import { validarBackup } from '../utils/storage';
-import { radius, typography, weights, spacing } from '../theme/tokens';
+import { aprovaFoxColors, radius, typography, weights, spacing } from '../theme/aprovafox';
+import { AprovaFoxLogo } from './AprovaFoxLogo';
 
 export interface ProfileScreenProps {
   stats: UserStats;
@@ -26,8 +27,8 @@ export interface ProfileScreenProps {
   onUpdateDailyGoal: (newGoal: number) => void;
   onResetStats: () => void;
   onRestaurarBackup?: (backupData: any) => Promise<void>;
-  tokens: any;
-  isDark: boolean;
+  tokens?: any;
+  isDark?: boolean;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -38,8 +39,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onUpdateDailyGoal,
   onResetStats,
   onRestaurarBackup,
-  tokens,
-  isDark,
 }) => {
   const [modalImportAberto, setModalImportAberto] = useState(false);
   const [textoJsonImport, setTextoJsonImport] = useState('');
@@ -121,48 +120,41 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   return (
     <ScrollView
-      contentContainerStyle={[styles.container, { backgroundColor: tokens.bg }]}
+      contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {/* 1. PERFIL DO ESTUDANTE */}
-      <View
-        style={[
-          styles.profileHero,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
-        <View style={[styles.avatarCircle, { backgroundColor: 'rgba(37, 99, 235, 0.15)' }]}>
-          <Ionicons name="school" size={44} color={tokens.primary} />
+      {/* 1. PERFIL DO ESTUDANTE COM IDENTIDADE APROVAFOX */}
+      <View style={styles.profileHero}>
+        <View style={styles.avatarCircle}>
+          <AprovaFoxLogo size={52} />
         </View>
 
         <View style={styles.heroInfo}>
           <View style={styles.nivelBadge}>
-            <Ionicons name="ribbon" size={14} color="#ffffff" />
-            <Text style={styles.nivelBadgeText}>Nível {nivelInfo.nivel}</Text>
+            <Ionicons name="sparkles" size={13} color={aprovaFoxColors.amber} />
+            <Text style={styles.nivelBadgeText}>Nível {nivelInfo.nivel} · {nivelInfo.titulo}</Text>
           </View>
-          <Text style={[styles.tituloNivel, { color: tokens.textPrimary }]}>
-            {nivelInfo.titulo}
-          </Text>
-          <Text style={[styles.cargoText, { color: tokens.textMuted }]}>
-            Agente de Vigilância Patrimonial · Itanhaém
+          <Text style={styles.sloganText}>"Estude esperto. Passe preparado."</Text>
+          <Text style={styles.cargoText}>
+            Prefeitura de Itanhaém · Agente de Vigilância Patrimonial
           </Text>
         </View>
 
         {/* Barra de XP para o próximo nível */}
         <View style={styles.xpProgressContainer}>
           <View style={styles.xpLabelRow}>
-            <Text style={[styles.xpLabel, { color: tokens.textMuted }]}>
+            <Text style={styles.xpLabel}>
               {xp} XP Acumulados
             </Text>
-            <Text style={[styles.xpNextLabel, { color: tokens.textMuted }]}>
+            <Text style={styles.xpNextLabel}>
               Próximo nível: {nivelInfo.xpProximoNivel} XP
             </Text>
           </View>
-          <View style={[styles.xpTrack, { backgroundColor: tokens.surface }]}>
+          <View style={styles.xpTrack}>
             <View
               style={[
                 styles.xpFill,
-                { width: `${nivelInfo.progressoPercentual}%`, backgroundColor: tokens.warning },
+                { width: `${nivelInfo.progressoPercentual}%` },
               ]}
             />
           </View>
@@ -171,74 +163,49 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* 2. ESTATÍSTICAS ACUMULADAS */}
       <View style={styles.statsGrid}>
-        <View
-          style={[
-            styles.statCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Ionicons name="flame" size={20} color={tokens.warning} />
-          <Text style={[styles.statValue, { color: tokens.textPrimary }]}>
+        <View style={styles.statCard}>
+          <Ionicons name="flame" size={20} color={aprovaFoxColors.amber} />
+          <Text style={styles.statValue}>
             {stats.streak || 0}d
           </Text>
-          <Text style={[styles.statLabel, { color: tokens.textMuted }]}>Sequência</Text>
+          <Text style={styles.statLabel}>Sequência</Text>
         </View>
 
-        <View
-          style={[
-            styles.statCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Ionicons name="checkmark-done" size={20} color={tokens.success} />
-          <Text style={[styles.statValue, { color: tokens.textPrimary }]}>
+        <View style={styles.statCard}>
+          <Ionicons name="checkmark-done" size={20} color={aprovaFoxColors.success} />
+          <Text style={styles.statValue}>
             {taxaAcerto}%
           </Text>
-          <Text style={[styles.statLabel, { color: tokens.textMuted }]}>Taxa Geral</Text>
+          <Text style={styles.statLabel}>Taxa Geral</Text>
         </View>
 
-        <View
-          style={[
-            styles.statCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Ionicons name="help-circle" size={20} color={tokens.primary} />
-          <Text style={[styles.statValue, { color: tokens.textPrimary }]}>
+        <View style={styles.statCard}>
+          <Ionicons name="help-circle" size={20} color={aprovaFoxColors.violet} />
+          <Text style={styles.statValue}>
             {totalQuestoes}
           </Text>
-          <Text style={[styles.statLabel, { color: tokens.textMuted }]}>Resolvidas</Text>
+          <Text style={styles.statLabel}>Resolvidas</Text>
         </View>
 
-        <View
-          style={[
-            styles.statCard,
-            { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-          ]}
-        >
-          <Ionicons name="clipboard" size={20} color={tokens.primary} />
-          <Text style={[styles.statValue, { color: tokens.textPrimary }]}>
+        <View style={styles.statCard}>
+          <Ionicons name="clipboard" size={20} color={aprovaFoxColors.info} />
+          <Text style={styles.statValue}>
             {simuladosFeitos}
           </Text>
-          <Text style={[styles.statLabel, { color: tokens.textMuted }]}>Simulados</Text>
+          <Text style={styles.statLabel}>Simulados</Text>
         </View>
       </View>
 
       {/* 3. GALERIA DE CONQUISTAS */}
-      <View
-        style={[
-          styles.sectionCard,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
+      <View style={styles.sectionCard}>
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
-            <Ionicons name="trophy" size={20} color={tokens.warning} />
-            <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
+            <Ionicons name="trophy" size={20} color={aprovaFoxColors.amber} />
+            <Text style={styles.sectionTitle}>
               Medalhas e Conquistas
             </Text>
           </View>
-          <Text style={[styles.sectionCounter, { color: tokens.textMuted }]}>
+          <Text style={styles.sectionCounter}>
             {conquistas.filter((c) => c.desbloqueada).length} de {conquistas.length}
           </Text>
         </View>
@@ -249,11 +216,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               key={item.id}
               style={[
                 styles.conquistaItem,
-                {
-                  backgroundColor: item.desbloqueada ? tokens.surface : 'transparent',
-                  borderColor: item.desbloqueada ? tokens.warning : tokens.cardBorder,
-                  opacity: item.desbloqueada ? 1 : 0.45,
-                },
+                item.desbloqueada ? styles.conquistaDesbloqueada : styles.conquistaBloqueada,
               ]}
             >
               <Text style={styles.conquistaIcon}>{item.icone}</Text>
@@ -261,17 +224,17 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <Text
                   style={[
                     styles.conquistaTitulo,
-                    { color: item.desbloqueada ? tokens.textPrimary : tokens.textMuted },
+                    { color: item.desbloqueada ? aprovaFoxColors.text : aprovaFoxColors.textMuted },
                   ]}
                 >
                   {item.titulo}
                 </Text>
-                <Text style={[styles.conquistaDesc, { color: tokens.textMuted }]}>
+                <Text style={styles.conquistaDesc}>
                   {item.descricao}
                 </Text>
               </View>
               {item.desbloqueada && (
-                <Ionicons name="checkmark-circle" size={18} color={tokens.success} />
+                <Ionicons name="checkmark-circle" size={18} color={aprovaFoxColors.success} />
               )}
             </View>
           ))}
@@ -279,19 +242,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </View>
 
       {/* 4. AJUSTE DE META DIÁRIA */}
-      <View
-        style={[
-          styles.sectionCard,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
+      <View style={styles.sectionCard}>
         <View style={styles.sectionTitleRow}>
-          <Ionicons name="flag" size={19} color={tokens.primary} />
-          <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
+          <Ionicons name="flag" size={19} color={aprovaFoxColors.violet} />
+          <Text style={styles.sectionTitle}>
             Meta Diária de Questões
           </Text>
         </View>
-        <Text style={[styles.sectionDesc, { color: tokens.textMuted }]}>
+        <Text style={styles.sectionDesc}>
           Defina quantas questões deseja resolver por dia para manter o ritmo e a aprovação.
         </Text>
 
@@ -308,16 +266,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 activeOpacity={0.85}
                 style={[
                   styles.metaBtn,
-                  {
-                    backgroundColor: isSelected ? tokens.primary : tokens.surface,
-                    borderColor: isSelected ? tokens.primary : tokens.cardBorder,
-                  },
+                  isSelected && styles.metaBtnActive,
                 ]}
               >
                 <Text
                   style={[
                     styles.metaBtnText,
-                    { color: isSelected ? '#ffffff' : tokens.textPrimary },
+                    { color: isSelected ? '#FFFFFF' : aprovaFoxColors.text },
                   ]}
                 >
                   {meta}
@@ -325,7 +280,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <Text
                   style={[
                     styles.metaBtnSub,
-                    { color: isSelected ? '#ffffff' : tokens.textMuted },
+                    { color: isSelected ? '#FFFFFF' : aprovaFoxColors.textSecondary },
                   ]}
                 >
                   questões
@@ -337,14 +292,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </View>
 
       {/* 5. PREFERÊNCIAS E ATALHOS */}
-      <View
-        style={[
-          styles.sectionCard,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
-        <Text style={[styles.sectionTitle, { color: tokens.textPrimary, marginBottom: 8 }]}>
-          Preferências e Recursos
+      <View style={styles.sectionCard}>
+        <Text style={[styles.sectionTitle, { marginBottom: 8 }]}>
+          Recursos e Ferramentas
         </Text>
 
         {/* Mural de Macetes Shortcut */}
@@ -354,70 +304,56 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onOpenMural();
           }}
           activeOpacity={0.85}
-          style={[
-            styles.actionRow,
-            {
-              backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fffbeb',
-              borderColor: tokens.warning,
-            },
-          ]}
+          style={styles.actionRow}
         >
           <View style={styles.actionRowLeft}>
-            <Ionicons name="bulb" size={20} color={tokens.warning} />
+            <Ionicons name="bulb" size={20} color={aprovaFoxColors.amber} />
             <View>
-              <Text style={[styles.actionRowTitle, { color: tokens.warning }]}>
+              <Text style={[styles.actionRowTitle, { color: aprovaFoxColors.amber }]}>
                 Mural de Macetes & Raio-X
               </Text>
-              <Text style={[styles.actionRowSub, { color: tokens.textMuted }]}>
+              <Text style={styles.actionRowSub}>
                 Dicas rápidas e pegadinhas da VUNESP
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={tokens.warning} />
+          <Ionicons name="chevron-forward" size={18} color={aprovaFoxColors.amber} />
         </TouchableOpacity>
 
         {/* Alternância de Tema */}
         <TouchableOpacity
           onPress={onToggleTheme}
           activeOpacity={0.85}
-          style={[
-            styles.actionRow,
-            { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-          ]}
+          style={styles.themeToggleRow}
         >
           <View style={styles.actionRowLeft}>
             <Ionicons
               name={theme === 'dark' ? 'moon' : 'sunny'}
               size={20}
-              color={theme === 'dark' ? tokens.primary : tokens.warning}
+              color={theme === 'dark' ? aprovaFoxColors.violet : aprovaFoxColors.amber}
             />
             <View>
-              <Text style={[styles.actionRowTitle, { color: tokens.textPrimary }]}>
+              <Text style={styles.actionRowTitle}>
                 Tema do Aplicativo
               </Text>
-              <Text style={[styles.actionRowSub, { color: tokens.textMuted }]}>
-                Atualmente: {theme === 'dark' ? 'Modo Escuro' : 'Modo Claro'}
+              <Text style={styles.actionRowSub}>
+                Atualmente: {theme === 'dark' ? 'Modo Noturno AprovaFox' : 'Modo Claro'}
               </Text>
             </View>
           </View>
-          <Text style={[styles.toggleText, { color: tokens.primary }]}>Alternar</Text>
+          <Text style={styles.toggleText}>Alternar</Text>
         </TouchableOpacity>
       </View>
 
       {/* 6. BACKUP & SEGURANÇA */}
-      <View
-        style={[
-          styles.sectionCard,
-          { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-        ]}
-      >
+      <View style={styles.sectionCard}>
         <View style={styles.sectionTitleRow}>
-          <Ionicons name="shield-checkmark" size={19} color={tokens.primary} />
-          <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
+          <Ionicons name="shield-checkmark" size={19} color={aprovaFoxColors.success} />
+          <Text style={styles.sectionTitle}>
             Backup & Segurança de Dados
           </Text>
         </View>
-        <Text style={[styles.sectionDesc, { color: tokens.textMuted }]}>
+        <Text style={styles.sectionDesc}>
           Seus dados de estudo estão seguros localmente (envelope v2). Exporte ou restaure seu progresso sempre que desejar.
         </Text>
 
@@ -425,13 +361,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <TouchableOpacity
             onPress={handleExportar}
             activeOpacity={0.85}
-            style={[
-              styles.backupBtn,
-              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-            ]}
+            style={styles.backupBtn}
           >
-            <Ionicons name="cloud-download-outline" size={18} color={tokens.primary} />
-            <Text style={[styles.backupBtnText, { color: tokens.textPrimary }]}>
+            <Ionicons name="cloud-download-outline" size={18} color={aprovaFoxColors.violet} />
+            <Text style={styles.backupBtnText}>
               Exportar JSON
             </Text>
           </TouchableOpacity>
@@ -439,13 +372,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <TouchableOpacity
             onPress={handleImportarArquivo}
             activeOpacity={0.85}
-            style={[
-              styles.backupBtn,
-              { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
-            ]}
+            style={styles.backupBtn}
           >
-            <Ionicons name="cloud-upload-outline" size={18} color={tokens.primary} />
-            <Text style={[styles.backupBtnText, { color: tokens.textPrimary }]}>
+            <Ionicons name="cloud-upload-outline" size={18} color={aprovaFoxColors.violet} />
+            <Text style={styles.backupBtnText}>
               Restaurar
             </Text>
           </TouchableOpacity>
@@ -472,8 +402,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           activeOpacity={0.85}
           style={styles.dangerActionBtn}
         >
-          <Ionicons name="trash-outline" size={16} color={tokens.danger} />
-          <Text style={[styles.dangerActionText, { color: tokens.danger }]}>
+          <Ionicons name="trash-outline" size={16} color={aprovaFoxColors.danger} />
+          <Text style={styles.dangerActionText}>
             Limpar todos os dados locais
           </Text>
         </TouchableOpacity>
@@ -487,46 +417,34 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         onRequestClose={() => setModalImportAberto(false)}
       >
         <View style={styles.modalOverlay}>
-          <View
-            style={[
-              styles.modalContent,
-              { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
-            ]}
-          >
-            <Text style={[styles.modalTitle, { color: tokens.textPrimary }]}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
               Restaurar Backup JSON
             </Text>
-            <Text style={[styles.modalSub, { color: tokens.textMuted }]}>
+            <Text style={styles.modalSub}>
               Cole o conteúdo JSON do seu backup abaixo para restaurar o histórico:
             </Text>
             <TextInput
-              style={[
-                styles.modalInput,
-                {
-                  backgroundColor: tokens.surface,
-                  borderColor: tokens.cardBorder,
-                  color: tokens.textPrimary,
-                },
-              ]}
+              style={styles.modalInput}
               multiline
               numberOfLines={8}
-              placeholder='{"versao": 2, ...}'
-              placeholderTextColor={tokens.textMuted}
+              placeholder='{"v": 2, ...}'
+              placeholderTextColor={aprovaFoxColors.textMuted}
               value={textoJsonImport}
               onChangeText={setTextoJsonImport}
             />
             <View style={styles.modalActions}>
               <TouchableOpacity
                 onPress={() => setModalImportAberto(false)}
-                style={[styles.modalBtn, { backgroundColor: tokens.surface }]}
+                style={styles.modalCancelBtn}
               >
-                <Text style={{ color: tokens.textPrimary }}>Cancelar</Text>
+                <Text style={{ color: aprovaFoxColors.text }}>Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleConfirmarImportTexto}
-                style={[styles.modalBtn, { backgroundColor: tokens.primary }]}
+                style={styles.modalConfirmBtn}
               >
-                <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Restaurar</Text>
+                <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Restaurar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -542,18 +460,24 @@ const styles = StyleSheet.create({
     paddingTop: spacing.block,
     paddingBottom: 40,
     gap: 16,
+    backgroundColor: aprovaFoxColors.night,
   },
   profileHero: {
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     padding: 20,
     borderRadius: radius.card,
-    borderWidth: 1,
     alignItems: 'center',
     gap: 12,
   },
   avatarCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.violet,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -564,25 +488,29 @@ const styles = StyleSheet.create({
   nivelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#2563eb',
+    gap: 6,
+    backgroundColor: aprovaFoxColors.amberSoft,
+    borderColor: aprovaFoxColors.amber,
+    borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: radius.pill,
   },
   nivelBadgeText: {
-    color: '#ffffff',
+    color: aprovaFoxColors.amber,
     fontSize: 12,
     fontWeight: weights.title,
   },
-  tituloNivel: {
-    fontSize: 20,
-    fontWeight: weights.title,
-    marginTop: 4,
+  sloganText: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: aprovaFoxColors.textSecondary,
+    marginTop: 2,
   },
   cargoText: {
     fontSize: typography.caption,
     textAlign: 'center',
+    color: aprovaFoxColors.textMuted,
   },
   xpProgressContainer: {
     width: '100%',
@@ -596,18 +524,22 @@ const styles = StyleSheet.create({
   xpLabel: {
     fontSize: typography.caption,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.amber,
   },
   xpNextLabel: {
     fontSize: typography.caption,
+    color: aprovaFoxColors.textMuted,
   },
   xpTrack: {
-    height: 8,
-    borderRadius: 4,
+    height: 7,
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderRadius: 3.5,
     overflow: 'hidden',
   },
   xpFill: {
     height: '100%',
-    borderRadius: 4,
+    backgroundColor: aprovaFoxColors.amber,
+    borderRadius: 3.5,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -615,25 +547,31 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     padding: 12,
     borderRadius: radius.card,
-    borderWidth: 1,
     alignItems: 'center',
     gap: 2,
   },
   statValue: {
     fontSize: 18,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
     marginTop: 2,
   },
   statLabel: {
     fontSize: 11,
-    fontWeight: weights.body,
+    fontWeight: weights.meta,
+    color: aprovaFoxColors.textMuted,
   },
   sectionCard: {
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     padding: 16,
     borderRadius: radius.card,
-    borderWidth: 1,
     gap: 12,
   },
   sectionHeader: {
@@ -647,15 +585,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontSize: typography.body,
+    fontSize: typography.label,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
   },
   sectionCounter: {
     fontSize: typography.caption,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.amber,
   },
   sectionDesc: {
     fontSize: typography.caption,
+    color: aprovaFoxColors.textSecondary,
     lineHeight: 18,
   },
   conquistasGrid: {
@@ -669,8 +610,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 12,
   },
+  conquistaDesbloqueada: {
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.amber,
+  },
+  conquistaBloqueada: {
+    backgroundColor: 'transparent',
+    borderColor: aprovaFoxColors.border,
+    opacity: 0.45,
+  },
   conquistaIcon: {
-    fontSize: 24,
+    fontSize: 22,
   },
   conquistaTextCol: {
     flex: 1,
@@ -681,6 +631,7 @@ const styles = StyleSheet.create({
   },
   conquistaDesc: {
     fontSize: 11,
+    color: aprovaFoxColors.textMuted,
     marginTop: 2,
   },
   metasRow: {
@@ -690,14 +641,20 @@ const styles = StyleSheet.create({
   },
   metaBtn: {
     flex: 1,
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1,
     paddingVertical: 12,
     borderRadius: radius.control,
-    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  metaBtnActive: {
+    backgroundColor: aprovaFoxColors.violet,
+    borderColor: aprovaFoxColors.violet,
+  },
   metaBtnText: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: weights.title,
   },
   metaBtnSub: {
@@ -708,9 +665,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: aprovaFoxColors.amberSoft,
+    borderColor: aprovaFoxColors.amber,
+    borderWidth: 1,
     padding: 14,
     borderRadius: radius.control,
+  },
+  themeToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.border,
     borderWidth: 1,
+    padding: 14,
+    borderRadius: radius.control,
   },
   actionRowLeft: {
     flexDirection: 'row',
@@ -721,14 +690,17 @@ const styles = StyleSheet.create({
   actionRowTitle: {
     fontSize: 14,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
   },
   actionRowSub: {
     fontSize: 11,
+    color: aprovaFoxColors.textMuted,
     marginTop: 2,
   },
   toggleText: {
     fontSize: 13,
     fontWeight: weights.title,
+    color: aprovaFoxColors.violetLight,
   },
   backupButtonsRow: {
     flexDirection: 'row',
@@ -741,13 +713,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: aprovaFoxColors.nightElevated,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1,
     paddingVertical: 12,
     borderRadius: radius.control,
-    borderWidth: 1,
   },
   backupBtnText: {
     fontSize: 13,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.text,
   },
   dangerActionBtn: {
     flexDirection: 'row',
@@ -760,28 +735,36 @@ const styles = StyleSheet.create({
   dangerActionText: {
     fontSize: 12,
     fontWeight: weights.meta,
+    color: aprovaFoxColors.danger,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     justifyContent: 'center',
     padding: 20,
   },
   modalContent: {
+    backgroundColor: aprovaFoxColors.surface,
+    borderColor: aprovaFoxColors.border,
+    borderWidth: 1.5,
     padding: 20,
     borderRadius: radius.card,
-    borderWidth: 1,
     gap: 12,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: weights.title,
+    color: aprovaFoxColors.text,
   },
   modalSub: {
     fontSize: typography.caption,
+    color: aprovaFoxColors.textSecondary,
   },
   modalInput: {
     height: 120,
+    backgroundColor: aprovaFoxColors.night,
+    borderColor: aprovaFoxColors.border,
+    color: aprovaFoxColors.text,
     borderRadius: radius.control,
     borderWidth: 1,
     padding: 10,
@@ -794,9 +777,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 12,
   },
-  modalBtn: {
+  modalCancelBtn: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: radius.control,
+    backgroundColor: aprovaFoxColors.nightElevated,
+  },
+  modalConfirmBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: radius.control,
+    backgroundColor: aprovaFoxColors.violet,
   },
 });
