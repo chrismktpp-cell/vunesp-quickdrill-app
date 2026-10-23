@@ -46,3 +46,4 @@ export function getCategoryColor(
   const palette = CATEGORY_PALETTES[mode][category];
   return palette || categoryColors.crase[mode];
 }
+

@@ -39,3 +39,4 @@ export function isDefaultFilters(filters: QuestionFilters): boolean {
     (!filters.ano || filters.ano === 'all')
   );
 }
+

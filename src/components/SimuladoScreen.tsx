@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  AppState,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type {
@@ -21,6 +22,12 @@ import {
   calcularResultadoSimulado,
   obterDiagnosticoSimulado,
 } from '../services/simuladoService';
+import {
+  salvarSimuladoAtivo,
+  carregarSimuladoAtivo,
+  limparSimuladoAtivo,
+  ActiveSimuladoData,
+} from '../services/activeSimuladoStorage';
 import { triggerLightHaptic } from '../utils/haptics';
 
 interface SimuladoScreenProps {
@@ -79,31 +86,151 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
   const [ultimoResultado, setUltimoResultado] = useState<SimuladoResultado | null>(null);
   const [errosEnviadosParaSRS, setErrosEnviadosParaSRS] = useState<boolean>(false);
+  const [activeSimuladoRecuperado, setActiveSimuladoRecuperado] = useState<ActiveSimuladoData | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
+  const totalDurationSecondsRef = useRef<number>(0);
 
-  // Timer countdown
+  // 1. Verificação defensiva de simulado salvo em andamento ao montar
   useEffect(() => {
-    if (stage === 'running') {
-      timerRef.current = setInterval(() => {
-        setSecondsRemaining((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            finalizarProva(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
+    carregarSimuladoAtivo().then((saved) => {
+      if (saved) {
+        const elapsed = Math.floor((Date.now() - saved.startedAt) / 1000);
+        const remaining = Math.max(0, saved.totalDurationSeconds - elapsed);
+        if (remaining <= 0) {
+          Alert.alert(
+            'Simulado Interrompido',
+            `O tempo do simulado "${saved.config.titulo}" expirou enquanto o aplicativo estava fechado. Deseja computar o resultado?`,
+            [
+              {
+                text: 'Descartar',
+                style: 'destructive',
+                onPress: () => limparSimuladoAtivo(),
+              },
+              {
+                text: 'Ver Resultado',
+                onPress: () => {
+                  const resultado = calcularResultadoSimulado(
+                    saved.questions,
+                    saved.respostas,
+                    saved.totalDurationSeconds,
+                    saved.config
+                  );
+                  setUltimoResultado(resultado);
+                  onSalvarResultado(resultado);
+                  limparSimuladoAtivo();
+                  setStage('result');
+                },
+              },
+            ]
+          );
+        } else {
+          setActiveSimuladoRecuperado(saved);
+        }
+      }
+    });
+  }, []);
+
+  const handleRetomarSimulado = (saved: ActiveSimuladoData) => {
+    triggerLightHaptic();
+    const elapsed = Math.floor((Date.now() - saved.startedAt) / 1000);
+    const remaining = Math.max(0, saved.totalDurationSeconds - elapsed);
+    setExamQuestions(saved.questions);
+    setSelectedConfig(saved.config);
+    setCurrentIndex(saved.currentIndex || 0);
+    setRespostas(saved.respostas || {});
+    setSecondsRemaining(remaining);
+    startTimeRef.current = saved.startedAt;
+    totalDurationSecondsRef.current = saved.totalDurationSeconds;
+    setActiveSimuladoRecuperado(null);
+    setStage('running');
+  };
+
+  const handleDescartarSimuladoSalvo = async () => {
+    triggerLightHaptic();
+    await limparSimuladoAtivo();
+    setActiveSimuladoRecuperado(null);
+  };
+
+  const finalizarProva = useCallback(
+    (porTempoEsgotado = false) => {
       if (timerRef.current) clearInterval(timerRef.current);
+      limparSimuladoAtivo();
+
+      const tempoTotalGasto = Math.min(
+        totalDurationSecondsRef.current || selectedConfig.duracaoMinutos * 60,
+        Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000))
+      );
+
+      const resultado = calcularResultadoSimulado(
+        examQuestions,
+        respostas,
+        tempoTotalGasto,
+        selectedConfig
+      );
+
+      setUltimoResultado(resultado);
+      onSalvarResultado(resultado);
+      setStage('result');
+
+      if (porTempoEsgotado) {
+        Alert.alert('Tempo Esgotado!', 'O tempo do simulado acabou. Veja seu desempenho.');
+      }
+    },
+    [examQuestions, respostas, selectedConfig, onSalvarResultado]
+  );
+
+  // Timer countdown baseado em wall-clock (Date.now() - startTime) sem drift
+  useEffect(() => {
+    if (stage !== 'running') {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
     }
+
+    const recalcularTempo = () => {
+      if (startTimeRef.current === 0) return;
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(0, totalDurationSecondsRef.current - elapsed);
+      setSecondsRemaining(remaining);
+      if (remaining <= 0) {
+        if (timerRef.current) clearInterval(timerRef.current);
+        finalizarProva(true);
+      }
+    };
+
+    recalcularTempo();
+    timerRef.current = setInterval(recalcularTempo, 1000);
+
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        recalcularTempo();
+      }
+    });
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      subscription.remove();
     };
-  }, [stage]);
+  }, [stage, finalizarProva]);
+
+  // Persistência com debounce (400ms) durante o simulado em andamento
+  useEffect(() => {
+    if (stage !== 'running' || examQuestions.length === 0 || startTimeRef.current === 0) return;
+
+    const timer = setTimeout(() => {
+      salvarSimuladoAtivo({
+        config: selectedConfig,
+        questions: examQuestions,
+        currentIndex,
+        respostas,
+        startedAt: startTimeRef.current,
+        totalDurationSeconds: totalDurationSecondsRef.current,
+      });
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [stage, examQuestions, currentIndex, respostas, selectedConfig]);
 
   const handleIniciarSimulado = () => {
     triggerLightHaptic();
@@ -113,13 +240,27 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
       return;
     }
 
+    const duracaoTotal = selectedConfig.duracaoMinutos * 60;
+    const now = Date.now();
+    startTimeRef.current = now;
+    totalDurationSecondsRef.current = duracaoTotal;
+
     setExamQuestions(selecionadas);
     setCurrentIndex(0);
     setRespostas({});
     setErrosEnviadosParaSRS(false);
-    setSecondsRemaining(selectedConfig.duracaoMinutos * 60);
-    startTimeRef.current = Date.now();
+    setSecondsRemaining(duracaoTotal);
+    setActiveSimuladoRecuperado(null);
     setStage('running');
+
+    salvarSimuladoAtivo({
+      config: selectedConfig,
+      questions: selecionadas,
+      currentIndex: 0,
+      respostas: {},
+      startedAt: now,
+      totalDurationSeconds: duracaoTotal,
+    });
   };
 
   const handleSelectOption = (questionId: string, optionIndex: number) => {
@@ -150,32 +291,34 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
     });
   };
 
-  const finalizarProva = useCallback(
-    (porTempoEsgotado = false) => {
-      if (timerRef.current) clearInterval(timerRef.current);
-
-      const tempoTotalGasto = Math.min(
-        selectedConfig.duracaoMinutos * 60,
-        Math.round((Date.now() - startTimeRef.current) / 1000)
-      );
-
-      const resultado = calcularResultadoSimulado(
-        examQuestions,
-        respostas,
-        tempoTotalGasto,
-        selectedConfig
-      );
-
-      setUltimoResultado(resultado);
-      onSalvarResultado(resultado);
-      setStage('result');
-
-      if (porTempoEsgotado) {
-        Alert.alert('Tempo Esgotado!', 'O tempo do simulado acabou. Veja seu desempenho.');
-      }
-    },
-    [examQuestions, respostas, selectedConfig, onSalvarResultado]
-  );
+  const confirmarSaidaOuPausa = () => {
+    triggerLightHaptic();
+    Alert.alert(
+      'Pausar ou Sair do Simulado',
+      'Seu progresso atual está salvo com segurança. Você pode pausar para continuar mais tarde ou descartar esta prova.',
+      [
+        { text: 'Continuar Prova', style: 'cancel' },
+        {
+          text: 'Pausar e Voltar',
+          onPress: () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setStage('menu');
+            carregarSimuladoAtivo().then((saved) => setActiveSimuladoRecuperado(saved));
+          },
+        },
+        {
+          text: 'Descartar Prova',
+          style: 'destructive',
+          onPress: () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+            limparSimuladoAtivo();
+            setActiveSimuladoRecuperado(null);
+            setStage('menu');
+          },
+        },
+      ]
+    );
+  };
 
   const confirmarFinalizacao = () => {
     triggerLightHaptic();
@@ -206,6 +349,52 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   if (stage === 'menu') {
     return (
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        {/* BANNER DE RETOMADA DE SIMULADO ATIVO */}
+        {activeSimuladoRecuperado && (
+          <View
+            style={[
+              styles.resumeCard,
+              { backgroundColor: colors.amberSoft, borderColor: colors.amber },
+            ]}
+          >
+            <View style={styles.resumeHeader}>
+              <Ionicons name="time" size={20} color={colors.amber} />
+              <Text style={[styles.resumeTitle, { color: colors.text }]}>
+                Simulado em Andamento Salvo
+              </Text>
+            </View>
+            <Text style={[styles.resumeDesc, { color: colors.text }]}>
+              Você possui o simulado "{activeSimuladoRecuperado.config.titulo}" em andamento com{' '}
+              {Math.max(
+                1,
+                Math.round(
+                  Math.max(
+                    0,
+                    activeSimuladoRecuperado.totalDurationSeconds -
+                      Math.floor((Date.now() - activeSimuladoRecuperado.startedAt) / 1000)
+                  ) / 60
+                )
+              )}{' '}
+              minuto(s) restante(s).
+            </Text>
+            <View style={styles.resumeActions}>
+              <TouchableOpacity
+                onPress={() => handleRetomarSimulado(activeSimuladoRecuperado)}
+                style={[styles.resumeBtn, { backgroundColor: colors.primary }]}
+              >
+                <Text style={styles.resumeBtnText}>Retomar Prova</Text>
+                <Ionicons name="play" size={14} color="#FFFFFF" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleDescartarSimuladoSalvo}
+                style={[styles.discardBtn, { borderColor: colors.cardBorder }]}
+              >
+                <Text style={[styles.discardBtnText, { color: colors.rose }]}>Descartar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         <View
           style={[
             styles.bannerHero,
@@ -401,13 +590,23 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
             </Text>
           </View>
 
-          {/* BOTÃO ENTREGAR */}
-          <TouchableOpacity
-            onPress={confirmarFinalizacao}
-            style={[styles.finishBtn, { backgroundColor: colors.roseSoft, borderColor: colors.rose }]}
-          >
-            <Text style={[styles.finishBtnText, { color: colors.rose }]}>Entregar</Text>
-          </TouchableOpacity>
+          {/* AÇÕES DE EXAME (PAUSAR E ENTREGAR) */}
+          <View style={styles.examBarRight}>
+            <TouchableOpacity
+              onPress={confirmarSaidaOuPausa}
+              style={[styles.pauseBtn, { backgroundColor: colors.subtle, borderColor: colors.cardBorder }]}
+            >
+              <Ionicons name="pause" size={12} color={colors.text} />
+              <Text style={[styles.pauseBtnText, { color: colors.text }]}>Pausar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={confirmarFinalizacao}
+              style={[styles.finishBtn, { backgroundColor: colors.roseSoft, borderColor: colors.rose }]}
+            >
+              <Text style={[styles.finishBtnText, { color: colors.rose }]}>Entregar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* PALETA DE QUESTÕES (NAVEGAÇÃO RÁPIDA) */}
@@ -990,6 +1189,24 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
   },
+  examBarRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pauseBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  pauseBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
   finishBtn: {
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -999,6 +1216,58 @@ const styles = StyleSheet.create({
   finishBtnText: {
     fontSize: 12,
     fontWeight: '800',
+  },
+  resumeCard: {
+    borderWidth: 1.5,
+    borderRadius: 14,
+    padding: 16,
+    gap: 8,
+    marginBottom: 12,
+  },
+  resumeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  resumeTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  resumeDesc: {
+    fontSize: 13,
+    lineHeight: 18,
+    opacity: 0.9,
+  },
+  resumeActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  resumeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  resumeBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  discardBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  discardBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   paletteScroll: {
     paddingHorizontal: 12,

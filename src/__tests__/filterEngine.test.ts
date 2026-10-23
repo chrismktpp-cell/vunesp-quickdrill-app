@@ -115,3 +115,4 @@ describe('FilterEngine - Normalização, Robustez e Estado Inicial Não-Vazio', 
     expect(cargo[0].id).toBe('q-completa');
   });
 });
+
