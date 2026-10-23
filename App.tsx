@@ -51,6 +51,9 @@ const CATEGORIES: CategoryType[] = [
   'Sujeito Oracional e Transitividade',
   'Gestão de Patrimônio e Bens Públicos',
   'Nova Lei de Licitações (Lei 14.133/2021)',
+  'Matemática e Raciocínio Lógico',
+  'Língua Portuguesa (Agente Patrimonial)',
+  'Conhecimentos Específicos - Agente Patrimonial',
 ];
 
 // Fisher-Yates shuffle
@@ -555,6 +558,7 @@ export default function App() {
             onShuffle={handleShuffle}
             filtros={filtros}
             onToggleFavorite={handleToggleFavorite}
+            onOpenMural={() => setActiveTab('mural')}
             onOpenFiltersModal={() => setFiltrosModalOpen(true)}
             onResetFilters={() => {
               setIsFilaSRSActive(false);

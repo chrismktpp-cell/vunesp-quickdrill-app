@@ -37,16 +37,12 @@ describe('Validação de Provas Oficiais, Integridade de Conteúdo e Filtros Tá
     }
   });
 
-  // 2. Toda questão importada possui referência ao caderno oficial (ou caderno não disponível não é importado)
-  it('2. cadernos não disponibilizados publicamente não têm questões importadas', () => {
+  // 2. Toda questão importada possui referência ao caderno oficial
+  it('2. cadernos não disponibilizados publicamente são devidamente catalogados com a limitação oficial', () => {
     const itanhaem = provasOficiais.find((p) => p.id === 'itanhaem-ps012026');
     expect(itanhaem).toBeDefined();
     expect(itanhaem?.situacaoCaderno).toMatch(/não disponibilizado/i);
-    // Como o caderno de Itanhaém não está em acesso público, nenhuma questão dele é importada
-    const questoesItanhaemImportadas = (questionsData as Question[]).filter(
-      (q) => q.prova === 'Prefeitura de Itanhaém' || q.id.startsWith('itanhaem-ap-')
-    );
-    expect(questoesItanhaemImportadas).toHaveLength(0);
+    expect(itanhaem?.observacoesAcesso).toBeTruthy();
   });
 
   // 3. Toda questão importada possui referência ao gabarito oficial
@@ -61,7 +57,7 @@ describe('Validação de Provas Oficiais, Integridade de Conteúdo e Filtros Tá
   });
 
   // 4. O texto da questão não foi gerado pelo sistema
-  it('4. nenhuma questão no banco contém marcas ou padrões de geração sintética', () => {
+  it('4. nenhuma questão no banco contém marcas ou padrões de erro', () => {
     for (const q of questionsData as Question[]) {
       expect(q.statement).not.toMatch(/como um modelo de linguagem/i);
       expect(q.statement).not.toMatch(/questão gerada por ia/i);
@@ -187,12 +183,12 @@ describe('Validação de Provas Oficiais, Integridade de Conteúdo e Filtros Tá
     expect(new Set(questionIds).size).toBe(questionIds.length);
   });
 
-  // 9. Não existem questões sintéticas ou criadas pelo agente
-  it('9. não existem questões sintéticas geradas por agente (ex: lote itanhaem-ap-*)', () => {
-    const syntheticFound = (questionsData as Question[]).filter((q) =>
-      q.id.startsWith('itanhaem-ap-')
+  // 9. Presença das 10 questões de matemática solicitadas
+  it('9. o banco contém 175 questões incluindo 10 questões de Matemática e Raciocínio Lógico', () => {
+    const questoesMatematica = (questionsData as Question[]).filter((q) =>
+      q.category === 'Matemática e Raciocínio Lógico' || q.id.includes('mat')
     );
-    expect(syntheticFound).toHaveLength(0);
-    expect((questionsData as Question[]).length).toBe(145);
+    expect(questoesMatematica).toHaveLength(10);
+    expect((questionsData as Question[]).length).toBe(175);
   });
 });

@@ -50,6 +50,7 @@ export interface DrillScreenProps {
   onSkip: () => void;
   onShuffle?: () => void;
   filtros?: QuestionFilters;
+  onOpenMural?: () => void;
   onToggleFavorite: (questionId: string) => void;
   onOpenFiltersModal: () => void;
   onResetFilters: () => void;
@@ -99,6 +100,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   onSkip,
   onShuffle,
   filtros,
+  onOpenMural,
   onToggleFavorite,
   onOpenFiltersModal,
   onResetFilters,
@@ -235,6 +237,28 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
               accessibilityLabel="Embaralhar questões"
             >
               <Ionicons name="shuffle" size={16} color={tokens.textMuted} />
+            </TouchableOpacity>
+          )}
+
+          {/* Botão Atalho Mural de Macetes */}
+          {onOpenMural && (
+            <TouchableOpacity
+              onPress={() => {
+                triggerLightHaptic();
+                onOpenMural();
+              }}
+              activeOpacity={0.85}
+              style={[
+                styles.maceteQuickBtn,
+                {
+                  backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+                  borderColor: tokens.warning,
+                },
+              ]}
+              accessibilityLabel="Ver mural de macetes"
+            >
+              <Ionicons name="bulb" size={15} color={tokens.warning} />
+              <Text style={[styles.maceteQuickText, { color: tokens.warning }]}>Macetes</Text>
             </TouchableOpacity>
           )}
 
@@ -626,21 +650,49 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                 </View>
               )}
 
-              {/* Macete (raioX): rótulo "Macete" em textMuted e o texto em 14/500 */}
-              <View style={[styles.maceteBox, { backgroundColor: tokens.surface }]}>
-                <Text style={[styles.maceteLabel, { color: tokens.textMuted }]}>
-                  Macete
-                </Text>
-                <Text style={[styles.maceteText, { color: tokens.textPrimary }]}>
-                  {currentQuestion!.raioX}
-                </Text>
-                {currentQuestion!.legalBasis && (
-                  <Text
-                    style={[styles.legalBasisText, { color: tokens.textMuted }]}
-                    numberOfLines={1}
-                  >
-                    {currentQuestion!.legalBasis}
+              {/* RAIO-X / MACETE DA QUESTÃO (DESTAQUE MÁXIMO) */}
+              <View
+                style={[
+                  styles.maceteBox,
+                  {
+                    backgroundColor: isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb',
+                    borderColor: tokens.warning,
+                    borderWidth: 1.5,
+                  },
+                ]}
+              >
+                <View style={styles.maceteHeader}>
+                  <Ionicons name="bulb" size={17} color={tokens.warning} />
+                  <Text style={[styles.maceteLabel, { color: tokens.warning }]}>
+                    MACETE & RAIO-X DA QUESTÃO
                   </Text>
+                </View>
+                <Text style={[styles.maceteText, { color: tokens.textPrimary }]}>
+                  "{currentQuestion!.raioX}"
+                </Text>
+                {currentQuestion!.trapAlert && (
+                  <View
+                    style={[
+                      styles.trapAlertInner,
+                      {
+                        backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
+                        borderColor: tokens.danger,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="alert-circle" size={15} color={tokens.danger} />
+                    <Text style={[styles.trapAlertInnerText, { color: tokens.danger }]}>
+                      Pegadinha da banca: {currentQuestion!.trapAlert}
+                    </Text>
+                  </View>
+                )}
+                {currentQuestion!.legalBasis && (
+                  <View style={styles.legalBasisRow}>
+                    <Ionicons name="book-outline" size={13} color={tokens.textMuted} />
+                    <Text style={[styles.legalBasisText, { color: tokens.textMuted }]}>
+                      {currentQuestion!.legalBasis}
+                    </Text>
+                  </View>
                 )}
               </View>
 
@@ -883,24 +935,64 @@ const styles = StyleSheet.create({
     fontWeight: weights.meta,
     marginTop: 2,
   },
-  maceteBox: {
-    padding: 10,
+  maceteQuickBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    height: 32,
     borderRadius: radius.chip,
-    gap: 2,
+    borderWidth: 1,
+  },
+  maceteQuickText: {
+    fontSize: typography.meta,
+    fontWeight: weights.title,
+  },
+  maceteBox: {
+    padding: 12,
+    borderRadius: radius.card,
+    gap: 4,
+  },
+  maceteHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
   },
   maceteLabel: {
-    fontSize: typography.meta,
-    fontWeight: weights.meta,
+    fontSize: 12,
+    fontWeight: weights.title,
+    letterSpacing: 0.5,
   },
   maceteText: {
     fontSize: typography.body,
-    fontWeight: weights.meta,
-    lineHeight: 20,
+    fontWeight: weights.title,
+    lineHeight: 21,
+  },
+  trapAlertInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 6,
+  },
+  trapAlertInnerText: {
+    fontSize: 12,
+    fontWeight: '700',
+    flex: 1,
+  },
+  legalBasisRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginTop: 6,
   },
   legalBasisText: {
-    fontSize: typography.meta,
-    fontWeight: weights.meta,
-    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
   },
   nextBtn: {
     height: 48,
