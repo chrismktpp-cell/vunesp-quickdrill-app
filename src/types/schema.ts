@@ -204,6 +204,18 @@ export interface SimuladoResultado {
   }>;
 }
 
+export interface Conquista {
+  id: string;
+  titulo: string;
+  descricao: string;
+  icone: string;
+  categoria: 'estudo' | 'precisao' | 'constancia' | 'desafio';
+  desbloqueada: boolean;
+  dataDesbloqueio?: number;
+  progressoAtual?: number;
+  progressoMeta?: number;
+}
+
 export interface UserStats {
   attempts: QuestionAttempt[];
   streak: number;
@@ -216,6 +228,12 @@ export interface UserStats {
   totalErros?: number;
   porCategoria?: Partial<Record<CategoryType, { acertos: number; erros: number }>>;
   gen?: number;
+  xp?: number;
+  nivel?: number;
+  metaDiaria?: number;
+  questoesHoje?: number;
+  dataUltimoEstudo?: string;
+  conquistasDesbloqueadas?: string[];
 }
 
 export type DrillMode = 'all' | 'errors_only' | 'blind_spots_only' | 'srs_queue';

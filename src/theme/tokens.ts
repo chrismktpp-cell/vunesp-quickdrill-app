@@ -16,21 +16,29 @@ export interface ThemeColors {
   // Brand & Accents
   primary: string;
   primaryLight: string;
+  primaryDark: string;
   primarySoft: string;
   primaryGlow: string;
 
   // Semantics
   success: string;
+  successDark: string;
   successSoft: string;
   successBorder: string;
 
   warning: string;
+  warningDark: string;
   warningSoft: string;
   warningBorder: string;
 
   danger: string;
+  dangerDark: string;
   dangerSoft: string;
   dangerBorder: string;
+
+  purple: string;
+  purpleDark: string;
+  purpleSoft: string;
 
   info: string;
   infoSoft: string;
@@ -60,20 +68,28 @@ export const darkTheme: ThemeColors = {
 
   primary: '#38bdf8',
   primaryLight: '#7dd3fc',
+  primaryDark: '#0284c7',
   primarySoft: 'rgba(56, 189, 248, 0.12)',
   primaryGlow: 'rgba(56, 189, 248, 0.25)',
 
   success: '#10b981',
+  successDark: '#059669',
   successSoft: 'rgba(16, 185, 129, 0.14)',
   successBorder: '#059669',
 
   warning: '#f59e0b',
+  warningDark: '#d97706',
   warningSoft: 'rgba(245, 158, 11, 0.14)',
   warningBorder: '#d97706',
 
   danger: '#f43f5e',
+  dangerDark: '#e11d48',
   dangerSoft: 'rgba(244, 63, 94, 0.14)',
   dangerBorder: '#e11d48',
+
+  purple: '#a855f7',
+  purpleDark: '#7c3aed',
+  purpleSoft: 'rgba(168, 85, 247, 0.14)',
 
   info: '#6366f1',
   infoSoft: 'rgba(99, 102, 241, 0.14)',
@@ -99,22 +115,30 @@ export const lightTheme: ThemeColors = {
   textMuted: '#64748b',
   textInverse: '#ffffff',
 
-  primary: '#0284c7',
-  primaryLight: '#0369a1',
-  primarySoft: 'rgba(2, 132, 199, 0.10)',
-  primaryGlow: 'rgba(2, 132, 199, 0.20)',
+  primary: '#2563eb',
+  primaryLight: '#3b82f6',
+  primaryDark: '#1d4ed8',
+  primarySoft: 'rgba(37, 99, 235, 0.10)',
+  primaryGlow: 'rgba(37, 99, 235, 0.20)',
 
-  success: '#059669',
-  successSoft: 'rgba(5, 150, 105, 0.10)',
-  successBorder: '#10b981',
+  success: '#16a34a',
+  successDark: '#15803d',
+  successSoft: 'rgba(22, 163, 74, 0.10)',
+  successBorder: '#16a34a',
 
-  warning: '#d97706',
-  warningSoft: 'rgba(217, 119, 6, 0.10)',
+  warning: '#f59e0b',
+  warningDark: '#d97706',
+  warningSoft: 'rgba(245, 158, 11, 0.12)',
   warningBorder: '#f59e0b',
 
-  danger: '#e11d48',
-  dangerSoft: 'rgba(225, 29, 72, 0.10)',
-  dangerBorder: '#f43f5e',
+  danger: '#ef4444',
+  dangerDark: '#dc2626',
+  dangerSoft: 'rgba(239, 68, 68, 0.10)',
+  dangerBorder: '#ef4444',
+
+  purple: '#8b5cf6',
+  purpleDark: '#6d28d9',
+  purpleSoft: 'rgba(139, 92, 246, 0.12)',
 
   info: '#4f46e5',
   infoSoft: 'rgba(79, 70, 229, 0.10)',
@@ -184,29 +208,77 @@ export const categoryColors = {
       badgeText: '#9a3412',
     },
   },
+  matematica: {
+    dark: {
+      accent: '#38bdf8',
+      soft: 'rgba(56, 189, 248, 0.14)',
+      border: '#0284c7',
+      badgeText: '#bae6fd',
+    },
+    light: {
+      accent: '#0284c7',
+      soft: 'rgba(2, 132, 199, 0.10)',
+      border: '#38bdf8',
+      badgeText: '#0369a1',
+    },
+  },
 };
 
 export const radius = {
-  chip: 8,
-  control: 12,
-  card: 16,
+  xs: 6,
+  chip: 10,
+  control: 14,
+  card: 18,
+  pill: 999,
 } as const;
 
 export const typography = {
+  caption: 11,
   meta: 12,
-  body: 14,
+  sub: 13,
+  body: 15,
   option: 16,
-  statement: 20,
-  feedback: 22,
+  statement: 17,
+  subtitle: 18,
+  title: 20,
+  hero: 26,
 } as const;
 
 export const weights = {
+  normal: '400' as const,
   meta: '500' as const,
   title: '600' as const,
   number: '700' as const,
+  black: '800' as const,
 } as const;
 
 export const spacing = {
-  block: 12,
+  xs: 4,
+  sm: 8,
+  md: 12,
+  block: 16,
   screenPadding: 16,
+  lg: 20,
+  xl: 24,
 } as const;
+
+export const shadows = {
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  cardHover: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  tactileButton: (darkBorder: string) => ({
+    borderBottomWidth: 3,
+    borderBottomColor: darkBorder,
+  }),
+};
