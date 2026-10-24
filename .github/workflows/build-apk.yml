@@ -36,31 +36,32 @@ jobs:
       - name: Prebuild Native Android Project
         run: npx expo prebuild --platform android --clean
 
-      - name: Build APK with Gradle
+      - name: Build APK with Gradle (Release com bundle JS embutido)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../aprovafox-vunesp.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vunesp-quickdrill-aprovafox-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: aprovafox-vunesp-apk
+          path: aprovafox-vunesp.apk
           if-no-files-found: error
 
       - name: Publish GitHub Release with APK
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: AprovaFox APK (Instalador Android)
+          name: AprovaFox APK (Instalador Android 100% Offline)
           body: |
-            ### VUNESP QuickDrill (AprovaFox) - APK Android
+            ### VUNESP QuickDrill (AprovaFox) - APK Android 100% Offline
 
             - **Versão:** 1.0.0
-            - **Build:** Android Nativo (Offline completo, SRS, Simulados e Banco de 175 questões)
-            - **Instalação:** Baixe o arquivo `app-debug.apk` no seu celular Xiaomi/Android e toque para instalar.
+            - **Modo:** Standalone Release (Bundle JavaScript e assets embutidos nativamente)
+            - **Instalação:** Baixe o arquivo `aprovafox-vunesp.apk` no seu celular Xiaomi/Android e toque para instalar.
           files: |
-            android/app/build/outputs/apk/debug/app-debug.apk
+            aprovafox-vunesp.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
