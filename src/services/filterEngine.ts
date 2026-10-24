@@ -27,7 +27,21 @@ export const normalizeText = (s?: string | number | null): string =>
     .toLowerCase();
 
 /**
- * Compara dois valores com suporte a 'all', undefined e insensibilidade a acentos/caixa.
+ * Mapeamento canônico defensivo de Categoria -> Matéria para fallback resiliente.
+ */
+export const MATERIA_FALLBACK: Record<string, string> = {
+  'Crase (VUNESP)': 'Língua Portuguesa',
+  'Sujeito Oracional e Transitividade': 'Língua Portuguesa',
+  'Gestão de Patrimônio e Bens Públicos': 'Direito Administrativo',
+  'Nova Lei de Licitações (Lei 14.133/2021)': 'Direito Administrativo',
+  'Língua Portuguesa (Agente Patrimonial)': 'Língua Portuguesa',
+  'Matemática e Raciocínio Lógico': 'Matemática e Raciocínio Lógico',
+  'Conhecimentos Específicos - Agente Patrimonial': 'Conhecimentos Específicos',
+};
+
+/**
+ * Compara dois valores com suporte a 'all', undefined e insensibilidade a acentos/caixa,
+ * além de equivalência semântica para cargos e órgãos de Itanhaém.
  */
 export const matchesFilter = (
   value: string | number | undefined | null,
@@ -35,7 +49,20 @@ export const matchesFilter = (
 ): boolean => {
   if (!selected || selected === 'all') return true;
   if (value === undefined || value === null || value === '') return false;
-  return normalizeText(value) === normalizeText(selected);
+  const normVal = normalizeText(value);
+  const normSel = normalizeText(selected);
+  if (normVal === normSel) return true;
+
+  // Equivalência estrita entre "Agente Patrimonial" e "Agente de Vigilância Patrimonial" (Itanhaém)
+  const isItanhaemPatrimonialVal =
+    normVal === 'agente patrimonial' || normVal === 'agente de vigilancia patrimonial';
+  const isItanhaemPatrimonialSel =
+    normSel === 'agente patrimonial' || normSel === 'agente de vigilancia patrimonial';
+  if (isItanhaemPatrimonialVal && isItanhaemPatrimonialSel) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -58,9 +85,10 @@ export function filtrarQuestoes(
       if (q.category !== filtros.category) return false;
     }
 
-    // 2. Matéria
+    // 2. Matéria (com fallback canônico por categoria)
     if (filtros.materia && filtros.materia !== 'all') {
-      if (!matchesFilter(q.materia, filtros.materia)) return false;
+      const matEfetiva = q.materia || MATERIA_FALLBACK[q.category] || 'Conhecimentos Gerais';
+      if (!matchesFilter(matEfetiva, filtros.materia)) return false;
     }
 
     // 3. Subtópico
@@ -116,7 +144,7 @@ export function filtrarQuestoes(
       if (!matchesFilter(q.prova, filtros.prova)) return false;
     }
 
-    // 10. Cargo
+    // 10. Cargo (com equivalência para Agente Patrimonial / Agente de Vigilância Patrimonial)
     if (filtros.cargo && filtros.cargo !== 'all') {
       if (!matchesFilter(q.cargo, filtros.cargo)) return false;
     }

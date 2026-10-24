@@ -11,7 +11,14 @@
     "correctIndex": 1,
     "raioX": "Pronomes de tratamento repelem artigo, logo nunca levam crase — 'a Vossa Excelência' é só preposição.",
     "legalBasis": "Regra gramatical: crase = preposição 'a' + artigo 'a'; pronomes de tratamento não admitem artigo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-02",
@@ -25,7 +32,14 @@
     "correctIndex": 1,
     "raioX": "Antes de verbo no infinitivo não existe artigo, então jamais ocorre crase.",
     "legalBasis": "Regra gramatical: verbos não admitem artigo definido; o 'a' é apenas preposição.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-03",
@@ -39,7 +53,14 @@
     "correctIndex": 0,
     "raioX": "Horas exatas determinadas sempre pedem crase — substitua por 'ao meio-dia' para confirmar.",
     "legalBasis": "Regra gramatical: indicação de horas determinadas exige preposição 'a' + artigo 'as' = às.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-04",
@@ -53,7 +74,14 @@
     "correctIndex": 0,
     "raioX": "'À medida que' indica proporção (= conforme); 'na medida em que' indica causa (= porque).",
     "legalBasis": "Regra gramatical: locução conjuntiva proporcional 'à medida que' vs. causal 'na medida em que'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-05",
@@ -67,7 +95,14 @@
     "correctIndex": 1,
     "raioX": "Em expressões com palavras repetidas (cara a cara, um a um), o 'a' é só preposição — sem crase.",
     "legalBasis": "Regra gramatical: locuções formadas por palavras repetidas não admitem crase.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-06",
@@ -81,7 +116,14 @@
     "correctIndex": 0,
     "raioX": "Sempre que houver 'à moda de' implícito (à milanesa, à italiana), a crase é obrigatória.",
     "legalBasis": "Regra gramatical: crase obrigatória em locuções adverbiais femininas com 'à moda de' subentendido.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-07",
@@ -95,7 +137,14 @@
     "correctIndex": 1,
     "raioX": "Cidade sem determinante não aceita artigo — diga 'voltou DE Itanhaém' (sem 'da') para confirmar.",
     "legalBasis": "Regra gramatical: nomes de cidades sem especificador não admitem artigo; truque: trocar por 'voltou de/da'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-08",
@@ -109,7 +158,14 @@
     "correctIndex": 0,
     "raioX": "Quando 'distância' vem determinada (de cinco metros), a locução é feminina e leva crase.",
     "legalBasis": "Regra gramatical: 'a distância' (indeterminada) vs. 'à distância de…' (determinada, com crase).",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-09",
@@ -123,7 +179,14 @@
     "correctIndex": 1,
     "raioX": "'Casa' sem adjunto (= lar próprio) dispensa artigo e crase; só com especificador leva crase (à casa do colega).",
     "legalBasis": "Regra gramatical: 'casa' e 'terra', sem modificador, não admitem artigo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-10",
@@ -137,7 +200,14 @@
     "correctIndex": 0,
     "raioX": "Dias da semana são femininos com artigo; se há 'de segunda', o paralelismo exige 'à sexta-feira'.",
     "legalBasis": "Regra gramatical: crase em intervalos de dias da semana (de … à …) quando ambos admitem artigo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-11",
@@ -151,7 +221,14 @@
     "correctIndex": 0,
     "raioX": "Diante de possessivo feminino singular a crase é facultativa — ambas as formas estão corretas, mas a banca marca a com acento quando o enunciado pede 'com crase'.",
     "legalBasis": "Regra gramatical: crase facultativa diante de pronome possessivo feminino singular (sua, minha).",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-12",
@@ -165,7 +242,14 @@
     "correctIndex": 0,
     "raioX": "Nomes próprios femininos de pessoas admitem artigo no uso coloquial brasileiro; com preposição, a crase é facultativa, mas a banca costuma cobrar com acento.",
     "legalBasis": "Regra gramatical: crase facultativa diante de nomes próprios femininos de pessoa.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-13",
@@ -179,7 +263,14 @@
     "correctIndex": 0,
     "raioX": "'Fazer referência a' + 'aquele' = àquele — a crase aparece na fusão da preposição com o demonstrativo.",
     "legalBasis": "Regra gramatical: crase obrigatória na contração de preposição 'a' com demonstrativos aquele(a/s), aquilo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-14",
@@ -193,7 +284,14 @@
     "correctIndex": 1,
     "raioX": "'Terra' como oposto de 'bordo/mar' dispensa artigo e crase — só ganha crase se tiver adjunto (à terra natal).",
     "legalBasis": "Regra gramatical: 'terra' em sentido de chão firme (oposição a bordo) não admite artigo.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-15",
@@ -207,7 +305,14 @@
     "correctIndex": 1,
     "raioX": "'Na medida em que' expressa causa (= porque/já que); 'à medida que' expressa proporção (= conforme).",
     "legalBasis": "Regra gramatical: locução conjuntiva causal 'na medida em que' vs. proporcional 'à medida que'.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-01",
@@ -221,7 +326,14 @@
     "correctIndex": 0,
     "raioX": "Oração subordinada como sujeito = sujeito oracional → verbo sempre na 3ª pessoa do singular.",
     "legalBasis": "Regra gramatical: sujeito oracional exige verbo no singular.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-02",
@@ -235,7 +347,14 @@
     "correctIndex": 1,
     "raioX": "O sujeito de 'convém' é a oração 'observar os prazos' (singular), não 'aos vereadores' (objeto indireto).",
     "legalBasis": "Regra gramatical: verbo impessoal-like com sujeito oracional fica no singular; OI não determina concordância.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-03",
@@ -249,7 +368,14 @@
     "correctIndex": 1,
     "raioX": "'Fazer' indicando tempo decorrido é impessoal — fica sempre no singular, sem sujeito.",
     "legalBasis": "Regra gramatical: verbo 'fazer' indicando tempo transcorrido é impessoal (invariável).",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-04",
@@ -263,7 +389,14 @@
     "correctIndex": 1,
     "raioX": "'Haver' no sentido de existir é impessoal — o complemento é objeto direto, não sujeito.",
     "legalBasis": "Regra gramatical: 'haver' = existir → impessoal, invariável na 3ª pessoa do singular.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-05",
@@ -277,7 +410,14 @@
     "correctIndex": 0,
     "raioX": "Com VTD + 'se' (voz passiva sintética), o verbo concorda com o sujeito paciente: 'os pareceres foram aprovados'.",
     "legalBasis": "Regra gramatical: VTD + SE = voz passiva sintética; sujeito paciente determina a concordância.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-06",
@@ -291,7 +431,14 @@
     "correctIndex": 1,
     "raioX": "VTI + 'se' = índice de indeterminação do sujeito → verbo trava no singular, sempre.",
     "legalBasis": "Regra gramatical: com VTI, VI ou VL + SE, o 'se' é índice de indeterminação, verbo no singular.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-07",
@@ -305,7 +452,14 @@
     "correctIndex": 0,
     "raioX": "'Visar' no sentido de pretender/objetivar é VTI (regência: visar a algo) — admite crase diante de substantivo feminino.",
     "legalBasis": "Regra gramatical: visar (= pretender) é VTI com preposição 'a'; visar (= mirar) é VTD.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-08",
@@ -319,7 +473,14 @@
     "correctIndex": 0,
     "raioX": "'Assistir' no sentido de presenciar/ver é VTI (assistir a algo) — exige preposição 'a'.",
     "legalBasis": "Regra gramatical: assistir (= ver/presenciar) é VTI; assistir (= prestar assistência) é VTD.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-09",
@@ -333,7 +494,14 @@
     "correctIndex": 0,
     "raioX": "Sujeito posposto continua sendo sujeito — o verbo concorda com ele: 'as novas regras vigoram'.",
     "legalBasis": "Regra gramatical: sujeito posposto não altera a concordância; o verbo flexiona normalmente.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-10",
@@ -347,7 +515,14 @@
     "correctIndex": 0,
     "raioX": "Com expressões partitivas (a maioria de), a concordância com o núcleo singular é a preferida em provas — ambas aceitas, mas VUNESP prefere o singular.",
     "legalBasis": "Regra gramatical: concordância com expressões partitivas admite singular (núcleo) ou plural (especificador).",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-11",
@@ -361,7 +536,14 @@
     "correctIndex": 1,
     "raioX": "Na indicação de horas, o verbo 'ser' concorda com o numeral: 'eram treze horas', 'era uma hora'.",
     "legalBasis": "Regra gramatical: verbo 'ser' impessoal em indicação de horas concorda com o predicativo numérico.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-12",
@@ -375,7 +557,14 @@
     "correctIndex": 0,
     "raioX": "Quando o especificador da porcentagem é singular ('do orçamento'), a concordância preferencial é com ele — singular.",
     "legalBasis": "Regra gramatical: % + de + nome → concordância pode ser com o % ou com o especificador; com especificador singular, prefere-se singular.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-13",
@@ -389,7 +578,14 @@
     "correctIndex": 0,
     "raioX": "Na subordinada subjetiva, o verbo da oração principal (é necessário) fica no singular, mas o da subordinada concorda com seu próprio sujeito ('os servidores').",
     "legalBasis": "Regra gramatical: oração subordinada substantiva subjetiva — verbo da principal no singular; verbo da subordinada concorda com seu sujeito interno.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-14",
@@ -403,7 +599,14 @@
     "correctIndex": 1,
     "raioX": "Com o pronome relativo 'que', o verbo concorda com o antecedente: 'eu que redigi' (1ª pessoa).",
     "legalBasis": "Regra gramatical: pronome relativo 'que' → verbo concorda com o antecedente; 'quem' → verbo na 3ª pessoa.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-15",
@@ -417,7 +620,14 @@
     "correctIndex": 0,
     "raioX": "'Aspirar' no sentido de desejar/almejar é VTI (aspirar a algo) — o 'a' é preposição, e com feminino leva crase.",
     "legalBasis": "Regra gramatical: aspirar (= desejar) é VTI com preposição 'a'; aspirar (= respirar) é VTD.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-01",
@@ -431,7 +641,14 @@
     "correctIndex": 0,
     "raioX": "Praças, ruas e praias são bens de uso comum do povo — qualquer pessoa pode usá-los sem permissão especial.",
     "legalBasis": "Código Civil, art. 99, I — bens de uso comum do povo: rios, mares, estradas, ruas e praças.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-02",
@@ -445,7 +662,14 @@
     "correctIndex": 1,
     "raioX": "Prédios onde funcionam repartições públicas são bens de uso especial — afetados ao serviço público.",
     "legalBasis": "Código Civil, art. 99, II — bens de uso especial: edifícios destinados a serviço ou estabelecimento público.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-03",
@@ -459,7 +683,14 @@
     "correctIndex": 1,
     "raioX": "Bens dominicais compõem o patrimônio disponível do ente — não estão afetados a nenhum uso público.",
     "legalBasis": "Código Civil, art. 99, III — bens dominicais: patrimônio das pessoas jurídicas de direito público sem destinação.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-04",
@@ -473,7 +704,14 @@
     "correctIndex": 1,
     "raioX": "Só bens dominicais podem ser alienados — um bem afetado precisa ser desafetado (perder a destinação) antes da venda.",
     "legalBasis": "Código Civil, art. 100 e art. 101 — bens de uso comum e especial são inalienáveis enquanto afetados.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-05",
@@ -487,7 +725,14 @@
     "correctIndex": 1,
     "raioX": "Bens públicos são imprescritíveis — não podem ser adquiridos por usucapião, independentemente do tempo de ocupação.",
     "legalBasis": "CF/88, art. 183, §3º e art. 191, parágrafo único; Código Civil, art. 102.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-06",
@@ -501,7 +746,14 @@
     "correctIndex": 1,
     "raioX": "Bens públicos são impenhoráveis — o pagamento de dívidas judiciais do poder público se faz por precatório, não por penhora.",
     "legalBasis": "CF/88, art. 100 — pagamentos devidos pela Fazenda Pública se fazem por precatórios; bens públicos são impenhoráveis.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-07",
@@ -515,7 +767,14 @@
     "correctIndex": 1,
     "raioX": "Tombamento é restrição administrativa que preserva o bem, mas não transfere a propriedade — o titular continua dono.",
     "legalBasis": "Decreto-Lei nº 25/1937 — tombamento impõe restrições ao uso, sem transferência dominial.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-08",
@@ -529,7 +788,14 @@
     "correctIndex": 0,
     "raioX": "Concessão de uso é contrato administrativo formal — exige autorização legislativa e licitação, salvo hipóteses de dispensa.",
     "legalBasis": "Lei 14.133/2021, art. 2º e Lei Orgânica Municipal — concessão de uso de bens públicos requer licitação prévia.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-09",
@@ -543,7 +809,14 @@
     "correctIndex": 0,
     "raioX": "Permissão de uso é ato unilateral, precário e discricionário — pode ser revogada a qualquer tempo sem indenização.",
     "legalBasis": "Doutrina administrativa (Hely Lopes Meirelles) — permissão de uso: ato precário, discricionário, revogável.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-10",
@@ -557,7 +830,14 @@
     "correctIndex": 1,
     "raioX": "Cessão de uso transfere posse/uso entre órgãos públicos — a propriedade permanece com o ente cedente.",
     "legalBasis": "Doutrina administrativa — cessão de uso: transferência de uso entre entidades públicas, sem alienação.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-11",
@@ -571,7 +851,14 @@
     "correctIndex": 0,
     "raioX": "O inventário anual é obrigatório para confrontar registros contábeis com bens físicos existentes.",
     "legalBasis": "Lei 4.320/1964, art. 96 — levantamento geral dos bens móveis e imóveis ao menos anualmente.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-12",
@@ -585,7 +872,14 @@
     "correctIndex": 0,
     "raioX": "Depreciação registra a perda de valor de bens tangíveis pelo uso, tempo ou obsolescência — nunca reflete valorização.",
     "legalBasis": "MCASP / NBC TSP 07 — depreciação: alocação sistemática do valor depreciável ao longo da vida útil.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-13",
@@ -599,7 +893,14 @@
     "correctIndex": 1,
     "raioX": "Material permanente tem durabilidade superior a 2 anos e não perde identidade com o uso — tombado e inventariado.",
     "legalBasis": "Lei 4.320/1964, art. 15, §2º — material permanente: duração superior a dois anos.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-14",
@@ -613,7 +914,14 @@
     "correctIndex": 0,
     "raioX": "O Termo de Responsabilidade vincula o servidor à guarda e conservação do bem — é instrumento interno de controle patrimonial.",
     "legalBasis": "Decreto 99.658/1990 (âmbito federal, aplicável por analogia) e normas internas de controle patrimonial.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-15",
@@ -627,7 +935,14 @@
     "correctIndex": 0,
     "raioX": "Bens inservíveis (ociosos, antieconômicos, irrecuperáveis) são alienados preferencialmente por leilão — forma mais ágil.",
     "legalBasis": "Lei 14.133/2021, art. 76, §2º — alienação de bens móveis inservíveis mediante leilão.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-01",
@@ -641,7 +956,14 @@
     "correctIndex": 1,
     "raioX": "Artista consagrado torna a competição inviável — é inexigibilidade (art. 74, II), não dispensa.",
     "legalBasis": "Lei 14.133/2021, art. 74, II — inexigibilidade para contratação de profissional artístico consagrado.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-02",
@@ -655,7 +977,14 @@
     "correctIndex": 0,
     "raioX": "Notória especialização + serviço singular = competição inviável → inexigibilidade, não dispensa por valor.",
     "legalBasis": "Lei 14.133/2021, art. 74, III — inexigibilidade para serviços técnicos de natureza singular com notória especialização.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-03",
@@ -669,7 +998,14 @@
     "correctIndex": 0,
     "raioX": "A Lei 14.133 fixa dispensa por valor para serviços comuns de engenharia em até R$ 100.000,00 (art. 75, I).",
     "legalBasis": "Lei 14.133/2021, art. 75, I — dispensa para obras e serviços comuns de engenharia até R$ 100.000,00.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-04",
@@ -683,7 +1019,14 @@
     "correctIndex": 1,
     "raioX": "Emergência gera dispensa (art. 75, VIII), não inexigibilidade — a competição é possível, mas o tempo não permite.",
     "legalBasis": "Lei 14.133/2021, art. 75, VIII — dispensa em caso de emergência ou calamidade pública.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-05",
@@ -697,7 +1040,14 @@
     "correctIndex": 1,
     "raioX": "A Lei 14.133 extinguiu Tomada de Preços e Convite — restam 5 modalidades: pregão, concorrência, concurso, leilão e diálogo competitivo.",
     "legalBasis": "Lei 14.133/2021, art. 28 — modalidades: pregão, concorrência, concurso, leilão e diálogo competitivo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-06",
@@ -711,7 +1061,14 @@
     "correctIndex": 0,
     "raioX": "São 5 modalidades: Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo — decore 'Pre-Con-Con-Lei-Di'.",
     "legalBasis": "Lei 14.133/2021, art. 28, I a V.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-07",
@@ -725,7 +1082,14 @@
     "correctIndex": 0,
     "raioX": "Pregão é exclusivo para bens e serviços comuns (padrões objetivos no edital) — vedado para obras e serviços especiais de engenharia.",
     "legalBasis": "Lei 14.133/2021, art. 29 — pregão para bens e serviços comuns, inclusive de engenharia comum.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-08",
@@ -739,7 +1103,14 @@
     "correctIndex": 0,
     "raioX": "Diálogo competitivo é para objetos complexos ou inovadores — a Administração dialoga com licitantes para encontrar a solução.",
     "legalBasis": "Lei 14.133/2021, art. 32 — diálogo competitivo para inovação tecnológica/técnica ou impossibilidade de definir o objeto.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-09",
@@ -753,7 +1124,14 @@
     "correctIndex": 1,
     "raioX": "Leilão aliena bens; concurso seleciona trabalho técnico/artístico — não confunda alienação com premiação.",
     "legalBasis": "Lei 14.133/2021, art. 31 — leilão para alienação de bens; art. 30 — concurso para trabalho técnico ou artístico.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-10",
@@ -767,7 +1145,14 @@
     "correctIndex": 0,
     "raioX": "O PNCP é o portal centralizado obrigatório de divulgação da Lei 14.133 — substituindo a fragmentação por diários oficiais.",
     "legalBasis": "Lei 14.133/2021, art. 174 — Portal Nacional de Contratações Públicas (PNCP) como sítio oficial de publicidade.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-11",
@@ -781,7 +1166,14 @@
     "correctIndex": 0,
     "raioX": "O ETP antecede o edital — é peça-chave da fase preparatória (planejamento), antes de qualquer publicação.",
     "legalBasis": "Lei 14.133/2021, art. 18, §1º — fase preparatória compreende ETP, termo de referência, análise de riscos etc.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-12",
@@ -795,7 +1187,14 @@
     "correctIndex": 0,
     "raioX": "O ETP documenta a necessidade, os requisitos e a estimativa de quantidades e custos — é o alicerce do planejamento.",
     "legalBasis": "Lei 14.133/2021, art. 18, §1º, I a XII — elementos obrigatórios do ETP.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-13",
@@ -809,7 +1208,14 @@
     "correctIndex": 0,
     "raioX": "Seguro-garantia com cláusula de retomada (step-in) pode alcançar 30% do valor do contrato — sem essa cláusula, o limite é 5%.",
     "legalBasis": "Lei 14.133/2021, art. 98, §3º — garantia de até 30% para seguro-garantia com cláusula de retomada.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-14",
@@ -823,7 +1229,14 @@
     "correctIndex": 0,
     "raioX": "A matriz de riscos distribui encargos entre Administração e contratado — define quem assume cada risco do contrato.",
     "legalBasis": "Lei 14.133/2021, art. 6º, XXVII — matriz de riscos: cláusula contratual de repartição de riscos.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-15",
@@ -837,7 +1250,14 @@
     "correctIndex": 0,
     "raioX": "Registro de preços funciona com pregão ou concorrência — são as duas modalidades compatíveis com o SRP na Lei 14.133.",
     "legalBasis": "Lei 14.133/2021, art. 82, §2º — registro de preços por pregão ou concorrência.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-16",
@@ -851,7 +1271,14 @@
     "correctIndex": 0,
     "raioX": "Pronomes indefinidos (nenhuma, qualquer, toda) repelem artigo feminino; portanto, o 'a' é apenas preposição sem crase.",
     "legalBasis": "Regra gramatical: pronomes indefinidos não admitem artigo definido diante de si.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-17",
@@ -865,7 +1292,14 @@
     "correctIndex": 1,
     "raioX": "Antes de pronome possessivo feminino no singular ('sua'), o artigo é facultativo, tornando o acento grave de crase facultativo.",
     "legalBasis": "Regra gramatical: crase facultativa antes de pronome possessivo feminino singular adjetivo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-18",
@@ -879,7 +1313,14 @@
     "correctIndex": 0,
     "raioX": "Se o pronome está no plural ('suas') e o 'a' está no singular, há apenas preposição simples — crase proibida!",
     "legalBasis": "Regra VUNESP: 'A' no singular diante de palavra no plural = crase nem a pau.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-19",
@@ -893,7 +1334,14 @@
     "correctIndex": 0,
     "raioX": "Ocorre crase antes de nome masculino quando está subentendida a locução 'à moda de' ou 'à maneira de'.",
     "legalBasis": "Regra gramatical: elipse da locução prepositiva feminina 'à moda de'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-20",
@@ -907,7 +1355,14 @@
     "correctIndex": 0,
     "raioX": "Macete VUNESP: 'Vou a, volto de, crase pra quê? Vou a, volto da, crase no A' (Volto de Itanhaém = sem crase).",
     "legalBasis": "Regra toponímica: nomes de localidades que não aceitam artigo feminino não admitem crase.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-21",
@@ -921,7 +1376,14 @@
     "correctIndex": 0,
     "raioX": "Quando o nome da localidade vem especificado por adjetivo ou locução restritiva ('histórica Itanhaém'), a crase torna-se obrigatória.",
     "legalBasis": "Regra gramatical: nomes de cidade determinados/especificados exigem artigo e aceitam crase.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-22",
@@ -935,7 +1397,14 @@
     "correctIndex": 0,
     "raioX": "A palavra 'casa' no sentido de lar próprio, desacompanhada de modificador, rejeita crase.",
     "legalBasis": "Regra gramatical: 'casa' própria sem determinante não admite artigo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-23",
@@ -949,7 +1418,14 @@
     "correctIndex": 0,
     "raioX": "Quando a palavra 'casa' vier determinada ou qualificada ('Casa das Leis'), o uso da crase é obrigatório.",
     "legalBasis": "Regra gramatical: 'casa' especificada admite artigo definido e exige crase.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-24",
@@ -963,7 +1439,14 @@
     "correctIndex": 0,
     "raioX": "'Terra' em oposição a bordo/mar, sem modificador, não admite artigo e não leva crase.",
     "legalBasis": "Regra gramatical: 'terra' em oposição a bordo não aceita artigo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-25",
@@ -977,7 +1460,14 @@
     "correctIndex": 0,
     "raioX": "Quando 'terra' significa terra natal ou vem determinada ('terra de seus antepassados'), a crase é obrigatória.",
     "legalBasis": "Regra gramatical: palavra 'terra' com adjunto adnominal restritivo admite artigo definido.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-26",
@@ -991,7 +1481,14 @@
     "correctIndex": 0,
     "raioX": "Diante de 'distância' determinada numericamente ('de 50 metros'), a crase é obrigatória segundo o padrão VUNESP.",
     "legalBasis": "Padrão VUNESP: 'à distância de [X metros]' exige acento indicativo de crase.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-27",
@@ -1005,7 +1502,14 @@
     "correctIndex": 0,
     "raioX": "Diante da expressão 'a distância' sem especificação numérica, predomina na banca VUNESP o uso sem crase.",
     "legalBasis": "Regra gramatical: 'a distância' indeterminada funciona como locução adverbial sem artigo definido.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-28",
@@ -1019,7 +1523,14 @@
     "correctIndex": 0,
     "raioX": "Após a preposição 'até', o uso da crase diante de substantivo feminino é facultativo ('até a' ou 'até à').",
     "legalBasis": "Regra gramatical: preposição 'até' permite preposição acidental gerando crase facultativa.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-29",
@@ -1033,7 +1544,14 @@
     "correctIndex": 0,
     "raioX": "Quem faz referência faz referência 'a'; somando com a letra inicial de 'aquele', temos 'àquele'.",
     "legalBasis": "Regra gramatical: regência nominal exige preposição 'a' + pronome demonstrativo 'aquele' = àquele.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-30",
@@ -1047,7 +1565,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'opor-se' exige a preposição 'a' (opor-se a algo); unindo com 'aquilo', obtém-se 'àquilo'.",
     "legalBasis": "Regra gramatical: VTI 'opor-se a' + 'aquilo' = crase obrigatória no 'A' inicial.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-31",
@@ -1061,7 +1586,14 @@
     "correctIndex": 0,
     "raioX": "O 'a' antes do pronome 'que' equivale a 'aquela' (idêntica àquela que foi rejeitada), ocorrendo crase.",
     "legalBasis": "Regra gramatical: fusão de preposição 'a' exigida por 'idêntica' com pronome demonstrativo 'a'.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-32",
@@ -1075,7 +1607,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'opor-se' exige preposição 'a' ('opôs-se a'); com o pronome 'a qual', ocorre crase obrigatória: 'à qual'.",
     "legalBasis": "Regra gramatical: regência verbal rege preposição 'a' que se funde ao artigo de 'a qual'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-33",
@@ -1089,7 +1628,14 @@
     "correctIndex": 0,
     "raioX": "O pronome relativo 'quem' rejeita artigo; portanto, diante dele jamais haverá crase.",
     "legalBasis": "Regra gramatical: 'quem' não admite artigo feminino anteposto.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-34",
@@ -1103,7 +1649,14 @@
     "correctIndex": 0,
     "raioX": "Paralelismo sintático: se começou com preposição simples ('de segunda'), termina com preposição simples ('a sexta').",
     "legalBasis": "Regra gramatical: paralelismo sintático 'de X a Y' vs. 'da X à Y'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-35",
@@ -1117,7 +1670,14 @@
     "correctIndex": 0,
     "raioX": "Havendo artigo no primeiro termo ('da' = de + a), deve haver crase no segundo termo ('à' = a + a) por paralelismo.",
     "legalBasis": "Regra gramatical: correlação de artigos definidos no paralelismo sintático temporal.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-36",
@@ -1131,7 +1691,14 @@
     "correctIndex": 0,
     "raioX": "Locução conjuntiva proporcional feminina 'à proporção que' sempre recebe acento grave indicativo de crase.",
     "legalBasis": "Regra gramatical: locuções conjuntivas com núcleo feminino exigem crase.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-37",
@@ -1145,7 +1712,14 @@
     "correctIndex": 0,
     "raioX": "Expressões de instrumento (escrever a mão, pintar a óleo) não levam crase segundo a jurisprudência da VUNESP.",
     "legalBasis": "Padrão VUNESP: locuções instrumentais femininas não admitem crase quando denotam mero instrumento.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-38",
@@ -1159,7 +1733,14 @@
     "correctIndex": 0,
     "raioX": "Locução adverbial feminina de modo ('à revelia', 'às pressas', 'às claras') sempre leva crase.",
     "legalBasis": "Regra gramatical: locuções adverbiais femininas são grafadas com acento grave.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-39",
@@ -1173,7 +1754,14 @@
     "correctIndex": 0,
     "raioX": "A correlação 'das [hora] às [hora]' exige crase porque há contração da preposição com o artigo feminino plural.",
     "legalBasis": "Regra gramatical: indicação de horário delimitado (das X às Y) exige crase.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-40",
@@ -1187,7 +1775,14 @@
     "correctIndex": 0,
     "raioX": "Numerais ordinais femininos ('primeira', 'segunda') admitem artigo definido; com a preposição 'a', ocorre crase.",
     "legalBasis": "Regra gramatical: ordinais femininos admitem artigo definido.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-41",
@@ -1201,7 +1796,14 @@
     "correctIndex": 0,
     "raioX": "Expressões com palavras femininas repetidas ('frente a frente', 'gota a gota') não admitem crase.",
     "legalBasis": "Regra gramatical: ausência de artigo entre vocábulos repetidos idênticos.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-42",
@@ -1215,7 +1817,14 @@
     "correctIndex": 0,
     "raioX": "'A' no singular antes de palavra feminina plural tomada em sentido geral ('pessoas') é preposição pura — sem crase.",
     "legalBasis": "Regra gramatical: substantivo no plural em sentido indeterminado rejeita crase com 'a' singular.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-43",
@@ -1229,7 +1838,14 @@
     "correctIndex": 0,
     "raioX": "Nomes de personalidades históricas célebres ou com títulos honoríficos formais recebem artigo e exigem crase.",
     "legalBasis": "Regra gramatical: títulos nobres e personalidades de destaque recebem artigo determinado.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-44",
@@ -1243,7 +1859,14 @@
     "correctIndex": 1,
     "raioX": "Antes de nomes próprios femininos comuns, o uso do artigo é facultativo no português do Brasil, tornando a crase facultativa.",
     "legalBasis": "Regra gramatical: crase facultativa diante de antropônimos femininos simples.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "crase-45",
@@ -1257,7 +1880,14 @@
     "correctIndex": 0,
     "raioX": "A locução prepositiva feminina 'à custa de' exige acento indicativo de crase obrigatório.",
     "legalBasis": "Regra gramatical: locuções prepositivas femininas (à custa de, à sombra de) são acentuadas.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-16",
@@ -1271,7 +1901,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'fazer' na indicação de tempo transcorrido é impessoal e deve permanecer invariavelmente no singular.",
     "legalBasis": "Gramática Normativa: impessoalidade do verbo 'fazer' temporal.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-17",
@@ -1285,7 +1922,14 @@
     "correctIndex": 0,
     "raioX": "Na locução verbal com 'haver' existencial, o verbo principal transfere sua impessoalidade para o verbo auxiliar ('há de haver').",
     "legalBasis": "Regra de concordância: contaminação da impessoalidade pelo verbo principal 'haver'.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-18",
@@ -1299,7 +1943,14 @@
     "correctIndex": 1,
     "raioX": "Na voz passiva sintética com sujeito composto posposto ('o parecer e a ata'), o verbo transita no plural: 'aprovaram-se'.",
     "legalBasis": "Sintaxe de concordância: voz passiva sintética concorda com o sujeito paciente.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-19",
@@ -1313,7 +1964,14 @@
     "correctIndex": 0,
     "raioX": "Com verbo transitivo indireto ('precisar de') + SE, temos índice de indeterminação; o verbo fica obrigatoriamente no singular.",
     "legalBasis": "Sintaxe de regência: índice de indeterminação do sujeito veda flexão plural.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-20",
@@ -1327,7 +1985,14 @@
     "correctIndex": 0,
     "raioX": "No sentido de almejar/desejar pretensão, 'aspirar' é transitivo indireto e exige a preposição 'a' ('aspiravam ao cargo').",
     "legalBasis": "Regência verbal: 'aspirar' com sentido de almejar é VTI com regência em 'a'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-21",
@@ -1341,7 +2006,14 @@
     "correctIndex": 0,
     "raioX": "No sentido de presenciar/ver, o verbo 'assistir' é transitivo indireto e rege preposição 'a', ocorrendo crase antes de 'posse'.",
     "legalBasis": "Regência verbal: 'assistir' (presenciar) = VTI com preposição 'a'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-22",
@@ -1355,7 +2027,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'obedecer' é transitivo indireto e rege a preposição 'a'; antes de 'normas', ocorre crase obrigatória ('às normas').",
     "legalBasis": "Regência verbal: 'obedecer' e 'desobedecer' são VTI regidos pela preposição 'a'.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-23",
@@ -1369,7 +2048,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'preferir' rege a preposição 'a' ('preferir X a Y'); a norma culta e a VUNESP condenam 'do que' ou 'mais que'.",
     "legalBasis": "Regência verbal: 'preferir' é VTDI com segundo termo regido pela preposição 'a'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-24",
@@ -1383,7 +2069,14 @@
     "correctIndex": 0,
     "raioX": "Quando a porcentagem é seguida de termo singular ('da verba'), a concordância atrativa com o substantivo no singular é amplamente aceita.",
     "legalBasis": "Sintaxe de concordância: concordância partitiva/percentual com especificador no singular.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-25",
@@ -1397,7 +2090,14 @@
     "correctIndex": 0,
     "raioX": "Com numeral percentual plural ('25%') e especificador no plural ('dos requerimentos'), o verbo vai obrigatoriamente para o plural.",
     "legalBasis": "Regra de concordância: número percentual plural concordando com termo determinante plural.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-26",
@@ -1411,7 +2111,14 @@
     "correctIndex": 0,
     "raioX": "O adjetivo 'anexo' concorda em gênero e número com o substantivo a que se refere ('as minutas anexas'); apenas 'em anexo' é invariável.",
     "legalBasis": "Concordância nominal: 'anexo', 'incluso' e 'apenso' flexionam como adjetivos.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-27",
@@ -1425,7 +2132,14 @@
     "correctIndex": 0,
     "raioX": "Quando 'bastante' equivale a 'muitos' e modifica um substantivo ('argumentos'), ele funciona como pronome adjetivo e vai para o plural.",
     "legalBasis": "Concordância nominal: 'bastante' flexiona no plural quando acompanha substantivo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-28",
@@ -1439,7 +2153,14 @@
     "correctIndex": 0,
     "raioX": "'Onde' indica lugar físico fixo ou permanência; 'aonde' exige verbos de movimento que regem preposição 'a' (ir, chegar, dirigir-se).",
     "legalBasis": "Semântica e sintaxe: distinção de advérbios de lugar com e sem movimento.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-29",
@@ -1453,7 +2174,14 @@
     "correctIndex": 0,
     "raioX": "O verbo 'dirigir-se' exige a preposição 'a' (dirigir-se a algum lugar); a união gera 'aonde'.",
     "legalBasis": "Regência do advérbio de lugar com verbos transitivos que regem preposição de movimento.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-30",
@@ -1467,7 +2195,14 @@
     "correctIndex": 0,
     "raioX": "Equivalendo a 'pelo qual' ou após a palavra 'motivo', grafa-se separado e sem acento: 'por que'.",
     "legalBasis": "Ortografia oficial: 'por que' relativo ou com palavra 'motivo' subentendida.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-31",
@@ -1481,7 +2216,14 @@
     "correctIndex": 0,
     "raioX": "Precedido de artigo ou determinante ('o'), funciona como substantivo masculino e grafa-se junto e com acento circunflexo: 'o porquê'.",
     "legalBasis": "Ortografia oficial: substantivação do pronome interrogativo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-32",
@@ -1495,7 +2237,14 @@
     "correctIndex": 0,
     "raioX": "Na indicação de horas, o verbo 'ser' concorda obrigatoriamente com o número de horas expressas ('eram duas horas').",
     "legalBasis": "Sintaxe de concordância: verbo 'ser' temporal concorda com o predicativo numérico.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-33",
@@ -1509,7 +2258,14 @@
     "correctIndex": 0,
     "raioX": "O sujeito é a oração subordinada 'publicar os atos no diário oficial'; verbos com sujeito oracional ficam estritamente no singular.",
     "legalBasis": "Gramática Normativa: sujeito oracional impõe terceira pessoa do singular ao verbo principal.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-34",
@@ -1523,7 +2279,14 @@
     "correctIndex": 0,
     "raioX": "Oxítonas e paroxítonas recebem acento conforme as regras gerais da ortografia oficial da Língua Portuguesa.",
     "legalBasis": "Novo Acordo Ortográfico: regras de acentuação gráfica na banca VUNESP.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "sujeito-35",
@@ -1537,7 +2300,14 @@
     "correctIndex": 1,
     "raioX": "No sentido de acarretar/produzir como consequência, o verbo 'implicar' é transitivo direto (não rege a preposição 'em').",
     "legalBasis": "Regência verbal clássica da VUNESP: 'implicar' = VTD no sentido de acarretar.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Língua Portuguesa",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-16",
@@ -1551,7 +2321,14 @@
     "correctIndex": 0,
     "raioX": "Bens desafetados ou sem destinação pública específica integram o patrimônio disponível do Estado como bens dominicais.",
     "legalBasis": "Código Civil, art. 99, III: bens dominicais constituem o patrimônio das pessoas jurídicas de direito público.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-17",
@@ -1565,7 +2342,14 @@
     "correctIndex": 0,
     "raioX": "A afetação é tácita quando decorre da destinação fática e uso público contínuo do bem, sem lei formal específica.",
     "legalBasis": "Doutrina Administrativista: afetação expressa (por lei/ato) vs. afetação tácita (por fato administrativo).",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-18",
@@ -1579,7 +2363,14 @@
     "correctIndex": 0,
     "raioX": "A imprescritibilidade veda peremptoriamente a aquisição de qualquer bem público por usucapião, conforme súmula do STF.",
     "legalBasis": "CF/88, art. 183, § 3º e Súmula 340 do STF: bens públicos não se adquirem por usucapião.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-19",
@@ -1593,7 +2384,14 @@
     "correctIndex": 0,
     "raioX": "Bens públicos não sofrem penhora judicial; as condenações transitadas em julgado são pagas pela ordem de precatórios ou RPV.",
     "legalBasis": "CF/88, art. 100: pagamentos devidos pelas Fazendas Públicas em virtude de sentenças judiciais.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-20",
@@ -1607,7 +2405,14 @@
     "correctIndex": 0,
     "raioX": "A permissão de uso é outorgada a título precário, podendo ser revogada pela administração a qualquer tempo por conveniência pública.",
     "legalBasis": "Direito Administrativo: permissão de uso como ato discricionário e precário.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-21",
@@ -1621,7 +2426,14 @@
     "correctIndex": 0,
     "raioX": "Diferente da autorização e permissão, a concessão de uso é um contrato administrativo bilateral de direito público.",
     "legalBasis": "Doutrina de Hely Lopes Meirelles: concessão de uso como ajuste contratual com prazo resolutivo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-22",
@@ -1635,7 +2447,14 @@
     "correctIndex": 0,
     "raioX": "A venda de imóveis da administração direta depende de prévia autorização em lei, avaliação e licitação (art. 76, I da Lei 14.133).",
     "legalBasis": "Lei 14.133/2021, art. 76, I: alienação de bens imóveis depende de autorização legislativa.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-23",
@@ -1649,7 +2468,14 @@
     "correctIndex": 0,
     "raioX": "Bens materiais e tangíveis sofrem depreciação; bens intangíveis com vida útil finita sofrem amortização contábil.",
     "legalBasis": "Manual de Contabilidade Aplicada ao Setor Público (MCASP), Parte II.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-24",
@@ -1663,7 +2489,14 @@
     "correctIndex": 0,
     "raioX": "Bem inservível antieconômico ou irrecuperável é aquele cujo custo de reparo ultrapassa a relação de benefício econômico.",
     "legalBasis": "Decreto Federal 9.373/2018 (referência geral para descarte e desfazimento de bens públicos).",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-25",
@@ -1677,7 +2510,14 @@
     "correctIndex": 0,
     "raioX": "A autoexecutoriedade autoriza a Administração a executar diretamente seus atos e medidas sem intervenção judicial prévia.",
     "legalBasis": "Direito Administrativo: atributos do ato administrativo (PATI).",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-26",
@@ -1691,7 +2531,14 @@
     "correctIndex": 0,
     "raioX": "A presunção de legitimidade opera juris tantum (relativa), transferindo o ônus da prova de ilegalidade para quem a alega.",
     "legalBasis": "Doutrina de Direito Administrativo: presunção de legitimidade e veracidade dos atos públicos.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-27",
@@ -1705,7 +2552,14 @@
     "correctIndex": 0,
     "raioX": "A publicidade dos atos municipais deve ter caráter educativo e informativo, sendo vedada promoção pessoal pelo princípio da impessoalidade.",
     "legalBasis": "CF/88, art. 37, § 1º: vedação à promoção pessoal em obras e serviços públicos.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-28",
@@ -1719,7 +2573,14 @@
     "correctIndex": 0,
     "raioX": "A moralidade administrativa não se confunde com mera legalidade; exige conduta pautada pela ética, honestidade e lealdade institucional.",
     "legalBasis": "CF/88, art. 37, caput: princípio da moralidade administrativa e dever de probidade.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-29",
@@ -1733,7 +2594,14 @@
     "correctIndex": 0,
     "raioX": "O conflito de interesses fere o dever ético de imparcialidade e impessoalidade, impondo o dever legal de abstenção ou suspeição.",
     "legalBasis": "Lei 12.813/2013 (Lei de Conflito de Interesses) e estatutos funcionais municipais.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "patrimonio-30",
@@ -1747,7 +2615,14 @@
     "correctIndex": 0,
     "raioX": "Atos ilegais são anulados (efeito ex tunc); atos válidos que se tornaram inoportunos ou inconvenientes são revogados (efeito ex nunc).",
     "legalBasis": "Súmula 473 do STF: a Administração pode anular seus próprios atos e revogá-los por conveniência.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-16",
@@ -1761,7 +2636,14 @@
     "correctIndex": 0,
     "raioX": "A Lei 14.133/2021 extinguiu expressamente as modalidades Convite e Tomada de Preços, restando apenas 5 modalidades formais.",
     "legalBasis": "Lei 14.133/2021, art. 28: rol taxativo das modalidades licitatórias vigentes.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-17",
@@ -1775,7 +2657,14 @@
     "correctIndex": 0,
     "raioX": "O Diálogo Competitivo foi criado pela Lei 14.133/2021 para inovações tecnológicas e situações onde a Administração não consegue definir a solução exata sozinha.",
     "legalBasis": "Lei 14.133/2021, art. 32: disciplina e hipóteses de cabimento do Diálogo Competitivo.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-18",
@@ -1789,7 +2678,14 @@
     "correctIndex": 0,
     "raioX": "O agente de contratação e a comissão de contratação devem ser preferencialmente servidores públicos efetivos (concursados).",
     "legalBasis": "Lei 14.133/2021, art. 8º: designação do agente de contratação dentre os servidores efetivos.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-19",
@@ -1803,7 +2699,14 @@
     "correctIndex": 0,
     "raioX": "O Pregão adota exclusivamente menor preço ou maior desconto; não se aplica a julgamentos baseados em técnica ou arte.",
     "legalBasis": "Lei 14.133/2021, art. 34: aplicação dos critérios de julgamento por modalidade.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-20",
@@ -1817,7 +2720,14 @@
     "correctIndex": 0,
     "raioX": "A Nova Lei consolidou a inversão de fases como regra geral: primeiro julgam-se as propostas, habilitando apenas o vencedor.",
     "legalBasis": "Lei 14.133/2021, art. 17: sequência regular de fases do processo licitatório.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-21",
@@ -1831,7 +2741,14 @@
     "correctIndex": 0,
     "raioX": "O baixo valor é hipótese clássica de dispensa de licitação (art. 75, I e II); inexigibilidade decorre de inviabilidade de competição.",
     "legalBasis": "Lei 14.133/2021, art. 75, I e II: dispensa por valor.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-22",
@@ -1845,7 +2762,14 @@
     "correctIndex": 0,
     "raioX": "Na Lei 14.133/2021, a contratação emergencial tem prazo máximo de até 1 ano (na lei antiga 8.666/93 era de 180 dias).",
     "legalBasis": "Lei 14.133/2021, art. 75, VIII: contratação emergencial com prazo improrrogável de até 1 ano.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-23",
@@ -1859,7 +2783,14 @@
     "correctIndex": 0,
     "raioX": "Serviço técnico especializado de natureza predominantemente intelectual com notória especialização é inexigibilidade (art. 74, III).",
     "legalBasis": "Lei 14.133/2021, art. 74, III: rol de inexigibilidade por notória especialização.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-24",
@@ -1873,7 +2804,14 @@
     "correctIndex": 0,
     "raioX": "A Lei 14.133/2021 inovou permitindo contratos de prestação de serviços contínuos por até 5 anos, prorrogáveis até o limite de 10 anos.",
     "legalBasis": "Lei 14.133/2021, art. 106: prazo de vigência dos contratos de serviços contínuos.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-25",
@@ -1887,7 +2825,14 @@
     "correctIndex": 0,
     "raioX": "A publicação de extrato no Portal Nacional de Contratações Públicas (PNCP) é condição legal indispensável para a eficácia do contrato.",
     "legalBasis": "Lei 14.133/2021, art. 94: publicidade no PNCP como requisito de eficácia contratual.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-26",
@@ -1901,7 +2846,14 @@
     "correctIndex": 0,
     "raioX": "O princípio da segregação de funções evita fraudes e conflito de interesses na cadeia de contratações públicas.",
     "legalBasis": "Lei 14.133/2021, art. 5º e art. 7º, § 1º: princípio da segregação de funções.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-27",
@@ -1915,7 +2867,14 @@
     "correctIndex": 0,
     "raioX": "A matriz de riscos define de antemão qual contratante responde por imprevistos econômicos, geológicos ou climáticos na obra.",
     "legalBasis": "Lei 14.133/2021, art. 22 e art. 103: cláusula de matriz de riscos contratuais.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-28",
@@ -1929,7 +2888,14 @@
     "correctIndex": 0,
     "raioX": "O ETP é a peça central do planejamento que avalia as soluções disponíveis de mercado antes do termo de referência.",
     "legalBasis": "Lei 14.133/2021, art. 18, § 1º: elementos constitutivos do Estudo Técnico Preliminar.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-29",
@@ -1943,7 +2909,14 @@
     "correctIndex": 0,
     "raioX": "A cláusula de retomada do seguro-garantia permite que a seguradora conclua a obra caso a contratada dê causa à rescisão.",
     "legalBasis": "Lei 14.133/2021, art. 102: seguro-garantia com previsão de cláusula de retomada.",
-    "difficulty": "Difícil"
+    "difficulty": "Difícil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-30",
@@ -1957,7 +2930,14 @@
     "correctIndex": 0,
     "raioX": "Na LRF (art. 20, III, 'a'), o limite de despesa de pessoal para o Legislativo Municipal (Câmara de Vereadores) é de 6% da Receita Corrente Líquida.",
     "legalBasis": "Lei Complementar 101/2000 (LRF), art. 20, inciso III, alínea 'a'.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-31",
@@ -1971,7 +2951,14 @@
     "correctIndex": 0,
     "raioX": "O artigo 42 da LRF proíbe expressamente contrair obrigação de despesa nos últimos dois quadrimestres (8 meses) do mandato sem caixa correspondente.",
     "legalBasis": "Lei Complementar 101/2000 (LRF), art. 42: proibição de restos a pagar sem lastro financeiro.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-32",
@@ -1985,7 +2972,14 @@
     "correctIndex": 0,
     "raioX": "Os limites constitucionais de duodécimo do art. 29-A da CF incidem estritamente sobre a receita tributária e transferências do exercício anterior.",
     "legalBasis": "CF/88, art. 29-A: limites máximos para os repasses às Câmaras Municipais.",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-33",
@@ -1999,7 +2993,14 @@
     "correctIndex": 0,
     "raioX": "A publicidade é a regra imperativa em licitações; apenas o conteúdo das propostas até a abertura e segredos resguardados por lei são sigilosos.",
     "legalBasis": "Lei 14.133/2021, art. 13: publicidade e hipóteses de sigilo.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-34",
@@ -2013,7 +3014,14 @@
     "correctIndex": 0,
     "raioX": "A preferência e exclusividade em lotes de até R$ 80 mil para microempresas e EPPs é regida pela LC 123/2006, recepcionada pela Lei 14.133.",
     "legalBasis": "Lei Complementar 123/2006, arts. 42 a 49 e Lei 14.133/2021, art. 4º.",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "id": "licitacao-35",
@@ -2027,7 +3035,14 @@
     "correctIndex": 0,
     "raioX": "A Lei 14.133/2021 transferiu os crimes em licitações para o Código Penal (art. 337-E: pena de reclusão de 4 a 8 anos e multa).",
     "legalBasis": "Código Penal Brasileiro, art. 337-E (incluído pela Lei 14.133/2021).",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "banca": "VUNESP",
+    "materia": "Direito Administrativo",
+    "cargo": "Agente Patrimonial",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém",
+    "ano": 2026,
+    "questionFormat": "lacuna"
   },
   {
     "banca": "VUNESP",
@@ -2051,7 +3066,9 @@
     "raioX": "A alternativa B é a única que preserva a sequência expressa no aviso: primeiro identificar, depois obter autorização. A está invertida; C contradiz “somente”; D acrescenta exigência não escrita; E restringe indevidamente a regra.",
     "legalBasis": "Leitura literal e inferência controlada.",
     "editalTopicoId": "itanhaem-ap-lp-01",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2075,7 +3092,9 @@
     "raioX": "Zeloso significa cuidadoso, diligente. As alternativas A, C e D indicam falta de cuidado; E descreve atitude agressiva, não o sentido do termo.",
     "legalBasis": "Semântica: relação de sinonímia.",
     "editalTopicoId": "itanhaem-ap-lp-02",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2099,7 +3118,9 @@
     "raioX": "“Manter os olhos abertos” é uma expressão figurada que equivale a permanecer atento. A confunde a expressão com o ato físico; C, D e E não correspondem ao contexto.",
     "legalBasis": "Semântica: sentido conotativo e expressão idiomática.",
     "editalTopicoId": "itanhaem-ap-lp-03",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2123,7 +3144,9 @@
     "raioX": "A oração adverbial deslocada “Durante a ronda” deve ser separada por vírgula, e não se separa o verbo de seu complemento. As demais inserem vírgulas indevidas ou omitem a necessária.",
     "legalBasis": "Pontuação de adjunto adverbial deslocado e separação entre termos da oração.",
     "editalTopicoId": "itanhaem-ap-lp-04",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2147,7 +3170,9 @@
     "raioX": "“Cuidadosamente” modifica o verbo “registrou”, indicando modo; por isso é advérbio. Não nomeia ser, não caracteriza substantivo e não liga termos ou orações.",
     "legalBasis": "Classes gramaticais: advérbio de modo.",
     "editalTopicoId": "itanhaem-ap-lp-05",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2171,7 +3196,9 @@
     "raioX": "Em D, “registros” é sujeito de “existir”, portanto o verbo concorda no plural. Haver e fazer, nos sentidos de existir e tempo decorrido, são impessoais e ficam no singular; em C, “existem” concordaria com registros.",
     "legalBasis": "Concordância com verbos impessoais e com o verbo existir.",
     "editalTopicoId": "itanhaem-ap-lp-06",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2195,7 +3222,9 @@
     "raioX": "O verbo obedecer rege a preposição “a”: obedecer ao protocolo. “Preferir” não admite “mais” nessa construção; assistir, no sentido de ver, rege a; visar, no sentido de mirar, é transitivo direto.",
     "legalBasis": "Regência verbal: obedecer a, assistir a e visar a/visar algo conforme o sentido.",
     "editalTopicoId": "itanhaem-ap-lp-07",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2219,7 +3248,9 @@
     "raioX": "Em B, “dirigir-se a” une-se ao artigo feminino de “portaria”: à portaria. Não há crase antes de verbo, pronome pessoal, em “de segunda a sexta” sem artigo na segunda ocorrência, nem em palavras repetidas.",
     "legalBasis": "Crase: preposição a + artigo a; casos proibidos.",
     "editalTopicoId": "itanhaem-ap-lp-08",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2243,7 +3274,9 @@
     "raioX": "O possessivo “seu” refere-se à pessoa tratada por Vossa Senhoria. As demais alternativas não são o referente possível pela concordância e pelo sentido da frase.",
     "legalBasis": "Referência pronominal e pronomes de tratamento.",
     "editalTopicoId": "itanhaem-ap-lp-09",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2267,7 +3300,9 @@
     "raioX": "“Porque” é conjunção causal e introduz a explicação do bloqueio. “Por que” é usado em perguntas ou com sentido de pelo qual; “por quê” aparece no fim de pergunta; “porquê” é substantivo.",
     "legalBasis": "Emprego dos porquês e valor semântico da conjunção.",
     "editalTopicoId": "itanhaem-ap-lp-10",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2291,7 +3326,9 @@
     "raioX": "Basta calcular 18 - 7 = 11. As demais alternativas resultam de subtrações incorretas ou de soma indevida.",
     "legalBasis": "Operação de subtração com números naturais.",
     "editalTopicoId": "itanhaem-ap-mat-01",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2315,7 +3352,9 @@
     "raioX": "Calcula-se 24 ÷ 8 = 3 e, em seguida, 3 × 3 = 9. As outras opções correspondem a denominador, operações incompletas ou frações diferentes.",
     "legalBasis": "Fração de uma quantidade: numerador/denominador.",
     "editalTopicoId": "itanhaem-ap-mat-02",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2339,7 +3378,9 @@
     "raioX": "15% de 200 = 0,15 × 200 = 30. As alternativas menores ou maiores representam percentuais incorretos.",
     "legalBasis": "Cálculo de porcentagem.",
     "editalTopicoId": "itanhaem-ap-mat-03",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2363,7 +3404,9 @@
     "raioX": "A quantidade de agentes e o tempo são inversamente proporcionais: 4 × 6 = 2 × x, logo x = 12 horas. Reduzir a equipe dobra o tempo.",
     "legalBasis": "Regra de três simples inversamente proporcional.",
     "editalTopicoId": "itanhaem-ap-mat-04",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2387,7 +3430,9 @@
     "raioX": "De 21h45 a 22h45 transcorre 1 hora; de 22h45 a 23h10, mais 25 minutos: total de 1h25. As demais confundem o intervalo ou somam os horários.",
     "legalBasis": "Conversão e cálculo de intervalos de tempo.",
     "editalTopicoId": "itanhaem-ap-mat-05",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2411,7 +3456,9 @@
     "raioX": "Como 1 kg = 1.000 g, 2,5 kg = 2.500 g. As demais alternativas deslocam a vírgula ou confundem a unidade.",
     "legalBasis": "Relação entre quilograma e grama.",
     "editalTopicoId": "itanhaem-ap-mat-06",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2435,7 +3482,9 @@
     "raioX": "Cada metro tem 100 centímetros; portanto, 3,2 × 100 = 320 cm. As demais fazem conversões por fatores incorretos.",
     "legalBasis": "Relação entre metro e centímetro.",
     "editalTopicoId": "itanhaem-ap-mat-07",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2459,7 +3508,9 @@
     "raioX": "Perímetro do retângulo = 2 × (12 + 8) = 40 m. 96 m é o produto de comprimento por largura multiplicado por quatro, e as demais não consideram os quatro lados corretamente.",
     "legalBasis": "Perímetro de retângulo: 2(c + l).",
     "editalTopicoId": "itanhaem-ap-mat-08",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2483,7 +3534,9 @@
     "raioX": "Área do retângulo = base × altura = 5 × 4 = 20 m². 9 m² é a soma das medidas e 40 m² dobra indevidamente o resultado.",
     "legalBasis": "Área de retângulo: base × altura.",
     "editalTopicoId": "itanhaem-ap-mat-09",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2507,7 +3560,9 @@
     "raioX": "A proposição tem a forma “se P, então Q”; com P verdadeira, decorre Q: há autorização registrada. As alternativas C, D e E acrescentam informações não dadas; A contradiz a conclusão.",
     "legalBasis": "Implicação lógica e modus ponens.",
     "editalTopicoId": "itanhaem-ap-mat-10",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2531,7 +3586,9 @@
     "raioX": "A conduta profissional é observar, registrar, preservar evidências e comunicar a autoridade competente. Ignorar ou alterar o local compromete a segurança; deixar aberto aumenta o risco; divulgar externamente viola a confidencialidade.",
     "legalBasis": "Procedimentos operacionais de vigilância, preservação do local e comunicação de ocorrências.",
     "editalTopicoId": "itanhaem-ap-esp-01",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2555,7 +3612,9 @@
     "raioX": "A alternativa C combina autorização, identificação e registro, formando controle rastreável. A e B fragilizam o acesso; D propõe retenção indevida do documento; E impede o atendimento sem critério.",
     "legalBasis": "Rotina de controle de acesso, rastreabilidade e tratamento respeitoso.",
     "editalTopicoId": "itanhaem-ap-esp-02",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2579,7 +3638,9 @@
     "raioX": "A identificação do veículo, do condutor e a autorização permitem controle e responsabilização. Cor e preferência pessoal não comprovam autorização; chuva não elimina o procedimento; entrega de chaves é indevida.",
     "legalBasis": "Controle de fluxo de veículos e registro patrimonial.",
     "editalTopicoId": "itanhaem-ap-esp-03",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2603,7 +3664,9 @@
     "raioX": "Alarme, comunicação e evacuação segura são prioridades; combate só ocorre se houver treinamento e condições. Elevador e ocultação são perigosos, e água não serve para qualquer classe de fogo.",
     "legalBasis": "Princípios de prevenção, alarme, comunicação e abandono de área.",
     "editalTopicoId": "itanhaem-ap-esp-04",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2627,7 +3690,9 @@
     "raioX": "A classe A abrange materiais sólidos combustíveis, como papel, madeira e tecido. B envolve líquidos inflamáveis; C, equipamentos elétricos energizados; D, metais pirofóricos; K, óleos e gorduras de cozinha.",
     "legalBasis": "Classificação usual das classes de fogo e seleção inicial do agente extintor.",
     "editalTopicoId": "itanhaem-ap-esp-05",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2651,7 +3716,9 @@
     "raioX": "Água conduz eletricidade e pode causar choque e agravar o risco, portanto deve ser evitada em equipamento energizado. As outras ações são compatíveis com resposta segura, respeitados treinamento e procedimentos.",
     "legalBasis": "Classe C: equipamento elétrico energizado; risco de choque e necessidade de agente não condutor.",
     "editalTopicoId": "itanhaem-ap-esp-06",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2675,7 +3742,9 @@
     "raioX": "A pessoa inconsciente exige acionamento de emergência, avaliação contínua e segurança da via aérea, sem oferecer líquidos. Compressões são indicadas quando não há respiração normal; movimentação desnecessária pode agravar lesões.",
     "legalBasis": "Noções de primeiros socorros: segurança, avaliação, acionamento e monitoramento.",
     "editalTopicoId": "itanhaem-ap-esp-07",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2699,7 +3768,9 @@
     "raioX": "Escuta ativa, linguagem respeitosa, informação objetiva e encaminhamento responsável qualificam o atendimento. A e B escalam o conflito; D cria expectativa falsa; E expõe indevidamente o usuário.",
     "legalBasis": "Princípios de atendimento, comunicação não violenta e encaminhamento.",
     "editalTopicoId": "itanhaem-ap-esp-08",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2723,7 +3794,9 @@
     "raioX": "Imparcialidade, integridade, sigilo adequado e registro fiel são deveres éticos. As alternativas A, B, D e E descrevem favorecimento, vantagem indevida ou omissão.",
     "legalBasis": "Princípios de legalidade, impessoalidade, moralidade e interesse público.",
     "editalTopicoId": "itanhaem-ap-esp-09",
-    "difficulty": "Fácil"
+    "difficulty": "Fácil",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   },
   {
     "banca": "VUNESP",
@@ -2747,6 +3820,8 @@
     "raioX": "O registro deve ser contemporâneo, objetivo, verificável e completo, permitindo continuidade do serviço. Opiniões e acusações sem prova prejudicam a apuração; postergação, anonimato e apagamento comprometem a rastreabilidade.",
     "legalBasis": "Registro operacional: precisão, objetividade, temporalidade e rastreabilidade.",
     "editalTopicoId": "itanhaem-ap-esp-10",
-    "difficulty": "Média"
+    "difficulty": "Média",
+    "orgao": "Câmara Municipal de Itanhaém",
+    "cidade": "Itanhaém"
   }
 ]

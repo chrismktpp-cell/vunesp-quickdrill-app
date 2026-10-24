@@ -73,4 +73,18 @@ describe('Auditoria Automatizada de Schemas Zod e Integridade de Dados', () => {
       expect(parsed.success).toBe(true);
     }
   });
+
+  it('6. 100% das 175 questões possuem metadados completos de banca, matéria, cargo e órgão sem lacunas', () => {
+    expect(questionsData).toHaveLength(175);
+    for (const q of questionsData) {
+      expect(q.banca).toBe('VUNESP');
+      expect(q.cargo).toBe('Agente Patrimonial');
+      expect(q.orgao).toBe('Câmara Municipal de Itanhaém');
+      expect(q.cidade).toBe('Itanhaém');
+      expect(q.materia).toBeDefined();
+      expect(['Língua Portuguesa', 'Direito Administrativo', 'Matemática e Raciocínio Lógico', 'Conhecimentos Específicos']).toContain(q.materia);
+      expect(q.questionFormat).toBeDefined();
+      expect(['lacuna', 'multipla_escolha']).toContain(q.questionFormat);
+    }
+  });
 });
