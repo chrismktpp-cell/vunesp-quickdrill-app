@@ -56,6 +56,11 @@ import { converterErrosSimuladoParaSRS } from './src/services/simuladoService';
 import { filtrarQuestoesDoDia, registrarConclusaoDiaTrilha } from './src/services/trilhaService';
 import type { DiaRoteiro } from './src/data/planoEstudosRoteiro';
 import {
+  carregarSessaoEstudoAtiva,
+  salvarSessaoEstudoAtiva,
+  limparSessaoEstudoAtiva,
+} from './src/services/activeStudySessionStorage';
+import {
   calcularXpResposta,
   XP_BONUS_SESSAO_PERFEITA,
   calcularNivel,
@@ -148,17 +153,31 @@ export default function App() {
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  // Carrega persistência inicial de forma atômica e coordenada
+  // Carrega persistência inicial de forma atômica e coordenada (incluindo rascunho de sessão ativa)
   useEffect(() => {
     Promise.all([
       loadStoredTheme(),
       loadInitialStats(),
       loadFavoriteIds(),
+      carregarSessaoEstudoAtiva(),
     ])
-      .then(([t, s, favs]) => {
+      .then(([t, s, favs, savedSession]) => {
         setTheme(t);
         setStats(s);
         setFavorites(favs);
+        if (savedSession) {
+          setActiveSession({
+            title: savedSession.title,
+            questions: savedSession.questions,
+            currentIndex: savedSession.currentIndex,
+            attempts: savedSession.attempts,
+            correct: savedSession.correct,
+            xpGained: savedSession.xpGained,
+            errorTopics: savedSession.errorTopics,
+            sourceQuestions: savedSession.sourceQuestions,
+            diaTrilha: savedSession.diaTrilha,
+          });
+        }
         setIsLoaded(true);
       })
       .catch((err) => {
@@ -166,6 +185,15 @@ export default function App() {
         setIsLoaded(true);
       });
   }, []);
+
+  // Persistência contínua resiliente (debounce 300ms) para salvar progresso da sessão ativa
+  useEffect(() => {
+    if (!activeSession) return;
+    const timer = setTimeout(() => {
+      void salvarSessaoEstudoAtiva(activeSession);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [activeSession]);
 
   const toggleTheme = useCallback(() => {
     triggerLightHaptic();
@@ -226,7 +254,9 @@ export default function App() {
     isFilaSRSActive,
     filaDoDia,
     filtros,
-    stats,
+    stats.errorQueue,
+    stats.blindSpotQueue,
+    stats.revisoesSRS,
     shuffleSeed,
   ]);
 
@@ -478,6 +508,7 @@ export default function App() {
 
         setSessionSummaryData(summary);
         setActiveSession(null);
+        void limparSessaoEstudoAtiva();
       }
     } else {
       if (filteredQuestions.length > 0) {
@@ -500,6 +531,7 @@ export default function App() {
         );
       } else {
         setActiveSession(null);
+        void limparSessaoEstudoAtiva();
       }
     } else {
       if (filteredQuestions.length > 0) {
@@ -795,14 +827,21 @@ export default function App() {
             sessionTitle={activeSession.title}
             onExitSession={() => {
               Alert.alert(
-                'Pausar Sessão',
-                'Deseja sair desta sessão de treino agora? Seu progresso respondido até aqui está salvo.',
+                'Pausar ou Sair da Sessão',
+                'Seu progresso até aqui está salvo. Deseja pausar para continuar depois ou descartar esta sessão?',
                 [
-                  { text: 'Continuar Estudando', style: 'cancel' },
+                  { text: 'Continuar Treinando', style: 'cancel' },
                   {
-                    text: 'Sair da Sessão',
-                    style: 'destructive',
+                    text: 'Pausar (Salvar)',
                     onPress: () => setActiveSession(null),
+                  },
+                  {
+                    text: 'Descartar Treino',
+                    style: 'destructive',
+                    onPress: () => {
+                      setActiveSession(null);
+                      void limparSessaoEstudoAtiva();
+                    },
                   },
                 ]
               );
