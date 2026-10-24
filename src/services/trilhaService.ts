@@ -177,3 +177,4 @@ export function registrarConclusaoDiaTrilha(
     xp: (stats.xp || 0) + bonusXp,
   };
 }
+

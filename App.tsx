@@ -103,8 +103,8 @@ export default function App() {
     questoesHoje: 0,
   });
 
-  // 5 Tabs principais: inicio | estudar | simulado | progresso | perfil
-  const [activeTab, setActiveTab] = useState<TabType>('inicio');
+  // 5 Tabs principais: estudar (Trilha) | inicio (Painel) | simulado | progresso | perfil
+  const [activeTab, setActiveTab] = useState<TabType>('estudar');
   const [favorites, setFavorites] = useState<string[]>([]);
 
   // Sessão de estudo finita ativa (estilo Duolingo)
@@ -880,6 +880,8 @@ export default function App() {
                 questions={questionsData as Question[]}
                 stats={stats}
                 onIniciarTreinoDia={handleIniciarTreinoDia}
+                onTreinarTopico={(category) => handleStartTopicSession(category)}
+                onIniciarSimulado={() => setActiveTab('simulado')}
                 colors={legacyColors}
                 isDark={isDark}
               />
@@ -939,36 +941,7 @@ export default function App() {
             { backgroundColor: tokens.navBg, borderTopColor: tokens.navBorder },
           ]}
         >
-          {/* TAB 1: INÍCIO */}
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setActiveTab('inicio');
-            }}
-            activeOpacity={0.85}
-            style={styles.tabBarItem}
-          >
-            <View style={styles.tabIconWrapper}>
-              <Ionicons
-                name={activeTab === 'inicio' ? 'home' : 'home-outline'}
-                size={22}
-                color={activeTab === 'inicio' ? tokens.primary : tokens.textMuted}
-              />
-            </View>
-            <Text
-              style={[
-                styles.tabBarLabel,
-                {
-                  color: activeTab === 'inicio' ? tokens.primary : tokens.textMuted,
-                  fontWeight: activeTab === 'inicio' ? '600' : '500',
-                },
-              ]}
-            >
-              Início
-            </Text>
-          </TouchableOpacity>
-
-          {/* TAB 2: ESTUDAR */}
+          {/* TAB 1: TRILHA (DUOLINGO LEARNING PATH) */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -997,6 +970,35 @@ export default function App() {
               ]}
             >
               Trilha
+            </Text>
+          </TouchableOpacity>
+
+          {/* TAB 2: PAINEL */}
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              setActiveTab('inicio');
+            }}
+            activeOpacity={0.85}
+            style={styles.tabBarItem}
+          >
+            <View style={styles.tabIconWrapper}>
+              <Ionicons
+                name={activeTab === 'inicio' ? 'home' : 'home-outline'}
+                size={22}
+                color={activeTab === 'inicio' ? tokens.primary : tokens.textMuted}
+              />
+            </View>
+            <Text
+              style={[
+                styles.tabBarLabel,
+                {
+                  color: activeTab === 'inicio' ? tokens.primary : tokens.textMuted,
+                  fontWeight: activeTab === 'inicio' ? '600' : '500',
+                },
+              ]}
+            >
+              Painel
             </Text>
           </TouchableOpacity>
 

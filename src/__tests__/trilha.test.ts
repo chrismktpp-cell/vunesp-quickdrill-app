@@ -119,3 +119,4 @@ describe('Trilha do Conhecimento (Ciclo de 7 Dias VUNESP)', () => {
     expect(novoStatus.dias[1].status).toBe('aberto');
   });
 });
+
