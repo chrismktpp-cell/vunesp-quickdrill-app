@@ -31,9 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Prebuild Native Android Project
         run: npx expo prebuild --platform android --clean
 
