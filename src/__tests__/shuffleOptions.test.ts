@@ -23,3 +23,4 @@ describe('getDeterministicOptionOrder', () => {
     expect(uniquePositions.size).toBeGreaterThan(1);
   });
 });
+

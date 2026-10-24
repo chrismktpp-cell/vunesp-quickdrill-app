@@ -28,3 +28,4 @@ export function getDeterministicOptionOrder(questionId: string, optionsCount: nu
 
   return indices;
 }
+
