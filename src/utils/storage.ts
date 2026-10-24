@@ -157,6 +157,8 @@ export function migrate(raw: unknown): UserStats {
       questoesHoje: typeof data.questoesHoje === 'number' ? data.questoesHoje : 0,
       dataUltimoEstudo: typeof data.dataUltimoEstudo === 'string' ? data.dataUltimoEstudo : undefined,
       conquistasDesbloqueadas: Array.isArray(data.conquistasDesbloqueadas) ? data.conquistasDesbloqueadas : [],
+      trilhaDias: data.trilhaDias && typeof data.trilhaDias === 'object' ? data.trilhaDias : {},
+      diaAtualTrilha: typeof data.diaAtualTrilha === 'number' ? data.diaAtualTrilha : 1,
       gen: typeof parsed.gen === 'number' ? parsed.gen : (typeof data.gen === 'number' ? data.gen : 1),
     };
   }
@@ -480,6 +482,8 @@ export async function loadInitialStats(): Promise<UserStats> {
         questoesHoje: typeof meta.questoesHoje === 'number' ? meta.questoesHoje : 0,
         dataUltimoEstudo: typeof meta.dataUltimoEstudo === 'string' ? meta.dataUltimoEstudo : undefined,
         conquistasDesbloqueadas: Array.isArray(meta.conquistasDesbloqueadas) ? meta.conquistasDesbloqueadas : [],
+        trilhaDias: meta.trilhaDias && typeof meta.trilhaDias === 'object' ? meta.trilhaDias : {},
+        diaAtualTrilha: typeof meta.diaAtualTrilha === 'number' ? meta.diaAtualTrilha : 1,
       };
 
       // Poda de órfãos
@@ -558,6 +562,8 @@ function metaOf(stats: UserStats, gen: number) {
     questoesHoje: stats.questoesHoje ?? 0,
     dataUltimoEstudo: stats.dataUltimoEstudo,
     conquistasDesbloqueadas: stats.conquistasDesbloqueadas || [],
+    trilhaDias: stats.trilhaDias || {},
+    diaAtualTrilha: stats.diaAtualTrilha ?? 1,
   };
 }
 

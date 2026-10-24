@@ -12,8 +12,11 @@ import { PendingReviewsCard } from './PendingReviewsCard';
 import { WeakPointsCard } from './WeakPointsCard';
 import { QuickActionCard } from './QuickActionCard';
 import { OfflineBanner } from './OfflineBanner';
+import { TrilhaHomeCard } from './TrilhaHomeCard';
 import { calcularProgressoGeral } from '../services/progressService';
 import { obterProximaAtividadeRecomendada } from '../services/recommendationService';
+import { calcularStatusTrilha, obterDiaRoteiro } from '../services/trilhaService';
+import { PLANO_7_DIAS, DiaRoteiro } from '../data/planoEstudosRoteiro';
 
 export interface HomeScreenProps {
   stats: UserStats;
@@ -21,6 +24,7 @@ export interface HomeScreenProps {
   revisoesPendentesCount: number;
   novasQuestoesCount: number;
   onContinuarEstudando: () => void;
+  onIniciarTreinoTrilha?: (diaRoteiro: DiaRoteiro) => void;
   onIniciarSimulado: () => void;
   onIrParaEstudo: (category?: CategoryType) => void;
   onIrParaMural: () => void;
@@ -39,6 +43,7 @@ export interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   stats,
   onContinuarEstudando,
+  onIniciarTreinoTrilha,
   onIniciarSimulado,
   onIrParaEstudo,
   onIrParaMural,
@@ -62,6 +67,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const progresso = useMemo(() => {
     return calcularProgressoGeral(questionsData, stats);
   }, [questionsData, stats]);
+
+  // Status da Trilha de 7 Dias
+  const statusTrilha = useMemo(() => {
+    return calcularStatusTrilha(stats);
+  }, [stats]);
+
+  const diaAtivoRoteiro = useMemo(() => {
+    return obterDiaRoteiro(statusTrilha.diaAtual) || PLANO_7_DIAS[0];
+  }, [statusTrilha.diaAtual]);
 
   // Recomendação inteligente determinística da próxima atividade
   const recomendacao = useMemo(() => {
@@ -94,7 +108,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 3. BARRA DE EVOLUÇÃO EM XP E NÍVEL */}
       <XpProgressBar xp={stats.xp || 0} />
 
-      {/* 4. PRÓXIMA ATIVIDADE RECOMENDADA (HERO ACTION) */}
+      {/* 4. CARD HERO DA TRILHA DO CONHECIMENTO (7 DIAS) */}
+      <TrilhaHomeCard
+        diaRoteiro={diaAtivoRoteiro}
+        diasConcluidos={statusTrilha.diasConcluidos}
+        totalDias={statusTrilha.totalDias}
+        percentualCiclo={statusTrilha.percentualCiclo}
+        onAbrirTrilha={() => onIrParaEstudo()}
+        onIniciarTreinoDia={() => {
+          if (onIniciarTreinoTrilha) {
+            onIniciarTreinoTrilha(diaAtivoRoteiro);
+          } else {
+            onIrParaEstudo();
+          }
+        }}
+      />
+
+      {/* 5. PRÓXIMA ATIVIDADE RECOMENDADA (HERO ACTION) */}
       <NextActivityCard
         recomendacao={recomendacao}
         onIniciar={onContinuarEstudando}

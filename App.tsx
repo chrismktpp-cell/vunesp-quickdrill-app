@@ -42,6 +42,7 @@ import { AprovaFoxLogo } from './src/components/AprovaFoxLogo';
 import { MuralDeMacetes } from './src/components/MuralDeMacetes';
 import { SimuladoScreen } from './src/components/SimuladoScreen';
 import { EditalScreen } from './src/components/EditalScreen';
+import { TrilhaConhecimentoScreen } from './src/components/TrilhaConhecimentoScreen';
 import { DashboardScreen } from './src/components/DashboardScreen';
 import { DrillScreen } from './src/components/DrillScreen';
 import { HomeScreen } from './src/components/HomeScreen';
@@ -52,6 +53,8 @@ import { gerarFilaDoDia } from './src/services/srsEngine';
 import { filtrarQuestoes, QuestionFilters } from './src/services/filterEngine';
 import { DEFAULT_FILTERS } from './src/constants/filters';
 import { converterErrosSimuladoParaSRS } from './src/services/simuladoService';
+import { filtrarQuestoesDoDia, registrarConclusaoDiaTrilha } from './src/services/trilhaService';
+import type { DiaRoteiro } from './src/data/planoEstudosRoteiro';
 import {
   calcularXpResposta,
   XP_BONUS_SESSAO_PERFEITA,
@@ -81,6 +84,7 @@ interface ActiveStudySession {
   xpGained: number;
   errorTopics: Record<string, number>;
   sourceQuestions: Question[];
+  diaTrilha?: number;
 }
 
 export default function App() {
@@ -244,7 +248,7 @@ export default function App() {
 
   // INICIADOR DE SESSÕES CURTAS (5 A 10 QUESTÕES)
   const startStudySession = useCallback(
-    (title: string, questionsPool: Question[]) => {
+    (title: string, questionsPool: Question[], diaTrilha?: number) => {
       triggerLightHaptic();
       if (!questionsPool || questionsPool.length === 0) {
         Alert.alert('Sem questões', 'Nenhuma questão encontrada para esta sessão no momento.');
@@ -260,6 +264,7 @@ export default function App() {
         xpGained: 0,
         errorTopics: {},
         sourceQuestions: sessionQuestions,
+        diaTrilha,
       });
       setSessionSummaryData(null);
       setIsAnswered(false);
@@ -268,6 +273,24 @@ export default function App() {
       setLastFeedbackTip(undefined);
     },
     []
+  );
+
+  // Iniciar missão de um dia específico da Trilha do Conhecimento
+  const handleIniciarTreinoDia = useCallback(
+    (diaRoteiro: DiaRoteiro) => {
+      const allQuestions = questionsData as Question[];
+      const questoesDia = filtrarQuestoesDoDia(allQuestions, diaRoteiro);
+      if (questoesDia.length === 0) {
+        Alert.alert('Aviso', 'Nenhuma questão encontrada para os filtros deste dia.');
+        return;
+      }
+      startStudySession(
+        `Dia ${diaRoteiro.dia} · ${diaRoteiro.titulo}`,
+        questoesDia,
+        diaRoteiro.dia
+      );
+    },
+    [startStudySession]
   );
 
   // Iniciar sessão recomendada inteligente
@@ -419,6 +442,20 @@ export default function App() {
         if (isPerfect) {
           setStats((prev) => {
             const updated = { ...prev, xp: (prev.xp || 0) + XP_BONUS_SESSAO_PERFEITA };
+            void saveAttemptToStorage(updated).catch(console.error);
+            return updated;
+          });
+        }
+
+        // Se for missão da Trilha do Conhecimento, registra a conclusão e destrava o próximo dia
+        if (activeSession.diaTrilha) {
+          setStats((prev) => {
+            const updated = registrarConclusaoDiaTrilha(
+              prev,
+              activeSession.diaTrilha!,
+              activeSession.attempts,
+              activeSession.correct
+            );
             void saveAttemptToStorage(updated).catch(console.error);
             return updated;
           });
@@ -820,6 +857,7 @@ export default function App() {
                 revisoesPendentesCount={filaDoDia.revisoesPendentes.length}
                 novasQuestoesCount={filaDoDia.novasQuestoes.length}
                 onContinuarEstudando={handleStartRecommendedSession}
+                onIniciarTreinoTrilha={handleIniciarTreinoDia}
                 onIniciarSimulado={() => setActiveTab('simulado')}
                 onIrParaEstudo={(category) => {
                   if (category) {
@@ -838,15 +876,12 @@ export default function App() {
             )}
 
             {activeTab === 'estudar' && (
-              <EditalScreen
+              <TrilhaConhecimentoScreen
                 questions={questionsData as Question[]}
-                attempts={stats.attempts}
-                revisoesSRS={stats.revisoesSRS || {}}
-                onTreinarTopico={handleStartTopicSession}
-                onIniciarSimulado={() => setActiveTab('simulado')}
+                stats={stats}
+                onIniciarTreinoDia={handleIniciarTreinoDia}
                 colors={legacyColors}
                 isDark={isDark}
-                getCategoryColor={getCategoryColor}
               />
             )}
 
@@ -944,7 +979,7 @@ export default function App() {
           >
             <View style={styles.tabIconWrapper}>
               <Ionicons
-                name={activeTab === 'estudar' ? 'school' : 'school-outline'}
+                name={activeTab === 'estudar' ? 'map' : 'map-outline'}
                 size={22}
                 color={activeTab === 'estudar' ? tokens.primary : tokens.textMuted}
               />
@@ -961,7 +996,7 @@ export default function App() {
                 },
               ]}
             >
-              Estudar
+              Trilha
             </Text>
           </TouchableOpacity>
 

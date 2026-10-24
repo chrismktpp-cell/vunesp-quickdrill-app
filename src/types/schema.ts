@@ -222,6 +222,15 @@ export interface Conquista {
   progressoMeta?: number;
 }
 
+export interface TrilhaDiaProgresso {
+  dia: number;
+  concluido: boolean;
+  questoesRespondidas: number;
+  questoesAcertos: number;
+  notaPercentual: number;
+  dataConclusao?: string;
+}
+
 export interface UserStats {
   attempts: QuestionAttempt[];
   streak: number;
@@ -240,6 +249,8 @@ export interface UserStats {
   questoesHoje?: number;
   dataUltimoEstudo?: string;
   conquistasDesbloqueadas?: string[];
+  trilhaDias?: Record<number, TrilhaDiaProgresso>;
+  diaAtualTrilha?: number;
 }
 
 export type DrillMode = 'all' | 'errors_only' | 'blind_spots_only' | 'srs_queue';
