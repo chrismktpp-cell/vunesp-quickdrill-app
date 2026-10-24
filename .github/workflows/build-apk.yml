@@ -11,6 +11,8 @@ jobs:
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -46,3 +48,19 @@ jobs:
           name: vunesp-quickdrill-aprovafox-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publish GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: AprovaFox APK (Instalador Android)
+          body: |
+            ### VUNESP QuickDrill (AprovaFox) - APK Android
+
+            - **Versão:** 1.0.0
+            - **Build:** Android Nativo (Offline completo, SRS, Simulados e Banco de 175 questões)
+            - **Instalação:** Baixe o arquivo `app-debug.apk` no seu celular Xiaomi/Android e toque para instalar.
+          files: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
