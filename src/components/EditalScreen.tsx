@@ -12,11 +12,16 @@ import editalPadrao from '../data/edital.json';
 import { calcularProgressoPorTopico, calcularCoberturaGeral } from '../services/editalService';
 import { triggerLightHaptic } from '../utils/haptics';
 import { EditalPathMap } from './EditalPathMap';
+import { TrilhaConhecimentoScreen } from './TrilhaConhecimentoScreen';
+import type { DiaRoteiro } from '../data/planoEstudosRoteiro';
+import type { UserStats } from '../types/schema';
 
 interface EditalScreenProps {
   questions: Question[];
   attempts: QuestionAttempt[];
   revisoesSRS?: Record<string, RevisaoSRS>;
+  stats?: UserStats;
+  onIniciarTreinoDia?: (diaRoteiro: DiaRoteiro) => void;
   onTreinarTopico: (category: CategoryType) => void;
   onIniciarSimulado?: () => void;
   colors: {
@@ -43,13 +48,15 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
   questions,
   attempts,
   revisoesSRS = {},
+  stats,
+  onIniciarTreinoDia,
   onTreinarTopico,
   onIniciarSimulado = () => {},
   colors,
   isDark,
   getCategoryColor,
 }) => {
-  const [visualizacao, setVisualizacao] = useState<'trilha' | 'artigos'>('trilha');
+  const [visualizacao, setVisualizacao] = useState<'trilha' | 'roteiro' | 'artigos'>('trilha');
   const topicos = editalPadrao as EditalTopico[];
 
   const progressoTopicos = useMemo(() => {
@@ -116,7 +123,7 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
         >
           <Ionicons
             name="map"
-            size={16}
+            size={15}
             color={visualizacao === 'trilha' ? '#ffffff' : colors.textMuted}
           />
           <Text
@@ -125,7 +132,35 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
               { color: visualizacao === 'trilha' ? '#ffffff' : colors.textMuted },
             ]}
           >
-            Trilha do Edital
+            Trilha Edital
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            triggerLightHaptic();
+            setVisualizacao('roteiro');
+          }}
+          activeOpacity={0.85}
+          style={[
+            styles.viewToggleBtn,
+            visualizacao === 'roteiro' && {
+              backgroundColor: colors.primary,
+            },
+          ]}
+        >
+          <Ionicons
+            name="calendar"
+            size={15}
+            color={visualizacao === 'roteiro' ? '#ffffff' : colors.textMuted}
+          />
+          <Text
+            style={[
+              styles.viewToggleBtnText,
+              { color: visualizacao === 'roteiro' ? '#ffffff' : colors.textMuted },
+            ]}
+          >
+            Roteiro 7 Dias
           </Text>
         </TouchableOpacity>
 
@@ -144,7 +179,7 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
         >
           <Ionicons
             name="list"
-            size={16}
+            size={15}
             color={visualizacao === 'artigos' ? '#ffffff' : colors.textMuted}
           />
           <Text
@@ -164,10 +199,33 @@ export const EditalScreen: React.FC<EditalScreenProps> = ({
           topicos={topicos}
           progressoMap={mapaProgresso}
           revisoesSRS={revisoesSRS}
-          onTreinarTopico={onTreinarTopico}
+          onTreinarTopico={(cat) => onTreinarTopico(cat as any)}
           onIniciarSimulado={onIniciarSimulado}
           isDark={isDark}
           colors={colors}
+        />
+      ) : visualizacao === 'roteiro' ? (
+        <TrilhaConhecimentoScreen
+          questions={questions}
+          stats={
+            stats ||
+            ({
+              attempts,
+              revisoesSRS,
+              blindSpotQueue: [],
+              errorQueue: [],
+              streak: 0,
+              totalScore: 0,
+              level: 1,
+              currentXP: 0,
+              simuladosHistorico: [],
+            } as any)
+          }
+          onIniciarTreinoDia={onIniciarTreinoDia || (() => {})}
+          onTreinarTopico={onTreinarTopico}
+          onIniciarSimulado={onIniciarSimulado}
+          colors={colors}
+          isDark={isDark}
         />
       ) : (
         <>

@@ -28,7 +28,7 @@ interface TrilhaConhecimentoScreenProps {
   questions: Question[];
   stats: UserStats;
   onIniciarTreinoDia: (diaRoteiro: DiaRoteiro) => void;
-  onTreinarTopico?: (category: CategoryType | string) => void;
+  onTreinarTopico?: (category: CategoryType) => void;
   onIniciarSimulado?: () => void;
   colors: {
     bg: string;

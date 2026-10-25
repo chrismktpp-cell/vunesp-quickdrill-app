@@ -953,6 +953,8 @@ export default function App() {
                 questions={questionsData as Question[]}
                 attempts={stats.attempts}
                 revisoesSRS={stats.revisoesSRS || {}}
+                stats={stats}
+                onIniciarTreinoDia={handleIniciarTreinoDia}
                 onTreinarTopico={handleStartTopicSession}
                 onIniciarSimulado={() => setActiveTab('simulado')}
                 colors={legacyColors}

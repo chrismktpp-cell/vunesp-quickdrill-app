@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  Linking,
+  Alert,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path as SvgPath, Circle } from 'react-native-svg';
@@ -18,6 +21,7 @@ import type {
   RevisaoSRS,
 } from '../types/schema';
 import { triggerLightHaptic, triggerSuccessHaptic } from '../utils/haptics';
+import { getAulasPorTopico, AulaItem } from '../data/editalAulas';
 
 interface EditalPathMapProps {
   topicos: EditalTopico[];
@@ -205,6 +209,19 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
     }
   };
 
+  const handleAbrirVideoaula = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Link de Vídeo', `Abra no navegador ou YouTube: ${url}`);
+      }
+    } catch {
+      Alert.alert('Vídeo', `Abra no seu navegador: ${url}`);
+    }
+  };
+
   const handleNodePress = (node: TrilhaNode) => {
     triggerLightHaptic();
     setSelectedNode(node);
@@ -352,8 +369,14 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
               },
             ]}
           >
-            {selectedNode && (
-              <>
+            {selectedNode && (() => {
+                const aulasDoTopico = getAulasPorTopico(selectedNode.id);
+                return (
+                  <ScrollView
+                    style={{ maxHeight: Dimensions.get('window').height * 0.78 }}
+                    contentContainerStyle={{ gap: 14, paddingBottom: 16 }}
+                    showsVerticalScrollIndicator={false}
+                  >
                 {/* TOPO DO CARD DE MISSÃO */}
                 <View style={styles.missionHeaderRow}>
                   <View
@@ -487,6 +510,72 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
                         </Text>
                       </View>
                     )}
+                  </View>
+                )}
+
+                {/* VIDEOAULAS CIRÚRGICAS RECOMENDADAS */}
+                {aulasDoTopico && aulasDoTopico.length > 0 && (
+                  <View style={styles.missionVideoSection}>
+                    <View style={styles.missionVideoHeaderRow}>
+                      <Ionicons name="logo-youtube" size={16} color="#ef4444" />
+                      <Text
+                        style={[
+                          styles.missionVideoSectionTitle,
+                          { color: isDark ? '#f1f5f9' : '#0f172a' },
+                        ]}
+                      >
+                        {aulasDoTopico[0].especifica
+                          ? 'VIDEOAULA CIRÚRGICA RECOMENDADA'
+                          : 'AULA NO YOUTUBE (VUNESP)'}
+                      </Text>
+                      {!aulasDoTopico[0].especifica && (
+                        <View style={styles.missionVideoPendingBadge}>
+                          <Text style={styles.missionVideoPendingBadgeText}>
+                            Falta link exato
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    {aulasDoTopico.map((video, vIdx) => (
+                      <View
+                        key={`aula-${vIdx}`}
+                        style={[
+                          styles.missionVideoCard,
+                          {
+                            backgroundColor: isDark ? 'rgba(30, 41, 59, 0.7)' : '#f8fafc',
+                            borderColor: isDark ? '#334155' : '#e2e8f0',
+                          },
+                        ]}
+                      >
+                        <View style={{ flex: 1, marginRight: 8 }}>
+                          <Text
+                            style={[
+                              styles.missionVideoTitle,
+                              { color: isDark ? '#ffffff' : '#0f172a' },
+                            ]}
+                            numberOfLines={2}
+                          >
+                            {video.titulo}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.missionVideoChannel,
+                              { color: isDark ? '#94a3b8' : '#64748b' },
+                            ]}
+                          >
+                            {video.canal} {video.duracao ? `• ${video.duracao}` : ''}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => handleAbrirVideoaula(video.url)}
+                          style={styles.missionWatchBtn}
+                          activeOpacity={0.85}
+                        >
+                          <Ionicons name="play" size={13} color="#ffffff" />
+                          <Text style={styles.missionWatchBtnText}>Assistir</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
                   </View>
                 )}
 
@@ -676,8 +765,9 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
                     </TouchableOpacity>
                   )}
                 </View>
-              </>
-            )}
+                  </ScrollView>
+                );
+              })()}
           </View>
         </View>
       </Modal>
@@ -906,6 +996,62 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     marginBottom: 2,
+  },
+  missionVideoSection: {
+    gap: 8,
+  },
+  missionVideoHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  missionVideoSectionTitle: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.6,
+  },
+  missionVideoPendingBadge: {
+    backgroundColor: 'rgba(234, 179, 8, 0.15)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  missionVideoPendingBadgeText: {
+    color: '#eab308',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  missionVideoCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  missionVideoTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    lineHeight: 16,
+  },
+  missionVideoChannel: {
+    fontSize: 10,
+    marginTop: 3,
+    fontWeight: '500',
+  },
+  missionWatchBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  missionWatchBtnText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '800',
   },
   lockedMissionText: {
     fontSize: 11,
