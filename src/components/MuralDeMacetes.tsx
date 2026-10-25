@@ -53,7 +53,7 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
   getCategoryColor,
 }) => {
   // View mode: 'feed' (scrollable list) or 'card' (interactive flip flashcard)
-  const [viewMode, setViewMode] = useState<'feed' | 'card'>('feed');
+  const [viewMode, setViewMode] = useState<'feed' | 'card'>('card');
 
   // Filters
   const [selectedCat, setSelectedCat] = useState<CategoryType | 'all' | 'favorites' | 'blind_spots'>('all');
@@ -134,7 +134,54 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* SEARCH BAR & VIEW SWITCH */}
+      {/* SEGMENTED VIEW SWITCH: FLASHCARDS INTERATIVOS VS MURAL COMPLETO */}
+      <View style={[styles.mainModeSwitchBox, { backgroundColor: colors.subtle, borderColor: colors.cardBorder }]}>
+        <TouchableOpacity
+          onPress={() => {
+            triggerLightHaptic();
+            setViewMode('card');
+          }}
+          activeOpacity={0.85}
+          style={[
+            styles.mainModeSwitchTab,
+            viewMode === 'card' && [styles.mainModeSwitchTabActive, { backgroundColor: colors.primary }],
+          ]}
+        >
+          <Ionicons name="albums" size={15} color={viewMode === 'card' ? '#ffffff' : colors.textMuted} />
+          <Text
+            style={[
+              styles.mainModeSwitchText,
+              { color: viewMode === 'card' ? '#ffffff' : colors.textMuted, fontWeight: viewMode === 'card' ? '700' : '500' },
+            ]}
+          >
+            🎴 Flashcards Interativos
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            triggerLightHaptic();
+            setViewMode('feed');
+          }}
+          activeOpacity={0.85}
+          style={[
+            styles.mainModeSwitchTab,
+            viewMode === 'feed' && [styles.mainModeSwitchTabActive, { backgroundColor: colors.primary }],
+          ]}
+        >
+          <Ionicons name="list" size={15} color={viewMode === 'feed' ? '#ffffff' : colors.textMuted} />
+          <Text
+            style={[
+              styles.mainModeSwitchText,
+              { color: viewMode === 'feed' ? '#ffffff' : colors.textMuted, fontWeight: viewMode === 'feed' ? '700' : '500' },
+            ]}
+          >
+            📋 Mural em Lista
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* SEARCH BAR */}
       <View style={styles.topControlRow}>
         <View style={[styles.searchBox, { backgroundColor: colors.subtle, borderColor: colors.cardBorder }]}>
           <Ionicons name="search" size={16} color={colors.textMuted} />
@@ -150,35 +197,6 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
               <Ionicons name="close-circle" size={16} color={colors.textMuted} />
             </TouchableOpacity>
           )}
-        </View>
-
-        {/* View mode toggle button */}
-        <View style={[styles.toggleViewContainer, { backgroundColor: colors.subtle }]}>
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setViewMode('feed');
-            }}
-            style={[
-              styles.viewToggleBtn,
-              viewMode === 'feed' && [styles.viewToggleBtnActive, { backgroundColor: colors.cardBg }],
-            ]}
-          >
-            <Ionicons name="list" size={16} color={viewMode === 'feed' ? colors.primary : colors.textMuted} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setViewMode('card');
-            }}
-            style={[
-              styles.viewToggleBtn,
-              viewMode === 'card' && [styles.viewToggleBtnActive, { backgroundColor: colors.cardBg }],
-            ]}
-          >
-            <Ionicons name="albums" size={16} color={viewMode === 'card' ? colors.primary : colors.textMuted} />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -474,10 +492,10 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
                   ))}
                 </View>
 
-                <View style={styles.tapToFlipNotice}>
-                  <Ionicons name="sync" size={14} color={colors.primary} />
-                  <Text style={[styles.tapToFlipText, { color: colors.primary }]}>
-                    Toque para ver a resposta & o macete
+                <View style={[styles.tapToFlipBtn3D, { backgroundColor: colors.primary }]}>
+                  <Ionicons name="sync" size={15} color="#ffffff" />
+                  <Text style={styles.tapToFlipBtnText}>
+                    Toque no Cartão para Virar & Ver o Macete
                   </Text>
                 </View>
               </View>
@@ -486,7 +504,7 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
               <View style={styles.cardBackContent}>
                 <View style={styles.answerConfirmedBox}>
                   <Text style={[styles.answerLabel, { color: colors.emerald }]}>
-                    GABARITO OFICIAL:
+                    ✓ GABARITO OFICIAL:
                   </Text>
                   <Text style={[styles.answerValue, { color: colors.emerald }]}>
                     {currentFlashcard!.options[currentFlashcard!.correctIndex]}
@@ -502,25 +520,26 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
                   )}
                 </Text>
 
-                {/* Raio-X */}
+                {/* Raio-X & Macete */}
                 <View
                   style={[
                     styles.raioXBoxCard,
                     {
-                      backgroundColor: getCategoryColor(currentFlashcard!.category).soft,
-                      borderColor: getCategoryColor(currentFlashcard!.category).accent,
+                      backgroundColor: isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb',
+                      borderColor: '#f59e0b',
+                      borderWidth: 1.5,
                     },
                   ]}
                 >
                   <View style={styles.raioXTag}>
-                    <Ionicons name="bulb" size={16} color={colors.amber} />
+                    <Ionicons name="bulb" size={16} color="#f59e0b" />
                     <Text
                       style={[
                         styles.raioXTagText,
-                        { color: getCategoryColor(currentFlashcard!.category).accent },
+                        { color: '#f59e0b', fontWeight: '800' },
                       ]}
                     >
-                      MACETE EM 1 FRASE:
+                      ⚡ MACETE & REGRA DE OURO:
                     </Text>
                   </View>
                   <Text style={[styles.raioXTextCard, { color: colors.text }]}>
@@ -534,6 +553,13 @@ export const MuralDeMacetes: React.FC<MuralDeMacetesProps> = ({
                     Fundamento: {currentFlashcard!.legalBasis}
                   </Text>
                 )}
+
+                <View style={[styles.tapToFlipBtn3D, { backgroundColor: '#3b82f6', marginTop: 12 }]}>
+                  <Ionicons name="sync" size={15} color="#ffffff" />
+                  <Text style={styles.tapToFlipBtnText}>
+                    Virar de Volta para o Desafio
+                  </Text>
+                </View>
               </View>
             )}
           </TouchableOpacity>
@@ -829,6 +855,54 @@ const styles = StyleSheet.create({
   optionPreviewText: {
     fontSize: 14,
     fontWeight: '700',
+  },
+  mainModeSwitchBox: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    padding: 4,
+    borderWidth: 1,
+    marginBottom: 8,
+    gap: 6,
+  },
+  mainModeSwitchTab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  mainModeSwitchTabActive: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  mainModeSwitchText: {
+    fontSize: 12,
+  },
+  tapToFlipBtn3D: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 11,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tapToFlipBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   tapToFlipNotice: {
     flexDirection: 'row',

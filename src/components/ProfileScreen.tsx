@@ -196,48 +196,106 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </View>
       </View>
 
-      {/* 3. GALERIA DE CONQUISTAS */}
+      {/* 3. MURAL DE CONQUISTAS E MEDALHAS DE MÉRITO */}
       <View style={styles.sectionCard}>
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
-            <Ionicons name="trophy" size={20} color={aprovaFoxColors.amber} />
-            <Text style={styles.sectionTitle}>
-              Medalhas e Conquistas
+            <View style={styles.trophyIconWrap}>
+              <Ionicons name="trophy" size={20} color={aprovaFoxColors.amber} />
+            </View>
+            <View>
+              <Text style={styles.sectionTitle}>
+                Mural de Conquistas e Medalhas
+              </Text>
+              <Text style={styles.sectionSubTitle}>
+                Reconhecimento de mérito e constância concurseira
+              </Text>
+            </View>
+          </View>
+          <View style={styles.badgeProgressPill}>
+            <Text style={styles.badgeProgressText}>
+              {conquistas.filter((c) => c.desbloqueada).length} / {conquistas.length}
             </Text>
           </View>
-          <Text style={styles.sectionCounter}>
-            {conquistas.filter((c) => c.desbloqueada).length} de {conquistas.length}
-          </Text>
+        </View>
+
+        {/* Barra de Progresso Geral das Conquistas */}
+        <View style={styles.conquistasTrack}>
+          <View
+            style={[
+              styles.conquistasFill,
+              {
+                width: `${Math.round((conquistas.filter((c) => c.desbloqueada).length / Math.max(1, conquistas.length)) * 100)}%`,
+              },
+            ]}
+          />
         </View>
 
         <View style={styles.conquistasGrid}>
-          {conquistas.map((item) => (
-            <View
-              key={item.id}
-              style={[
-                styles.conquistaItem,
-                item.desbloqueada ? styles.conquistaDesbloqueada : styles.conquistaBloqueada,
-              ]}
-            >
-              <Text style={styles.conquistaIcon}>{item.icone}</Text>
-              <View style={styles.conquistaTextCol}>
-                <Text
+          {conquistas.map((item) => {
+            const metaVal = item.progressoMeta || 1;
+            const pct = Math.min(100, Math.round(((item.progressoAtual || 0) / metaVal) * 100));
+            return (
+              <View
+                key={item.id}
+                style={[
+                  styles.conquistaItem,
+                  item.desbloqueada ? styles.conquistaDesbloqueada : styles.conquistaBloqueada,
+                ]}
+              >
+                {/* Ícone da Medalha */}
+                <View
                   style={[
-                    styles.conquistaTitulo,
-                    { color: item.desbloqueada ? aprovaFoxColors.text : aprovaFoxColors.textMuted },
+                    styles.medalhaCircle,
+                    item.desbloqueada ? styles.medalhaCircleUnlocked : styles.medalhaCircleLocked,
                   ]}
                 >
-                  {item.titulo}
-                </Text>
-                <Text style={styles.conquistaDesc}>
-                  {item.descricao}
-                </Text>
+                  <Ionicons
+                    name={item.desbloqueada ? (item.icone as any) : 'lock-closed'}
+                    size={22}
+                    color={item.desbloqueada ? '#FFB547' : '#64748b'}
+                  />
+                </View>
+
+                {/* Conteúdo textual */}
+                <View style={styles.conquistaTextCol}>
+                  <View style={styles.conquistaTitleRow}>
+                    <Text
+                      style={[
+                        styles.conquistaTitulo,
+                        { color: item.desbloqueada ? '#f8fafc' : '#94a3b8' },
+                      ]}
+                    >
+                      {item.titulo}
+                    </Text>
+                    {item.desbloqueada ? (
+                      <View style={styles.unlockedBadgePill}>
+                        <Ionicons name="checkmark-circle" size={12} color="#10b981" />
+                        <Text style={styles.unlockedBadgeText}>Conquistada</Text>
+                      </View>
+                    ) : (
+                      <Text style={styles.progressPercentText}>{pct}%</Text>
+                    )}
+                  </View>
+                  <Text style={styles.conquistaDesc}>
+                    {item.descricao}
+                  </Text>
+
+                  {/* Barra de Progresso individual se bloqueada */}
+                  {!item.desbloqueada && (
+                    <View style={styles.individualProgressRow}>
+                      <View style={styles.individualProgressTrack}>
+                        <View style={[styles.individualProgressFill, { width: `${pct}%` }]} />
+                      </View>
+                      <Text style={styles.individualProgressFraction}>
+                        {item.progressoAtual || 0}/{metaVal}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
-              {item.desbloqueada && (
-                <Ionicons name="checkmark-circle" size={18} color={aprovaFoxColors.success} />
-              )}
-            </View>
-          ))}
+            );
+          })}
         </View>
       </View>
 
@@ -599,40 +657,146 @@ const styles = StyleSheet.create({
     color: aprovaFoxColors.textSecondary,
     lineHeight: 18,
   },
+  trophyIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 181, 71, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sectionSubTitle: {
+    fontSize: 11,
+    color: aprovaFoxColors.textMuted,
+    marginTop: 2,
+  },
+  badgeProgressPill: {
+    backgroundColor: 'rgba(255, 181, 71, 0.15)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 181, 71, 0.3)',
+  },
+  badgeProgressText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFB547',
+  },
+  conquistasTrack: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginVertical: 4,
+  },
+  conquistasFill: {
+    height: '100%',
+    backgroundColor: '#FFB547',
+    borderRadius: 3,
+  },
   conquistasGrid: {
-    gap: 8,
+    gap: 10,
+    marginTop: 6,
   },
   conquistaItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: radius.control,
-    borderWidth: 1,
+    borderRadius: radius.card,
+    borderWidth: 1.5,
     gap: 12,
   },
   conquistaDesbloqueada: {
     backgroundColor: aprovaFoxColors.nightElevated,
-    borderColor: aprovaFoxColors.amber,
+    borderColor: '#FFB547',
+    shadowColor: '#FFB547',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 2,
   },
   conquistaBloqueada: {
-    backgroundColor: 'transparent',
-    borderColor: aprovaFoxColors.border,
-    opacity: 0.45,
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    opacity: 0.65,
   },
-  conquistaIcon: {
-    fontSize: 22,
+  medalhaCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  medalhaCircleUnlocked: {
+    backgroundColor: 'rgba(255, 181, 71, 0.2)',
+    borderWidth: 1.5,
+    borderColor: '#FFB547',
+  },
+  medalhaCircleLocked: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   conquistaTextCol: {
     flex: 1,
+  },
+  conquistaTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
   },
   conquistaTitulo: {
     fontSize: 13,
     fontWeight: weights.title,
   },
+  unlockedBadgePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+  },
+  unlockedBadgeText: {
+    color: '#10b981',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  progressPercentText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: aprovaFoxColors.textMuted,
+  },
   conquistaDesc: {
     fontSize: 11,
     color: aprovaFoxColors.textMuted,
-    marginTop: 2,
+    lineHeight: 15,
+  },
+  individualProgressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 6,
+  },
+  individualProgressTrack: {
+    flex: 1,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  individualProgressFill: {
+    height: '100%',
+    backgroundColor: '#7657F6',
+    borderRadius: 2,
+  },
+  individualProgressFraction: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: aprovaFoxColors.textMuted,
   },
   metasRow: {
     flexDirection: 'row',
