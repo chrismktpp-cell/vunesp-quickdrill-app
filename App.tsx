@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -79,7 +80,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-export type TabType = 'inicio' | 'estudar' | 'materias' | 'simulado' | 'progresso' | 'perfil';
+export type TabType = 'inicio' | 'estudar' | 'simulado' | 'progresso' | 'perfil';
 
 interface ActiveStudySession {
   title: string;
@@ -948,24 +949,15 @@ export default function App() {
             )}
 
             {activeTab === 'estudar' && (
-              <TrilhaConhecimentoScreen
+              <EditalScreen
                 questions={questionsData as Question[]}
-                stats={stats}
-                onIniciarTreinoDia={handleIniciarTreinoDia}
-                onTreinarTopico={(category) => handleStartTopicSession(category)}
+                attempts={stats.attempts}
+                revisoesSRS={stats.revisoesSRS || {}}
+                onTreinarTopico={handleStartTopicSession}
                 onIniciarSimulado={() => setActiveTab('simulado')}
                 colors={legacyColors}
                 isDark={isDark}
-              />
-            )}
-
-            {activeTab === 'materias' && (
-              <MateriasScreen
-                questions={questionsData as Question[]}
-                stats={stats}
-                onTreinarTopico={(categoryOrMateria) => handleStartTopicSession(categoryOrMateria)}
-                colors={legacyColors}
-                isDark={isDark}
+                getCategoryColor={getCategoryColor}
               />
             )}
 
@@ -1023,7 +1015,7 @@ export default function App() {
             { backgroundColor: tokens.navBg, borderTopColor: tokens.navBorder },
           ]}
         >
-          {/* TAB 1: INÍCIO (PAINEL & ESTATÍSTICAS) */}
+          {/* TAB 1: INÍCIO */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1049,11 +1041,11 @@ export default function App() {
               ]}
               numberOfLines={1}
             >
-              Painel
+              Início
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 2: TRILHA (DUOLINGO LEARNING PATH) */}
+          {/* TAB 2: ESTUDAR (TRILHA DO EDITAL COM BADGES AQUI) */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1064,7 +1056,7 @@ export default function App() {
           >
             <View style={styles.tabIconWrapper}>
               <Ionicons
-                name={activeTab === 'estudar' ? 'map' : 'map-outline'}
+                name={activeTab === 'estudar' ? 'school' : 'school-outline'}
                 size={22}
                 color={activeTab === 'estudar' ? tokens.primary : tokens.textMuted}
               />
@@ -1082,41 +1074,11 @@ export default function App() {
               ]}
               numberOfLines={1}
             >
-              Trilha
+              Estudar
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 3: MATÉRIAS (ESCOLHER POR MATÉRIA & EDITAL) */}
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setActiveTab('materias');
-            }}
-            activeOpacity={0.85}
-            style={styles.tabBarItem}
-          >
-            <View style={styles.tabIconWrapper}>
-              <Ionicons
-                name={activeTab === 'materias' ? 'book' : 'book-outline'}
-                size={22}
-                color={activeTab === 'materias' ? tokens.primary : tokens.textMuted}
-              />
-            </View>
-            <Text
-              style={[
-                styles.tabBarLabel,
-                {
-                  color: activeTab === 'materias' ? tokens.primary : tokens.textMuted,
-                  fontWeight: activeTab === 'materias' ? '600' : '500',
-                },
-              ]}
-              numberOfLines={1}
-            >
-              Matérias
-            </Text>
-          </TouchableOpacity>
-
-          {/* TAB 4: SIMULADOS */}
+          {/* TAB 3: SIMULADOS */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1146,7 +1108,7 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 5: PROGRESSO */}
+          {/* TAB 4: PROGRESSO */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1179,7 +1141,7 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 6: PERFIL */}
+          {/* TAB 5: PERFIL */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1326,8 +1288,9 @@ const styles = StyleSheet.create({
   bottomTabBar: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 4,
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'android' ? 34 : 14,
+    paddingHorizontal: 8,
   },
   tabBarItem: {
     flex: 1,
