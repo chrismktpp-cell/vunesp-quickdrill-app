@@ -19,7 +19,7 @@ import type {
 } from '../types/schema';
 import type { QuestionFilters } from '../services/filterEngine';
 import { FilaDoDiaBanner } from './FilaDoDiaBanner';
-import { triggerLightHaptic } from '../utils/haptics';
+import { triggerLightHaptic, triggerSuccessHaptic } from '../utils/haptics';
 import { radius, typography, weights, spacing } from '../theme/tokens';
 import { getDeterministicOptionOrder } from '../utils/shuffleOptions';
 
@@ -126,6 +126,18 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   const [isLapisActive, setIsLapisActive] = useState<boolean>(false);
   const [discardedOptionIndices, setDiscardedOptionIndices] = useState<number[]>([]);
 
+  // Modo Marca-Texto (destaque de palavras no enunciado e pegadinhas da VUNESP)
+  const [isHighlighterActive, setIsHighlighterActive] = useState<boolean>(false);
+  const [highlightedWordIndices, setHighlightedWordIndices] = useState<number[]>([]);
+
+  // Ajuste de Tamanho de Fonte (-1: P, 0: M, 1: G, 2: GG)
+  const [fontScaleStep, setFontScaleStep] = useState<number>(0);
+  const fontDelta = fontScaleStep * 2;
+
+  // Efeito Visual de Combo (sequência de acertos seguidos)
+  const [comboCount, setComboCount] = useState<number>(0);
+  const [showComboBanner, setShowComboBanner] = useState<boolean>(false);
+
   // Permutação determinística de alternativas para remover o viés de 67% na alternativa A
   const optionOrder = useMemo(() => {
     if (!currentQuestion) return [];
@@ -136,6 +148,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
     questionStartTimeRef.current = Date.now();
     setPendingOptionIndex(null);
     setDiscardedOptionIndices([]);
+    setHighlightedWordIndices([]);
+    setShowComboBanner(false);
   }, [currentQuestion?.id, currentIndex]);
 
   const handleToggleDiscardOption = (idx: number) => {
@@ -168,8 +182,55 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
     setPendingOptionIndex(idx);
   };
 
+  const handleToggleHighlightWord = (tokenIdx: number) => {
+    triggerLightHaptic();
+    setHighlightedWordIndices((prev) => {
+      if (prev.includes(tokenIdx)) {
+        return prev.filter((i) => i !== tokenIdx);
+      } else {
+        return [...prev, tokenIdx];
+      }
+    });
+  };
+
+  const handleAutoHighlightPegadinhas = () => {
+    triggerLightHaptic();
+    if (!currentQuestion) return;
+    const tokensList = currentQuestion.statement.split(/(\s+)/);
+    const trapRegex = /^(exceto|não|incorreta|incorreto|errada|errado|falsa|falso|apenas|somente|nunca|sempre|salvo|vedado|proibido|exclusivamente)[\.,;:?!]?$/i;
+    const newIndices: number[] = [];
+    tokensList.forEach((token, idx) => {
+      if (trapRegex.test(token.trim())) {
+        newIndices.push(idx);
+      }
+    });
+    setHighlightedWordIndices((prev) => Array.from(new Set([...prev, ...newIndices])));
+  };
+
+  const handleDecreaseFont = () => {
+    triggerLightHaptic();
+    setFontScaleStep((prev) => Math.max(-1, prev - 1));
+  };
+
+  const handleIncreaseFont = () => {
+    triggerLightHaptic();
+    setFontScaleStep((prev) => Math.min(2, prev + 1));
+  };
+
   const handleConfirmAnswer = () => {
-    if (pendingOptionIndex === null || isAnswered) return;
+    if (pendingOptionIndex === null || isAnswered || !currentQuestion) return;
+    const isCorrect = pendingOptionIndex === currentQuestion.correctIndex;
+    if (isCorrect) {
+      const nextCombo = comboCount + 1;
+      setComboCount(nextCombo);
+      if (nextCombo >= 2) {
+        setShowComboBanner(true);
+        triggerSuccessHaptic();
+      }
+    } else {
+      setComboCount(0);
+      setShowComboBanner(false);
+    }
     const tempoGastoMs = Math.max(0, Date.now() - questionStartTimeRef.current);
     onAnswer(pendingOptionIndex, tempoGastoMs);
   };
@@ -180,21 +241,63 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   const isLastQuestion =
     filteredQuestions.length > 0 && currentIndex === filteredQuestions.length - 1;
 
-  // Render text statement com destaque para lacuna [ ? ]
+  // Render text statement com destaque para lacuna [ ? ] e marca-texto interativo
   const renderStatement = (text: string) => {
-    const parts = text.split('_____');
-    if (parts.length === 1) {
-      return (
-        <Text style={[styles.statementText, { color: tokens.textPrimary }]}>
-          {text}
-        </Text>
-      );
-    }
+    const tokensList = text.split(/(\s+)/);
     return (
-      <Text style={[styles.statementText, { color: tokens.textPrimary }]}>
-        {parts[0]}
-        <Text style={{ color: tokens.primary, fontWeight: weights.title }}>[ ? ]</Text>
-        {parts.slice(1).join('_____')}
+      <Text
+        style={[
+          styles.statementText,
+          {
+            color: tokens.textPrimary,
+            fontSize: typography.statement + fontDelta,
+            lineHeight: (typography.statement + fontDelta) * 1.5,
+          },
+        ]}
+      >
+        {tokensList.map((token, tokenIdx) => {
+          const isHighlighted = highlightedWordIndices.includes(tokenIdx);
+          const isBlank = token === '_____';
+          if (isBlank) {
+            return (
+              <Text
+                key={tokenIdx}
+                style={{ color: tokens.primary, fontWeight: weights.title }}
+              >
+                [ ? ]
+              </Text>
+            );
+          }
+          if (isHighlighted) {
+            return (
+              <Text
+                key={tokenIdx}
+                onPress={isHighlighterActive ? () => handleToggleHighlightWord(tokenIdx) : undefined}
+                style={[
+                  styles.highlightedWordText,
+                  {
+                    backgroundColor: isDark ? '#eab308' : '#fef08a',
+                    color: '#0f172a',
+                  },
+                ]}
+              >
+                {token}
+              </Text>
+            );
+          }
+          if (isHighlighterActive && token.trim().length > 0) {
+            return (
+              <Text
+                key={tokenIdx}
+                onPress={() => handleToggleHighlightWord(tokenIdx)}
+                style={styles.highlighterInteractiveWord}
+              >
+                {token}
+              </Text>
+            );
+          }
+          return <Text key={tokenIdx}>{token}</Text>;
+        })}
       </Text>
     );
   };
@@ -560,50 +663,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
               </View>
             </View>
 
-            {/* Ações do Card: Lápis de Descarte + Favorito */}
+            {/* Ações do Card: Favoritar */}
             <View style={styles.cardMetaRightActions}>
-              {!isAnswered && (
-                <TouchableOpacity
-                  onPress={() => {
-                    triggerLightHaptic();
-                    setIsLapisActive((prev) => !prev);
-                  }}
-                  activeOpacity={0.8}
-                  style={[
-                    styles.lapisHeaderBtn,
-                    isLapisActive
-                      ? {
-                          backgroundColor: isDark
-                            ? 'rgba(255, 181, 71, 0.22)'
-                            : '#fef3c7',
-                          borderColor: tokens.warning,
-                        }
-                      : {
-                          backgroundColor: tokens.surface,
-                          borderColor: tokens.cardBorder,
-                        },
-                  ]}
-                  accessibilityLabel="Ativar modo lápis para riscar alternativas"
-                >
-                  <Ionicons
-                    name={isLapisActive ? 'pencil' : 'pencil-outline'}
-                    size={14}
-                    color={isLapisActive ? tokens.warning : tokens.textMuted}
-                  />
-                  <Text
-                    style={[
-                      styles.lapisHeaderBtnText,
-                      {
-                        color: isLapisActive ? tokens.warning : tokens.textMuted,
-                        fontWeight: isLapisActive ? weights.title : weights.meta,
-                      },
-                    ]}
-                  >
-                    {isLapisActive ? 'Riscar Ativo' : 'Lápis'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
               <TouchableOpacity
                 onPress={() => onToggleFavorite(currentQuestion!.id)}
                 activeOpacity={0.85}
@@ -615,6 +676,151 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   size={22}
                   color={isCurrentFavorite ? tokens.warning : tokens.textMuted}
                 />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* BARRA DE FERRAMENTAS DE ESTUDO: LÁPIS + MARCA-TEXTO + FONTE A-/A+ */}
+          <View style={styles.studyToolbarRow}>
+            <View style={styles.studyToolbarTools}>
+              {!isAnswered && (
+                <>
+                  {/* Botão Lápis */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      triggerLightHaptic();
+                      setIsLapisActive((prev) => {
+                        if (!prev) setIsHighlighterActive(false);
+                        return !prev;
+                      });
+                    }}
+                    activeOpacity={0.8}
+                    style={[
+                      styles.toolbarActionBtn,
+                      isLapisActive
+                        ? {
+                            backgroundColor: isDark
+                              ? 'rgba(255, 181, 71, 0.22)'
+                              : '#fef3c7',
+                            borderColor: tokens.warning,
+                          }
+                        : {
+                            backgroundColor: tokens.surface,
+                            borderColor: tokens.cardBorder,
+                          },
+                    ]}
+                    accessibilityLabel="Ativar modo lápis para riscar alternativas"
+                  >
+                    <Ionicons
+                      name={isLapisActive ? 'pencil' : 'pencil-outline'}
+                      size={13}
+                      color={isLapisActive ? tokens.warning : tokens.textMuted}
+                    />
+                    <Text
+                      style={[
+                        styles.toolbarActionBtnText,
+                        {
+                          color: isLapisActive ? tokens.warning : tokens.textMuted,
+                          fontWeight: isLapisActive ? weights.title : weights.meta,
+                        },
+                      ]}
+                    >
+                      {isLapisActive ? 'Lápis ON' : 'Lápis'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Botão Marca-Texto */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      triggerLightHaptic();
+                      setIsHighlighterActive((prev) => {
+                        if (!prev) setIsLapisActive(false);
+                        return !prev;
+                      });
+                    }}
+                    activeOpacity={0.8}
+                    style={[
+                      styles.toolbarActionBtn,
+                      isHighlighterActive
+                        ? {
+                            backgroundColor: isDark
+                              ? 'rgba(234, 179, 8, 0.22)'
+                              : '#fef9c3',
+                            borderColor: '#eab308',
+                          }
+                        : {
+                            backgroundColor: tokens.surface,
+                            borderColor: tokens.cardBorder,
+                          },
+                    ]}
+                    accessibilityLabel="Ativar modo marca-texto no enunciado"
+                  >
+                    <Ionicons
+                      name={isHighlighterActive ? 'color-wand' : 'color-wand-outline'}
+                      size={13}
+                      color={isHighlighterActive ? '#eab308' : tokens.textMuted}
+                    />
+                    <Text
+                      style={[
+                        styles.toolbarActionBtnText,
+                        {
+                          color: isHighlighterActive
+                            ? (isDark ? '#fef08a' : '#854d0e')
+                            : tokens.textMuted,
+                          fontWeight: isHighlighterActive ? weights.title : weights.meta,
+                        },
+                      ]}
+                    >
+                      {isHighlighterActive ? 'Marca-Texto ON' : 'Marca-Texto'}
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+
+            {/* Controle de Tamanho de Fonte (A- / A+) */}
+            <View
+              style={[
+                styles.fontSizePill,
+                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={handleDecreaseFont}
+                activeOpacity={0.7}
+                style={[
+                  styles.fontSizeBtn,
+                  fontScaleStep === -1 && { opacity: 0.35 },
+                ]}
+                disabled={fontScaleStep <= -1}
+                accessibilityLabel="Diminuir tamanho da fonte"
+              >
+                <Text style={[styles.fontSizeBtnText, { color: tokens.textMuted }]}>
+                  A-
+                </Text>
+              </TouchableOpacity>
+              <View style={[styles.fontSizeDivider, { backgroundColor: tokens.cardBorder }]} />
+              <TouchableOpacity
+                onPress={handleIncreaseFont}
+                activeOpacity={0.7}
+                style={[
+                  styles.fontSizeBtn,
+                  fontScaleStep === 2 && { opacity: 0.35 },
+                ]}
+                disabled={fontScaleStep >= 2}
+                accessibilityLabel="Aumentar tamanho da fonte"
+              >
+                <Text
+                  style={[
+                    styles.fontSizeBtnText,
+                    {
+                      color: fontScaleStep > 0 ? tokens.primary : tokens.textMuted,
+                      fontWeight: fontScaleStep > 0 ? '700' : '500',
+                    },
+                  ]}
+                >
+                  A+
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -637,7 +843,16 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   Texto de Apoio
                 </Text>
               </View>
-              <Text style={[styles.supportTextContent, { color: tokens.textSecondary }]}>
+              <Text
+                style={[
+                  styles.supportTextContent,
+                  {
+                    color: tokens.textSecondary,
+                    fontSize: 13 + fontDelta,
+                    lineHeight: (13 + fontDelta) * 1.45,
+                  },
+                ]}
+              >
                 {currentQuestion!.supportText}
               </Text>
             </View>
@@ -647,6 +862,40 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
           <View style={styles.statementBox}>
             {renderStatement(currentQuestion!.statement)}
           </View>
+
+          {/* Aviso Flutuante de Modo Marca-Texto Ativo */}
+          {isHighlighterActive && !isAnswered && (
+            <View
+              style={[
+                styles.highlighterActiveBanner,
+                {
+                  backgroundColor: isDark ? 'rgba(234, 179, 8, 0.15)' : '#fef9c3',
+                  borderColor: '#eab308',
+                },
+              ]}
+            >
+              <View style={styles.highlighterBannerLeft}>
+                <Ionicons name="color-wand" size={13} color="#eab308" />
+                <Text
+                  style={[
+                    styles.highlighterActiveBannerText,
+                    { color: isDark ? '#fef08a' : '#854d0e' },
+                  ]}
+                >
+                  Toque no texto para grifar
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={handleAutoHighlightPegadinhas}
+                activeOpacity={0.8}
+                style={styles.autoPegadinhasBtn}
+                accessibilityLabel="Destacar termos de pegadinha da VUNESP"
+              >
+                <Ionicons name="flash" size={11} color="#ffffff" />
+                <Text style={styles.autoPegadinhasBtnText}>⚡ Pegadinhas</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Aviso Flutuante de Modo Lápis Ativo */}
           {isLapisActive && !isAnswered && (
@@ -773,7 +1022,11 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   <Text
                     style={[
                       styles.optionText,
-                      { color: tokens.textPrimary },
+                      {
+                        color: tokens.textPrimary,
+                        fontSize: 14 + fontDelta,
+                        lineHeight: (14 + fontDelta) * 1.4,
+                      },
                       isDiscarded &&
                         !isConfirmed && {
                           textDecorationLine: 'line-through',
@@ -977,6 +1230,48 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
           ) : (
             /* FEEDBACK NO MESMO CARD APÓS CONFIRMAR */
             <View style={styles.feedbackSection}>
+              {/* BADGE COMEMORATIVO DE COMBO (SEQUÊNCIA DE ACERTOS) */}
+              {isAnswered && showComboBanner && comboCount >= 2 && (
+                <View
+                  style={[
+                    styles.comboBannerBox,
+                    comboCount >= 5
+                      ? styles.comboBannerUnstoppable
+                      : comboCount >= 3
+                      ? styles.comboBannerFire
+                      : styles.comboBannerGood,
+                  ]}
+                >
+                  <View style={styles.comboEmojiCircle}>
+                    <Text style={styles.comboEmoji}>
+                      {comboCount >= 5 ? '⚡' : '🔥'}
+                    </Text>
+                  </View>
+                  <View style={styles.comboContent}>
+                    <View style={styles.comboTitleRow}>
+                      <Text style={styles.comboTitleText}>
+                        {comboCount >= 5
+                          ? `COMBO ${comboCount}x · IMPARÁVEL!`
+                          : comboCount >= 3
+                          ? `COMBO ${comboCount}x · EM CHAMAS!`
+                          : `COMBO ${comboCount}x · SEQUÊNCIA ATIVA!`}
+                      </Text>
+                      <View style={styles.comboXpBadge}>
+                        <Text style={styles.comboXpBadgeText}>
+                          {comboCount >= 5 ? '+25 XP' : comboCount >= 3 ? '+15 XP' : '+10 XP'}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={styles.comboDescText}>
+                      {comboCount >= 5
+                        ? 'Nível cirúrgico das primeiras colocações VUNESP!'
+                        : comboCount >= 3
+                        ? 'Excelente ritmo de estudo! Mantendo o foco.'
+                        : 'Duas seguidas! Continue firme rumo à aprovação.'}
+                    </Text>
+                  </View>
+                </View>
+              )}
               {/* Faixa única de feedback */}
               {feedbackTip ? (
                 <View
@@ -1329,6 +1624,160 @@ const styles = StyleSheet.create({
   },
   lapisHeaderBtnText: {
     fontSize: 11,
+  },
+  studyToolbarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 2,
+    gap: 8,
+  },
+  studyToolbarTools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  toolbarActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  toolbarActionBtnText: {
+    fontSize: 11,
+  },
+  fontSizePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: radius.pill,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  fontSizeBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fontSizeBtnText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  fontSizeDivider: {
+    width: 1,
+    height: 12,
+  },
+  highlighterActiveBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: radius.control,
+    borderWidth: 1,
+    gap: 8,
+  },
+  highlighterBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+  },
+  highlighterActiveBannerText: {
+    fontSize: 11,
+    fontWeight: weights.title,
+  },
+  autoPegadinhasBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#b45309',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+  },
+  autoPegadinhasBtnText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  highlightedWordText: {
+    borderRadius: 3,
+    paddingHorizontal: 2,
+    fontWeight: '700',
+  },
+  highlighterInteractiveWord: {
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'dotted',
+  },
+  comboBannerBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: radius.card,
+    borderWidth: 1.5,
+    gap: 10,
+    marginBottom: 6,
+  },
+  comboBannerGood: {
+    backgroundColor: 'rgba(59, 130, 246, 0.12)',
+    borderColor: '#3b82f6',
+  },
+  comboBannerFire: {
+    backgroundColor: 'rgba(249, 115, 22, 0.14)',
+    borderColor: '#f97316',
+  },
+  comboBannerUnstoppable: {
+    backgroundColor: 'rgba(234, 179, 8, 0.16)',
+    borderColor: '#eab308',
+  },
+  comboEmojiCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  comboEmoji: {
+    fontSize: 18,
+  },
+  comboContent: {
+    flex: 1,
+  },
+  comboTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  comboTitleText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#f8fafc',
+    letterSpacing: 0.5,
+  },
+  comboXpBadge: {
+    backgroundColor: '#22c55e',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: radius.pill,
+  },
+  comboXpBadgeText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  comboDescText: {
+    fontSize: 11,
+    color: '#94a3b8',
+    lineHeight: 15,
   },
   lapisActiveBanner: {
     flexDirection: 'row',
