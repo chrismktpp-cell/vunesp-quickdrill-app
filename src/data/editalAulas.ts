@@ -3,7 +3,7 @@ export interface AulaItem {
   canal: string;
   duracao: string;
   url: string;
-  especifica: boolean; // true = link exato curado; false = busca recomendada (aguardando link do usuário)
+  especifica: boolean; // true = link exato curado; false = busca recomendada
 }
 
 export const TOPICOS_AULAS: Record<string, AulaItem[]> = {
@@ -79,11 +79,18 @@ export const TOPICOS_AULAS: Record<string, AulaItem[]> = {
   // 6. Atos Administrativos, Princípios & Ética Pública
   'edital-adm-03': [
     {
-      titulo: 'Atos Administrativos e Princípios da Administração Pública VUNESP',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Atos+Administrativos+Principios+LIMPE+VUNESP',
-      especifica: false,
+      titulo: 'Princípios da Administração Pública (LIMPE)',
+      canal: 'Cíntia Brunelli',
+      duracao: '14 min',
+      url: 'https://www.youtube.com/watch?v=ZCE93TMAFeI',
+      especifica: true,
+    },
+    {
+      titulo: 'Atos Administrativos (Resumo Completo)',
+      canal: 'Cíntia Brunelli',
+      duracao: '12 min',
+      url: 'https://www.youtube.com/watch?v=L2lXiq54qno',
+      especifica: true,
     },
   ],
 
@@ -141,11 +148,18 @@ export const TOPICOS_AULAS: Record<string, AulaItem[]> = {
   // 11. Coesão e Comunicação Oficial
   'edital-ap-lp-03': [
     {
-      titulo: 'Coesão, Conectivos e Redação Oficial VUNESP',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Coesao+Textual+Conectivos+Redacao+Oficial+VUNESP',
-      especifica: false,
+      titulo: 'Coesão e Coerência Textual',
+      canal: 'Prof. Noslen',
+      duracao: '6 min',
+      url: 'https://www.youtube.com/watch?v=IIU6i3UXyi0',
+      especifica: true,
+    },
+    {
+      titulo: 'Redação Oficial para Concursos VUNESP',
+      canal: 'Prof. Martins VUNESP',
+      duracao: '16 min',
+      url: 'https://www.youtube.com/watch?v=JWyF7JICwvQ',
+      especifica: true,
     },
   ],
 
@@ -163,55 +177,90 @@ export const TOPICOS_AULAS: Record<string, AulaItem[]> = {
   // 13. Regra de três e medidas
   'edital-ap-mat-02': [
     {
-      titulo: 'Regra de Três Simples e Unidades de Medida VUNESP',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Regra+de+Tres+Simples+Unidades+de+Medida+VUNESP',
-      especifica: false,
+      titulo: 'Regra de Três Simples — VUNESP',
+      canal: 'Ciência Exata',
+      duracao: '18 min',
+      url: 'https://www.youtube.com/watch?v=bIkmmm9UJE4',
+      especifica: true,
+    },
+    {
+      titulo: 'Regra de Três Rápida e Fácil',
+      canal: 'Prof. Sandro Curió',
+      duracao: '7 min',
+      url: 'https://www.youtube.com/watch?v=q846Qdi-od8',
+      especifica: true,
     },
   ],
 
   // 14. Geometria e lógica básica
   'edital-ap-mat-03': [
     {
-      titulo: 'Geometria Básica e Raciocínio Lógico VUNESP',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Geometria+Plana+Perimetro+Area+Logica+VUNESP',
-      especifica: false,
+      titulo: 'Área, Perímetro e Teorema de Pitágoras — VUNESP',
+      canal: 'Ciência Exata',
+      duracao: '5 min',
+      url: 'https://www.youtube.com/watch?v=neEL_VyhDc4',
+      especifica: true,
+    },
+    {
+      titulo: 'Aulão Geometria Plana — Banca VUNESP',
+      canal: 'Ciência Exata',
+      duracao: '30 min',
+      url: 'https://www.youtube.com/watch?v=ZE5HjZd9U8g',
+      especifica: true,
     },
   ],
 
   // 15. Guarda, vigilância e controle de acesso
   'edital-ap-esp-01': [
     {
-      titulo: 'Noções de Portaria, Guarda e Segurança Patrimonial',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Guarda+Vigilancia+Controle+de+Acesso+Concurso',
-      especifica: false,
+      titulo: 'Segurança Patrimonial e Controle de Acesso',
+      canal: 'Prof. Carlos Pereira',
+      duracao: '31 min',
+      url: 'https://www.youtube.com/watch?v=-s44Ol55u2k',
+      especifica: true,
+    },
+    {
+      titulo: 'Simulado Vigilância, Portaria e Rondas',
+      canal: 'Prof. Carlos Pereira',
+      duracao: '10 min',
+      url: 'https://www.youtube.com/watch?v=yefmgdu5r6A',
+      especifica: true,
     },
   ],
 
   // 16. Prevenção de incêndios e primeiros socorros
   'edital-ap-esp-02': [
     {
-      titulo: 'Prevenção e Combate a Incêndios (Extintores) e Primeiros Socorros',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Prevencao+de+Incendios+Extintores+Classes+Fogo+Primeiros+Socorros',
-      especifica: false,
+      titulo: 'Classes de Incêndio e Uso Correto de Extintores',
+      canal: 'Pense Prevenção',
+      duracao: '4 min',
+      url: 'https://www.youtube.com/watch?v=SZtInP3N25M',
+      especifica: true,
+    },
+    {
+      titulo: 'Noções de Primeiros Socorros para Concursos',
+      canal: 'Prof. Fábio Inácio',
+      duracao: '18 min',
+      url: 'https://www.youtube.com/watch?v=K0tc1JuzXDI',
+      especifica: true,
     },
   ],
 
   // 17. Atendimento e ética no serviço público
   'edital-ap-esp-03': [
     {
-      titulo: 'Atendimento ao Cidadão e Ética no Serviço Público VUNESP',
-      canal: 'Busca VUNESP',
-      duracao: 'Aguardando envio',
-      url: 'https://www.youtube.com/results?search_query=Atendimento+ao+Publico+Etica+no+Servico+Publico+VUNESP',
-      especifica: false,
+      titulo: 'Qualidade no Atendimento ao Cidadão no Serviço Público',
+      canal: 'TecConcursos',
+      duracao: '25 min',
+      url: 'https://www.youtube.com/watch?v=LMCRKa_MssU',
+      especifica: true,
+    },
+    {
+      titulo: 'Ética no Serviço Público — Princípios e Postura Funcional',
+      canal: 'Prof. Felipe Medeiros',
+      duracao: '19 min',
+      url: 'https://www.youtube.com/watch?v=agd3z5_mx9U',
+      especifica: true,
     },
   ],
 
