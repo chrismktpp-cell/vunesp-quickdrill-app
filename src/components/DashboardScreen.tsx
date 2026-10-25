@@ -362,6 +362,43 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     return [...radarMaterias].sort((a, b) => a.score - b.score)[0];
   }, [radarMaterias]);
 
+  // Geometria pré-calculada do Gráfico de Radar (evita recalcular trigonometria em cada frame)
+  const radarGeometry = useMemo(() => {
+    const cx = 140;
+    const cy = 135;
+    const R = 85;
+
+    const rings = [0.25, 0.5, 0.75, 1.0].map((factor, idx) => {
+      const r = R * factor;
+      return {
+        key: `ring-${idx}`,
+        pts: `${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`,
+        factor,
+      };
+    });
+
+    const pTop = {
+      x: cx,
+      y: cy - Math.max(12, ((radarMaterias[0]?.score || 0) / 100) * R),
+    };
+    const pRight = {
+      x: cx + Math.max(12, ((radarMaterias[1]?.score || 0) / 100) * R),
+      y: cy,
+    };
+    const pBottom = {
+      x: cx,
+      y: cy + Math.max(12, ((radarMaterias[2]?.score || 0) / 100) * R),
+    };
+    const pLeft = {
+      x: cx - Math.max(12, ((radarMaterias[3]?.score || 0) / 100) * R),
+      y: cy,
+    };
+
+    const dataPoints = `${pTop.x},${pTop.y} ${pRight.x},${pRight.y} ${pBottom.x},${pBottom.y} ${pLeft.x},${pLeft.y}`;
+
+    return { cx, cy, R, rings, pTop, pRight, pBottom, pLeft, dataPoints };
+  }, [radarMaterias]);
+
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       {/* ================= 1. BANNER FILA DO DIA (AÇÃO IMEDIATA) ================= */}
@@ -517,47 +554,19 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         {/* SVG DO GRÁFICO DE RADAR */}
         <View style={styles.radarSvgContainer}>
           {(() => {
-            const cx = 140;
-            const cy = 135;
-            const R = 85;
-
-            // Anéis de referência poligonal (25%, 50%, 75%, 100%)
-            const rings = [0.25, 0.5, 0.75, 1.0];
-
-            // Coordenadas dos 4 vértices do polígono de dados
-            const pTop = {
-              x: cx,
-              y: cy - Math.max(12, ((radarMaterias[0]?.score || 0) / 100) * R),
-            };
-            const pRight = {
-              x: cx + Math.max(12, ((radarMaterias[1]?.score || 0) / 100) * R),
-              y: cy,
-            };
-            const pBottom = {
-              x: cx,
-              y: cy + Math.max(12, ((radarMaterias[2]?.score || 0) / 100) * R),
-            };
-            const pLeft = {
-              x: cx - Math.max(12, ((radarMaterias[3]?.score || 0) / 100) * R),
-              y: cy,
-            };
-
-            const dataPoints = `${pTop.x},${pTop.y} ${pRight.x},${pRight.y} ${pBottom.x},${pBottom.y} ${pLeft.x},${pLeft.y}`;
-
+            const { cx, cy, R, rings, pTop, pRight, pBottom, pLeft, dataPoints } = radarGeometry;
             return (
               <Svg width={280} height={270}>
                 {/* Anéis poligonais concêntricos */}
-                {rings.map((factor, idx) => {
-                  const r = R * factor;
-                  const pts = `${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`;
+                {rings.map((ring) => {
                   return (
                     <Polygon
-                      key={`ring-${idx}`}
-                      points={pts}
+                      key={ring.key}
+                      points={ring.pts}
                       fill="transparent"
                       stroke={isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}
-                      strokeWidth={factor === 0.75 ? 1.5 : 1}
-                      strokeDasharray={factor === 0.75 ? '3,3' : undefined}
+                      strokeWidth={ring.factor === 0.75 ? 1.5 : 1}
+                      strokeDasharray={ring.factor === 0.75 ? '3,3' : undefined}
                     />
                   );
                 })}

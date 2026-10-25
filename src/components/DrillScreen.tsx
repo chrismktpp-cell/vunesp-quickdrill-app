@@ -23,6 +23,9 @@ import { triggerLightHaptic, triggerSuccessHaptic } from '../utils/haptics';
 import { radius, typography, weights, spacing } from '../theme/tokens';
 import { getDeterministicOptionOrder } from '../utils/shuffleOptions';
 
+const VUNESP_TRAP_REGEX =
+  /^(exceto|não|incorreta|incorreto|errada|errado|falsa|falso|apenas|somente|nunca|sempre|salvo|vedado|proibido|exclusivamente)[\.,;:?!]?$/i;
+
 export interface DrillScreenProps {
   questionsData: Question[];
   filteredQuestions: Question[];
@@ -138,6 +141,15 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   const [comboCount, setComboCount] = useState<number>(0);
   const [showComboBanner, setShowComboBanner] = useState<boolean>(false);
 
+  // Memoização O(1) para marcação de palavras e tokens do enunciado
+  const statementTokens = useMemo(() => {
+    return currentQuestion?.statement.split(/(\s+)/) || [];
+  }, [currentQuestion?.statement]);
+
+  const highlightedSet = useMemo(() => {
+    return new Set(highlightedWordIndices);
+  }, [highlightedWordIndices]);
+
   // Permutação determinística de alternativas para remover o viés de 67% na alternativa A
   const optionOrder = useMemo(() => {
     if (!currentQuestion) return [];
@@ -196,11 +208,9 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   const handleAutoHighlightPegadinhas = () => {
     triggerLightHaptic();
     if (!currentQuestion) return;
-    const tokensList = currentQuestion.statement.split(/(\s+)/);
-    const trapRegex = /^(exceto|não|incorreta|incorreto|errada|errado|falsa|falso|apenas|somente|nunca|sempre|salvo|vedado|proibido|exclusivamente)[\.,;:?!]?$/i;
     const newIndices: number[] = [];
-    tokensList.forEach((token, idx) => {
-      if (trapRegex.test(token.trim())) {
+    statementTokens.forEach((token, idx) => {
+      if (VUNESP_TRAP_REGEX.test(token.trim())) {
         newIndices.push(idx);
       }
     });
@@ -242,8 +252,7 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
     filteredQuestions.length > 0 && currentIndex === filteredQuestions.length - 1;
 
   // Render text statement com destaque para lacuna [ ? ] e marca-texto interativo
-  const renderStatement = (text: string) => {
-    const tokensList = text.split(/(\s+)/);
+  const renderStatement = (_text: string) => {
     return (
       <Text
         style={[
@@ -255,8 +264,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
           },
         ]}
       >
-        {tokensList.map((token, tokenIdx) => {
-          const isHighlighted = highlightedWordIndices.includes(tokenIdx);
+        {statementTokens.map((token, tokenIdx) => {
+          const isHighlighted = highlightedSet.has(tokenIdx);
           const isBlank = token === '_____';
           if (isBlank) {
             return (

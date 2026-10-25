@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -88,75 +88,75 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
 }) => {
   const [selectedNode, setSelectedNode] = useState<TrilhaNode | null>(null);
 
-  // Calcula estado de cada nó da trilha
-  const nodes: TrilhaNode[] = [];
+  // Calcula estado de cada nó da trilha (memoizado para fluidez ao rolar)
+  const nodes: TrilhaNode[] = useMemo(() => {
+    const list: TrilhaNode[] = [];
+    let previousCompleted = true; // Primeiro nó sempre liberado
 
-  let previousCompleted = true; // Primeiro nó sempre liberado
+    // Checa uma única vez fora do loop se há itens na Caixa 5
+    const hasCaixa5 = Object.values(revisoesSRS).some((srs) => srs.caixa >= 5);
 
-  topicos.forEach((topico, idx) => {
-    const prog = progressoMap.get(topico.id);
-    const taxa = prog?.taxaAcerto ?? 0;
-    const respondidas = prog?.questoesRespondidas ?? 0;
-    const isDominado = prog?.status === 'dominado' || (respondidas >= 4 && taxa >= 75);
+    topicos.forEach((topico, idx) => {
+      const prog = progressoMap.get(topico.id);
+      const taxa = prog?.taxaAcerto ?? 0;
+      const respondidas = prog?.questoesRespondidas ?? 0;
+      const isDominado = prog?.status === 'dominado' || (respondidas >= 4 && taxa >= 75);
 
-    // Verifica se possui questões na caixa 5 (Lendário)
-    let hasCaixa5 = false;
-    for (const srs of Object.values(revisoesSRS)) {
-      if (srs.caixa >= 5) {
-        hasCaixa5 = true;
-        break;
-      }
-    }
-
-    let status: NodeStatus = 'travado';
-    if (idx === 0 || previousCompleted) {
-      if (isDominado && hasCaixa5) {
-        status = 'lendario';
-      } else if (isDominado) {
-        status = 'dominado';
+      let status: NodeStatus = 'travado';
+      if (idx === 0 || previousCompleted) {
+        if (isDominado && hasCaixa5) {
+          status = 'lendario';
+        } else if (isDominado) {
+          status = 'dominado';
+        } else {
+          status = 'aberto';
+        }
       } else {
-        status = 'aberto';
+        status = 'travado';
       }
-    } else {
-      status = 'travado';
-    }
 
-    // Regra de destravamento do próximo nó:
-    // O próximo nó libera se este tiver taxa >= 70% OU pelo menos 4 respondidas OU for dominado
-    previousCompleted = respondidas >= 4 || taxa >= 70 || isDominado;
+      // Regra de destravamento do próximo nó:
+      // O próximo nó libera se este tiver taxa >= 70% OU pelo menos 4 respondidas OU for dominado
+      previousCompleted = respondidas >= 4 || taxa >= 70 || isDominado;
 
-    nodes.push({
-      id: topico.id,
-      index: idx,
-      tipo: 'topico',
-      topico,
-      progresso: prog,
-      status,
-      xOffset: X_OFFSETS[idx % X_OFFSETS.length],
-      icone: ICONES_TOPICOS[idx % ICONES_TOPICOS.length] || 'book',
-      tituloCurto: topico.nome.split('&')[0].split(',')[0].trim(),
-      subtitulo: topico.category,
+      list.push({
+        id: topico.id,
+        index: idx,
+        tipo: 'topico',
+        topico,
+        progresso: prog,
+        status,
+        xOffset: X_OFFSETS[idx % X_OFFSETS.length],
+        icone: ICONES_TOPICOS[idx % ICONES_TOPICOS.length] || 'book',
+        tituloCurto: topico.nome.split('&')[0].split(',')[0].trim(),
+        subtitulo: topico.category,
+      });
     });
-  });
 
-  // Nó Chefão Final (Simulado Real)
-  const allCompleted = nodes.every((n) => n.status !== 'travado');
-  const bossNode: TrilhaNode = {
-    id: 'boss-simulado',
-    index: nodes.length,
-    tipo: 'boss',
-    status: allCompleted ? 'aberto' : 'travado',
-    xOffset: 0,
-    icone: 'trophy',
-    tituloCurto: 'Simulado Real VUNESP',
-    subtitulo: 'Chefe da Trilha (40 Questões)',
-  };
-  nodes.push(bossNode);
+    // Nó Chefão Final (Simulado Real)
+    const allCompleted = list.every((n) => n.status !== 'travado');
+    const bossNode: TrilhaNode = {
+      id: 'boss-simulado',
+      index: list.length,
+      tipo: 'boss',
+      status: allCompleted ? 'aberto' : 'travado',
+      xOffset: 0,
+      icone: 'trophy',
+      tituloCurto: 'Simulado Real VUNESP',
+      subtitulo: 'Chefe da Trilha (40 Questões)',
+    };
+    list.push(bossNode);
+
+    return list;
+  }, [topicos, progressoMap, revisoesSRS]);
+
+  // Identifica o nó atual na fronteira da jornada (evita duplicar tag AQUI)
+  const activeNodeIndex = nodes.findIndex((n) => n.status === 'aberto');
 
   const screenWidth = Dimensions.get('window').width;
   const centerX = screenWidth / 2;
   const NODE_SIZE = 76;
-  const VERTICAL_STEP = 110;
+  const VERTICAL_STEP = 126;
   const TOTAL_HEIGHT = nodes.length * VERTICAL_STEP + 80;
 
   // Helper para obter cores 3D de cada status
@@ -312,7 +312,7 @@ export const EditalPathMap: React.FC<EditalPathMapProps> = ({
                 </View>
               )}
 
-              {node.status === 'aberto' && (
+              {i === activeNodeIndex && (
                 <View style={styles.activePillBadge}>
                   <Text style={styles.activePillText}>AQUI</Text>
                 </View>
