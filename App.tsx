@@ -110,7 +110,7 @@ export default function App() {
   });
 
   // 5 Tabs principais: estudar (Trilha) | inicio (Painel) | simulado | progresso | perfil
-  const [activeTab, setActiveTab] = useState<TabType>('estudar');
+  const [activeTab, setActiveTab] = useState<TabType>('inicio');
   const [favorites, setFavorites] = useState<string[]>([]);
 
   // Sessão de estudo finita ativa (estilo Duolingo)
@@ -1023,7 +1023,37 @@ export default function App() {
             { backgroundColor: tokens.navBg, borderTopColor: tokens.navBorder },
           ]}
         >
-          {/* TAB 1: TRILHA (DUOLINGO LEARNING PATH) */}
+          {/* TAB 1: INÍCIO (PAINEL & ESTATÍSTICAS) */}
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              setActiveTab('inicio');
+            }}
+            activeOpacity={0.85}
+            style={styles.tabBarItem}
+          >
+            <View style={styles.tabIconWrapper}>
+              <Ionicons
+                name={activeTab === 'inicio' ? 'home' : 'home-outline'}
+                size={22}
+                color={activeTab === 'inicio' ? tokens.primary : tokens.textMuted}
+              />
+            </View>
+            <Text
+              style={[
+                styles.tabBarLabel,
+                {
+                  color: activeTab === 'inicio' ? tokens.primary : tokens.textMuted,
+                  fontWeight: activeTab === 'inicio' ? '600' : '500',
+                },
+              ]}
+              numberOfLines={1}
+            >
+              Painel
+            </Text>
+          </TouchableOpacity>
+
+          {/* TAB 2: TRILHA (DUOLINGO LEARNING PATH) */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1056,7 +1086,7 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 2: MATÉRIAS (ESCOLHER POR MATÉRIA & EDITAL) */}
+          {/* TAB 3: MATÉRIAS (ESCOLHER POR MATÉRIA & EDITAL) */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1083,36 +1113,6 @@ export default function App() {
               numberOfLines={1}
             >
               Matérias
-            </Text>
-          </TouchableOpacity>
-
-          {/* TAB 2: PAINEL */}
-          <TouchableOpacity
-            onPress={() => {
-              triggerLightHaptic();
-              setActiveTab('inicio');
-            }}
-            activeOpacity={0.85}
-            style={styles.tabBarItem}
-          >
-            <View style={styles.tabIconWrapper}>
-              <Ionicons
-                name={activeTab === 'inicio' ? 'home' : 'home-outline'}
-                size={22}
-                color={activeTab === 'inicio' ? tokens.primary : tokens.textMuted}
-              />
-            </View>
-            <Text
-              style={[
-                styles.tabBarLabel,
-                {
-                  color: activeTab === 'inicio' ? tokens.primary : tokens.textMuted,
-                  fontWeight: activeTab === 'inicio' ? '600' : '500',
-                },
-              ]}
-              numberOfLines={1}
-            >
-              Painel
             </Text>
           </TouchableOpacity>
 
