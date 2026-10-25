@@ -7,29 +7,45 @@ export interface MascotWelcomeProps {
   saudacao: string;
   concurso: string;
   cargo: string;
+  isDark?: boolean;
+  tokens?: any;
 }
 
 export const MascotWelcome: React.FC<MascotWelcomeProps> = ({
   saudacao,
   concurso,
   cargo,
+  isDark = true,
+  tokens,
 }) => {
-  return (
-    <View style={styles.card}>
-      <View style={styles.contentCol}>
-        <Text style={styles.slogan}>AprovaFox · Concursos</Text>
-        <Text style={styles.saudacao}>{saudacao}</Text>
-        <Text style={styles.tagline}>"Estude esperto. Passe preparado."</Text>
+  const cardBg = tokens?.cardBg || (isDark ? aprovaFoxColors.surface : '#ffffff');
+  const cardBorder = tokens?.cardBorder || (isDark ? aprovaFoxColors.border : '#e2e8f0');
+  const textColor = tokens?.textPrimary || (isDark ? aprovaFoxColors.text : '#0f172a');
+  const textMuted = tokens?.textSecondary || (isDark ? aprovaFoxColors.textSecondary : '#64748b');
+  const badgeBg = tokens?.surfaceSubtle || (isDark ? aprovaFoxColors.nightElevated : '#f1f5f9');
+  const badgeBorder = tokens?.cardBorder || (isDark ? aprovaFoxColors.border : '#cbd5e1');
 
-        <View style={styles.concursoBadge}>
-          <Text style={styles.concursoText} numberOfLines={1}>
+  return (
+    <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+      <View style={styles.contentCol}>
+        <Text style={[styles.slogan, { color: isDark ? aprovaFoxColors.amber : '#d97706' }]}>
+          AprovaFox · Concursos
+        </Text>
+        <Text style={[styles.saudacao, { color: textColor }]}>{saudacao}</Text>
+        <Text style={[styles.tagline, { color: textMuted }]}>"Estude esperto. Passe preparado."</Text>
+
+        <View style={[styles.concursoBadge, { backgroundColor: badgeBg, borderColor: badgeBorder }]}>
+          <Text
+            style={[styles.concursoText, { color: isDark ? aprovaFoxColors.violetLight : aprovaFoxColors.violet }]}
+            numberOfLines={1}
+          >
             {concurso} · {cargo}
           </Text>
         </View>
       </View>
 
       <View style={styles.mascotCol}>
-        <AprovaFoxMascot mood="welcome" size={96} />
+        <AprovaFoxMascot mood="welcome" size={88} />
       </View>
     </View>
   );

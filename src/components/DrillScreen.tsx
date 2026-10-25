@@ -122,6 +122,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   const questionStartTimeRef = useRef<number>(Date.now());
   const [pendingOptionIndex, setPendingOptionIndex] = useState<number | null>(null);
 
+  // Modo Lápis (riscar/descartar alternativas incorretas)
+  const [isLapisActive, setIsLapisActive] = useState<boolean>(false);
+  const [discardedOptionIndices, setDiscardedOptionIndices] = useState<number[]>([]);
+
   // Permutação determinística de alternativas para remover o viés de 67% na alternativa A
   const optionOrder = useMemo(() => {
     if (!currentQuestion) return [];
@@ -131,11 +135,36 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
   useEffect(() => {
     questionStartTimeRef.current = Date.now();
     setPendingOptionIndex(null);
+    setDiscardedOptionIndices([]);
   }, [currentQuestion?.id, currentIndex]);
+
+  const handleToggleDiscardOption = (idx: number) => {
+    if (isAnswered) return;
+    triggerLightHaptic();
+    setDiscardedOptionIndices((prev) => {
+      if (prev.includes(idx)) {
+        return prev.filter((i) => i !== idx);
+      } else {
+        if (pendingOptionIndex === idx) {
+          setPendingOptionIndex(null);
+        }
+        return [...prev, idx];
+      }
+    });
+  };
 
   const handleSelectPendingOption = (idx: number) => {
     if (isAnswered) return;
     triggerLightHaptic();
+
+    if (isLapisActive) {
+      handleToggleDiscardOption(idx);
+      return;
+    }
+
+    if (discardedOptionIndices.includes(idx)) {
+      setDiscardedOptionIndices((prev) => prev.filter((i) => i !== idx));
+    }
     setPendingOptionIndex(idx);
   };
 
@@ -482,25 +511,112 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             { backgroundColor: tokens.cardBg, borderColor: tokens.cardBorder },
           ]}
         >
-          {/* Header do Card: Subtópico + Dificuldade à esquerda, Estrela de favorito à direita */}
+          {/* Header do Card: Dificuldade badge + Subtópico à esquerda, Estrela de favorito à direita */}
           <View style={styles.cardMetaRow}>
             <View style={styles.cardMetaLeft}>
-              <Text style={[styles.metaText, { color: tokens.textMuted }]}>
-                {currentQuestion!.subtopic} · {currentQuestion!.difficulty}
-              </Text>
+              <View style={styles.metaBadgeRow}>
+                <View
+                  style={[
+                    styles.difficultyBadge,
+                    {
+                      backgroundColor:
+                        currentQuestion!.difficulty === 'Fácil'
+                          ? tokens.successSoft
+                          : currentQuestion!.difficulty === 'Difícil'
+                          ? tokens.dangerSoft
+                          : tokens.warningSoft,
+                      borderColor:
+                        currentQuestion!.difficulty === 'Fácil'
+                          ? tokens.success
+                          : currentQuestion!.difficulty === 'Difícil'
+                          ? tokens.danger
+                          : tokens.warning,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.difficultyBadgeText,
+                      {
+                        color:
+                          currentQuestion!.difficulty === 'Fácil'
+                            ? tokens.success
+                            : currentQuestion!.difficulty === 'Difícil'
+                            ? tokens.danger
+                            : tokens.warning,
+                      },
+                    ]}
+                  >
+                    {currentQuestion!.difficulty}
+                  </Text>
+                </View>
+
+                <Text
+                  style={[styles.metaSubtopicText, { color: tokens.textMuted }]}
+                  numberOfLines={1}
+                >
+                  {currentQuestion!.subtopic}
+                </Text>
+              </View>
             </View>
 
-            <TouchableOpacity
-              onPress={() => onToggleFavorite(currentQuestion!.id)}
-              activeOpacity={0.85}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <Ionicons
-                name={isCurrentFavorite ? 'star' : 'star-outline'}
-                size={22}
-                color={isCurrentFavorite ? tokens.warning : tokens.textMuted}
-              />
-            </TouchableOpacity>
+            {/* Ações do Card: Lápis de Descarte + Favorito */}
+            <View style={styles.cardMetaRightActions}>
+              {!isAnswered && (
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerLightHaptic();
+                    setIsLapisActive((prev) => !prev);
+                  }}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.lapisHeaderBtn,
+                    isLapisActive
+                      ? {
+                          backgroundColor: isDark
+                            ? 'rgba(255, 181, 71, 0.22)'
+                            : '#fef3c7',
+                          borderColor: tokens.warning,
+                        }
+                      : {
+                          backgroundColor: tokens.surface,
+                          borderColor: tokens.cardBorder,
+                        },
+                  ]}
+                  accessibilityLabel="Ativar modo lápis para riscar alternativas"
+                >
+                  <Ionicons
+                    name={isLapisActive ? 'pencil' : 'pencil-outline'}
+                    size={14}
+                    color={isLapisActive ? tokens.warning : tokens.textMuted}
+                  />
+                  <Text
+                    style={[
+                      styles.lapisHeaderBtnText,
+                      {
+                        color: isLapisActive ? tokens.warning : tokens.textMuted,
+                        fontWeight: isLapisActive ? weights.title : weights.meta,
+                      },
+                    ]}
+                  >
+                    {isLapisActive ? 'Riscar Ativo' : 'Lápis'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                onPress={() => onToggleFavorite(currentQuestion!.id)}
+                activeOpacity={0.85}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityLabel={isCurrentFavorite ? 'Remover dos favoritos' : 'Favoritar questão'}
+              >
+                <Ionicons
+                  name={isCurrentFavorite ? 'star' : 'star-outline'}
+                  size={22}
+                  color={isCurrentFavorite ? tokens.warning : tokens.textMuted}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Texto de Apoio (se houver) */}
@@ -508,19 +624,52 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
             <View
               style={[
                 styles.supportTextBox,
-                { backgroundColor: tokens.surface, borderColor: tokens.cardBorder },
+                {
+                  backgroundColor: tokens.surface,
+                  borderColor: tokens.cardBorder,
+                  borderLeftColor: tokens.primary,
+                },
               ]}
             >
-              <Text style={[styles.supportTextContent, { color: tokens.textMuted }]}>
+              <View style={styles.supportTextHeader}>
+                <Ionicons name="document-text-outline" size={14} color={tokens.primary} />
+                <Text style={[styles.supportTextHeaderTitle, { color: tokens.primary }]}>
+                  Texto de Apoio
+                </Text>
+              </View>
+              <Text style={[styles.supportTextContent, { color: tokens.textSecondary }]}>
                 {currentQuestion!.supportText}
               </Text>
             </View>
           )}
 
-          {/* Enunciado 20/600, lineHeight 28. A lacuna [ ? ] usa primary */}
+          {/* Enunciado da Questão: tipografia respirável e destaque visual */}
           <View style={styles.statementBox}>
             {renderStatement(currentQuestion!.statement)}
           </View>
+
+          {/* Aviso Flutuante de Modo Lápis Ativo */}
+          {isLapisActive && !isAnswered && (
+            <View
+              style={[
+                styles.lapisActiveBanner,
+                {
+                  backgroundColor: isDark ? 'rgba(255, 181, 71, 0.15)' : '#fef3c7',
+                  borderColor: tokens.warning,
+                },
+              ]}
+            >
+              <Ionicons name="pencil" size={14} color={tokens.warning} />
+              <Text
+                style={[
+                  styles.lapisActiveBannerText,
+                  { color: isDark ? tokens.warning : '#b45309' },
+                ]}
+              >
+                Modo Lápis Ativo: toque nas alternativas para riscá-las.
+              </Text>
+            </View>
+          )}
 
           {/* Alternativas em botões grandes e táteis com 4 estados distintos */}
           <View style={styles.optionsList}>
@@ -531,22 +680,31 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
               const isSelectedPending = pendingOptionIndex === originalIdx;
               const isConfirmedSelected = selectedOptionIndex === originalIdx;
               const isCorrectOption = originalIdx === currentQuestion!.correctIndex;
+              const isDiscarded = discardedOptionIndices.includes(originalIdx);
 
               let optBg = tokens.cardBg;
               let optBorder = tokens.cardBorder;
-              let optBorderWidth = 1;
+              let optBorderWidth = 1.5;
               let letterBg = tokens.surface;
+              let letterBorderColor = tokens.cardBorder;
               let letterColor = tokens.textPrimary;
               let rightIcon: any = null;
 
               if (!isConfirmed) {
-                // Estado 1: Não selecionado (default)
-                // Estado 2: Selecionado pré-confirmação
-                if (isSelectedPending) {
-                  optBg = isDark ? 'rgba(37, 99, 235, 0.15)' : '#eff6ff';
+                // Estado 1: Descartado com lápis
+                if (isDiscarded) {
+                  optBg = isDark ? 'rgba(15, 23, 42, 0.4)' : '#f1f5f9';
+                  optBorder = isDark ? 'rgba(255, 255, 255, 0.08)' : '#cbd5e1';
+                  letterBg = isDark ? 'rgba(255, 255, 255, 0.04)' : '#e2e8f0';
+                  letterBorderColor = isDark ? 'rgba(255, 255, 255, 0.08)' : '#cbd5e1';
+                  letterColor = tokens.textMuted;
+                } else if (isSelectedPending) {
+                  // Estado 2: Selecionado pré-confirmação
+                  optBg = tokens.primarySoft;
                   optBorder = tokens.primary;
                   optBorderWidth = 2;
                   letterBg = tokens.primary;
+                  letterBorderColor = tokens.primary;
                   letterColor = '#ffffff';
                 }
               } else {
@@ -557,15 +715,17 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   optBorder = tokens.success;
                   optBorderWidth = 2;
                   letterBg = tokens.success;
+                  letterBorderColor = tokens.success;
                   letterColor = '#ffffff';
-                  rightIcon = <Ionicons name="checkmark-circle" size={20} color={tokens.success} />;
+                  rightIcon = <Ionicons name="checkmark-circle" size={22} color={tokens.success} />;
                 } else if (isConfirmedSelected && !isCorrectOption) {
                   optBg = tokens.dangerSoft;
                   optBorder = tokens.danger;
                   optBorderWidth = 2;
                   letterBg = tokens.danger;
+                  letterBorderColor = tokens.danger;
                   letterColor = '#ffffff';
-                  rightIcon = <Ionicons name="close-circle" size={20} color={tokens.danger} />;
+                  rightIcon = <Ionicons name="close-circle" size={22} color={tokens.danger} />;
                 }
               }
 
@@ -582,17 +742,81 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                       borderColor: optBorder,
                       borderWidth: optBorderWidth,
                     },
+                    isSelectedPending && !isConfirmed && styles.optionRowSelectedPending,
+                    isDiscarded && !isConfirmed && styles.optionRowDiscarded,
                   ]}
                 >
-                  <View style={[styles.letterCircle, { backgroundColor: letterBg }]}>
-                    <Text style={[styles.letterText, { color: letterColor }]}>
+                  <View
+                    style={[
+                      styles.letterCircle,
+                      {
+                        backgroundColor: letterBg,
+                        borderColor: letterBorderColor,
+                        borderWidth:
+                          isSelectedPending || (isConfirmed && (isCorrectOption || isConfirmedSelected))
+                            ? 0
+                            : 1,
+                        opacity: isDiscarded && !isConfirmed ? 0.45 : 1,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.letterText,
+                        { color: letterColor },
+                        isDiscarded && !isConfirmed && { textDecorationLine: 'line-through' },
+                      ]}
+                    >
                       {letter}
                     </Text>
                   </View>
-                  <Text style={[styles.optionText, { color: tokens.textPrimary }]}>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      { color: tokens.textPrimary },
+                      isDiscarded &&
+                        !isConfirmed && {
+                          textDecorationLine: 'line-through',
+                          textDecorationStyle: 'solid',
+                          color: tokens.textMuted,
+                          opacity: 0.55,
+                        },
+                    ]}
+                  >
                     {option}
                   </Text>
-                  {rightIcon && <View style={styles.optionRightIcon}>{rightIcon}</View>}
+
+                  {/* Ícone de feedback/gabarito OU Botão de Lápis Individual na Linha */}
+                  {rightIcon ? (
+                    <View style={styles.optionRightIcon}>{rightIcon}</View>
+                  ) : (
+                    !isAnswered && (
+                      <TouchableOpacity
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleToggleDiscardOption(originalIdx);
+                        }}
+                        activeOpacity={0.7}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        style={[
+                          styles.inlineLapisBtn,
+                          isDiscarded && {
+                            backgroundColor: isDark
+                              ? 'rgba(255, 181, 71, 0.22)'
+                              : '#fef3c7',
+                            borderColor: tokens.warning,
+                          },
+                        ]}
+                        accessibilityLabel={`Riscar alternativa ${letter}`}
+                      >
+                        <Ionicons
+                          name={isDiscarded ? 'pencil' : 'pencil-outline'}
+                          size={15}
+                          color={isDiscarded ? tokens.warning : tokens.textMuted}
+                        />
+                      </TouchableOpacity>
+                    )
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -615,7 +839,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   style={[
                     styles.certaintySegment,
                     selectedCertainty === 1
-                      ? { backgroundColor: tokens.warning }
+                      ? {
+                          backgroundColor: tokens.warning,
+                          borderColor: tokens.warning,
+                        }
                       : {
                           backgroundColor: tokens.surface,
                           borderColor: tokens.cardBorder,
@@ -626,7 +853,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   <Text
                     style={[
                       styles.certaintyText,
-                      { color: selectedCertainty === 1 ? '#ffffff' : tokens.textMuted },
+                      {
+                        color: selectedCertainty === 1 ? '#0B1020' : tokens.textMuted,
+                        fontWeight: selectedCertainty === 1 ? weights.title : weights.meta,
+                      },
                     ]}
                   >
                     🎲 Chute
@@ -643,7 +873,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   style={[
                     styles.certaintySegment,
                     selectedCertainty === 2
-                      ? { backgroundColor: tokens.primary }
+                      ? {
+                          backgroundColor: tokens.primary,
+                          borderColor: tokens.primary,
+                        }
                       : {
                           backgroundColor: tokens.surface,
                           borderColor: tokens.cardBorder,
@@ -654,7 +887,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   <Text
                     style={[
                       styles.certaintyText,
-                      { color: selectedCertainty === 2 ? '#ffffff' : tokens.textMuted },
+                      {
+                        color: selectedCertainty === 2 ? '#ffffff' : tokens.textMuted,
+                        fontWeight: selectedCertainty === 2 ? weights.title : weights.meta,
+                      },
                     ]}
                   >
                     🤔 Dúvida
@@ -671,7 +907,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   style={[
                     styles.certaintySegment,
                     selectedCertainty === 3
-                      ? { backgroundColor: tokens.success }
+                      ? {
+                          backgroundColor: tokens.success,
+                          borderColor: tokens.success,
+                        }
                       : {
                           backgroundColor: tokens.surface,
                           borderColor: tokens.cardBorder,
@@ -682,7 +921,10 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                   <Text
                     style={[
                       styles.certaintyText,
-                      { color: selectedCertainty === 3 ? '#ffffff' : tokens.textMuted },
+                      {
+                        color: selectedCertainty === 3 ? '#0B1020' : tokens.textMuted,
+                        fontWeight: selectedCertainty === 3 ? weights.title : weights.meta,
+                      },
                     ]}
                   >
                     🎯 Certeza
@@ -701,6 +943,8 @@ export const DrillScreen: React.FC<DrillScreenProps> = ({
                     backgroundColor:
                       pendingOptionIndex !== null ? tokens.primary : tokens.surface,
                     opacity: pendingOptionIndex !== null ? 1 : 0.6,
+                    borderBottomColor: tokens.primaryDark,
+                    borderBottomWidth: pendingOptionIndex !== null ? 3 : 0,
                   },
                 ]}
               >
@@ -1053,8 +1297,13 @@ const styles = StyleSheet.create({
   questionCard: {
     padding: 18,
     borderRadius: radius.card,
-    borderWidth: 1,
+    borderWidth: 1.5,
     gap: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
   },
   cardMetaRow: {
     flexDirection: 'row',
@@ -1064,25 +1313,85 @@ const styles = StyleSheet.create({
   cardMetaLeft: {
     flex: 1,
   },
-  metaText: {
-    fontSize: typography.caption,
+  cardMetaRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  lapisHeaderBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  lapisHeaderBtnText: {
+    fontSize: 11,
+  },
+  lapisActiveBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: radius.control,
+    borderWidth: 1,
+  },
+  lapisActiveBannerText: {
+    fontSize: 12,
+    fontWeight: weights.title,
+  },
+  metaBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  difficultyBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  difficultyBadgeText: {
+    fontSize: 11,
+    fontWeight: weights.title,
+  },
+  metaSubtopicText: {
+    fontSize: 12,
     fontWeight: weights.meta,
+    flexShrink: 1,
   },
   supportTextBox: {
     padding: 12,
     borderRadius: radius.control,
     borderWidth: 1,
+    borderLeftWidth: 4,
+    gap: 6,
+  },
+  supportTextHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  supportTextHeaderTitle: {
+    fontSize: 11,
+    fontWeight: weights.title,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   supportTextContent: {
-    fontSize: typography.caption,
-    lineHeight: 18,
-    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 20,
   },
   statementBox: {},
   statementText: {
     fontSize: typography.statement,
     fontWeight: weights.statement,
-    lineHeight: typography.statementLineHeight,
+    lineHeight: 26,
+    letterSpacing: -0.2,
   },
   optionsList: {
     gap: 10,
@@ -1090,14 +1399,27 @@ const styles = StyleSheet.create({
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    minHeight: 52,
     borderRadius: radius.card,
     gap: 12,
   },
+  optionRowSelectedPending: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  optionRowDiscarded: {
+    opacity: 0.6,
+    borderStyle: 'dashed',
+  },
   letterCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1114,6 +1436,16 @@ const styles = StyleSheet.create({
   optionRightIcon: {
     marginLeft: 4,
   },
+  inlineLapisBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
+  },
   certaintySection: {
     gap: 12,
     marginTop: 6,
@@ -1128,6 +1460,7 @@ const styles = StyleSheet.create({
   },
   certaintySegment: {
     flex: 1,
+    minHeight: 44,
     paddingVertical: 10,
     borderRadius: radius.control,
     alignItems: 'center',

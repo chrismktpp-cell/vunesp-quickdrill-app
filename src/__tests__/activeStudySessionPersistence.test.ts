@@ -100,3 +100,4 @@ describe('ActiveStudySessionStorage - Persistência Resiliente de Treinos e Tril
     expect(loadedCorrupted).toBeNull();
   });
 });
+

@@ -80,3 +80,4 @@ export async function limparSessaoEstudoAtiva(): Promise<void> {
     console.warn('Erro ao limpar sessão de estudo ativa:', err);
   }
 }
+

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import type { UserStats, Question, CategoryType } from '../types/schema';
+import questionsDataJson from '../data/questions.json';
 import { aprovaFoxColors, spacing } from '../theme/aprovafox';
 import { MascotWelcome } from './MascotWelcome';
 import { StreakCard } from './StreakCard';
@@ -14,20 +15,24 @@ import { QuickActionCard } from './QuickActionCard';
 import { OfflineBanner } from './OfflineBanner';
 import { TrilhaHomeCard } from './TrilhaHomeCard';
 import { calcularProgressoGeral } from '../services/progressService';
-import { obterProximaAtividadeRecomendada } from '../services/recommendationService';
+import { obterProximaAtividadeRecomendada, RecomendacaoEstudo } from '../services/recommendationService';
 import { calcularStatusTrilha, obterDiaRoteiro } from '../services/trilhaService';
 import { PLANO_7_DIAS, DiaRoteiro } from '../data/planoEstudosRoteiro';
+
+const questionsData = questionsDataJson as Question[];
 
 export interface HomeScreenProps {
   stats: UserStats;
   totalQuestoesDisponiveis: number;
   revisoesPendentesCount: number;
   novasQuestoesCount: number;
-  onContinuarEstudando: () => void;
+  onContinuarEstudando: (recomendacao?: RecomendacaoEstudo) => void;
   onIniciarTreinoTrilha?: (diaRoteiro: DiaRoteiro) => void;
   onIniciarSimulado: () => void;
   onIrParaEstudo: (category?: CategoryType) => void;
   onIrParaMural: () => void;
+  onTreinarPontosCegos?: () => void;
+  onTreinarErros?: () => void;
   onToggleTheme: () => void;
   isDark?: boolean;
   tokens?: any;
@@ -47,9 +52,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onIniciarSimulado,
   onIrParaEstudo,
   onIrParaMural,
+  onTreinarPontosCegos,
+  onTreinarErros,
+  isDark = true,
+  tokens,
 }) => {
-  // Dados oficiais
-  const questionsData = require('../data/questions.json') as Question[];
 
   // Saudação por horário local
   const hora = new Date().getHours();
@@ -82,9 +89,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     return obterProximaAtividadeRecomendada(questionsData, stats);
   }, [questionsData, stats]);
 
+  const bgColor = tokens?.bg || (isDark ? aprovaFoxColors.night : '#f8fafc');
+
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { backgroundColor: bgColor }]}
       showsVerticalScrollIndicator={false}
     >
       {/* 1. MASCÓTE & SAUDAÇÃO INICIAL */}
@@ -92,21 +101,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         saudacao={saudacao}
         concurso={concurso}
         cargo={cargo}
+        isDark={isDark}
+        tokens={tokens}
       />
 
-      {/* 2. META DIÁRIA & SEQUÊNCIA */}
-      <DailyGoalCard
-        questoesHoje={stats.questoesHoje || 0}
-        metaDiaria={stats.metaDiaria || 15}
-      />
-
-      <StreakCard
-        streak={stats.streak || 0}
-        bestStreak={stats.bestStreak || 0}
-      />
+      {/* 2. HUD DE STATUS DIÁRIO: OFENSIVA & META EM GRID EQUILIBRADO */}
+      <View style={styles.metricsRow}>
+        <View style={styles.metricCol}>
+          <StreakCard
+            streak={stats.streak || 0}
+            bestStreak={stats.bestStreak || 0}
+            isDark={isDark}
+            tokens={tokens}
+            compact
+          />
+        </View>
+        <View style={styles.metricCol}>
+          <DailyGoalCard
+            questoesHoje={stats.questoesHoje || 0}
+            metaDiaria={stats.metaDiaria || 15}
+            isDark={isDark}
+            tokens={tokens}
+            compact
+          />
+        </View>
+      </View>
 
       {/* 3. BARRA DE EVOLUÇÃO EM XP E NÍVEL */}
-      <XpProgressBar xp={stats.xp || 0} />
+      <XpProgressBar
+        xp={stats.xp || 0}
+        isDark={isDark}
+        tokens={tokens}
+      />
 
       {/* 4. CARD HERO DA TRILHA DO CONHECIMENTO (7 DIAS) */}
       <TrilhaHomeCard
@@ -127,21 +153,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 5. PRÓXIMA ATIVIDADE RECOMENDADA (HERO ACTION) */}
       <NextActivityCard
         recomendacao={recomendacao}
-        onIniciar={onContinuarEstudando}
+        onIniciar={() => onContinuarEstudando(recomendacao)}
       />
 
       {/* 5. REVISÕES PENDENTES SRS */}
       <PendingReviewsCard
         revisoesPendentes={progresso.revisoesPendentes}
-        onIniciarRevisao={onContinuarEstudando}
+        onIniciarRevisao={() => onContinuarEstudando(recomendacao)}
       />
 
       {/* 6. PONTOS CRÍTICOS & PONTOS CEGOS */}
       <WeakPointsCard
         blindSpotsCount={progresso.pontosCegosCount}
         errorsCount={stats.errorQueue?.length || 0}
-        onTreinarPontosCegos={() => onIrParaEstudo()}
-        onTreinarErros={() => onIrParaEstudo()}
+        onTreinarPontosCegos={onTreinarPontosCegos || (() => onIrParaEstudo())}
+        onTreinarErros={onTreinarErros || (() => onIrParaEstudo())}
       />
 
       {/* 7. RESUMO DAS MATÉRIAS DO EDITAL */}
@@ -167,7 +193,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.block,
     paddingBottom: 40,
-    gap: 16,
-    backgroundColor: aprovaFoxColors.night,
+    gap: 14,
+  },
+  metricsRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  metricCol: {
+    flex: 1,
   },
 });

@@ -43,6 +43,7 @@ import { MuralDeMacetes } from './src/components/MuralDeMacetes';
 import { SimuladoScreen } from './src/components/SimuladoScreen';
 import { EditalScreen } from './src/components/EditalScreen';
 import { TrilhaConhecimentoScreen } from './src/components/TrilhaConhecimentoScreen';
+import { MateriasScreen } from './src/components/MateriasScreen';
 import { DashboardScreen } from './src/components/DashboardScreen';
 import { DrillScreen } from './src/components/DrillScreen';
 import { HomeScreen } from './src/components/HomeScreen';
@@ -50,7 +51,7 @@ import { ProfileScreen } from './src/components/ProfileScreen';
 import { SessionSummary, SessionSummaryData } from './src/components/SessionSummary';
 import { FiltrosModal } from './src/components/FiltrosModal';
 import { gerarFilaDoDia } from './src/services/srsEngine';
-import { filtrarQuestoes, QuestionFilters } from './src/services/filterEngine';
+import { filtrarQuestoes, QuestionFilters, normalizeText, MATERIA_FALLBACK } from './src/services/filterEngine';
 import { DEFAULT_FILTERS } from './src/constants/filters';
 import { converterErrosSimuladoParaSRS } from './src/services/simuladoService';
 import { filtrarQuestoesDoDia, registrarConclusaoDiaTrilha } from './src/services/trilhaService';
@@ -78,7 +79,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-export type TabType = 'inicio' | 'estudar' | 'simulado' | 'progresso' | 'perfil';
+export type TabType = 'inicio' | 'estudar' | 'materias' | 'simulado' | 'progresso' | 'perfil';
 
 interface ActiveStudySession {
   title: string;
@@ -324,47 +325,77 @@ export default function App() {
   );
 
   // Iniciar sessão recomendada inteligente
-  const handleStartRecommendedSession = useCallback(() => {
-    const allQuestions = questionsData as Question[];
-
-    if (filaDoDia.revisoesPendentes.length > 0) {
-      startStudySession(
-        `Revisão do Dia (${filaDoDia.revisoesPendentes.length} pendentes)`,
-        filaDoDia.revisoesPendentes
-      );
-      return;
-    }
-
-    if (stats.blindSpotQueue && stats.blindSpotQueue.length > 0) {
-      const blindQuestions = allQuestions.filter((q) =>
-        stats.blindSpotQueue.includes(q.id)
-      );
-      if (blindQuestions.length > 0) {
-        startStudySession('Treino de Pontos Cegos', blindQuestions);
+  const handleStartRecommendedSession = useCallback(
+    (recomendacaoEspecifica?: { titulo: string; questoes: Question[] }) => {
+      if (recomendacaoEspecifica && recomendacaoEspecifica.questoes.length > 0) {
+        startStudySession(
+          recomendacaoEspecifica.titulo,
+          recomendacaoEspecifica.questoes
+        );
         return;
       }
-    }
 
-    if (stats.errorQueue && stats.errorQueue.length > 0) {
-      const errorQuestions = allQuestions.filter((q) =>
-        stats.errorQueue.includes(q.id)
-      );
-      if (errorQuestions.length > 0) {
-        startStudySession('Revisão de Erros Recentes', errorQuestions);
-        return;
-      }
-    }
-
-    // Default: sessão do edital geral
-    startStudySession('Sessão Geral do Edital (10 Questões)', allQuestions);
-  }, [filaDoDia, stats, startStudySession]);
-
-  // Iniciar sessão de um tópico específico
-  const handleStartTopicSession = useCallback(
-    (category: CategoryType) => {
       const allQuestions = questionsData as Question[];
-      const catQuestions = allQuestions.filter((q) => q.category === category);
-      startStudySession(`${category.split(' ')[0]} · Treino Focado`, catQuestions);
+
+      if (filaDoDia.revisoesPendentes.length > 0) {
+        startStudySession(
+          `Revisão do Dia (${filaDoDia.revisoesPendentes.length} pendentes)`,
+          filaDoDia.revisoesPendentes
+        );
+        return;
+      }
+
+      if (stats.blindSpotQueue && stats.blindSpotQueue.length > 0) {
+        const blindQuestions = allQuestions.filter((q) =>
+          stats.blindSpotQueue.includes(q.id)
+        );
+        if (blindQuestions.length > 0) {
+          startStudySession('Treino de Pontos Cegos', blindQuestions);
+          return;
+        }
+      }
+
+      if (stats.errorQueue && stats.errorQueue.length > 0) {
+        const errorQuestions = allQuestions.filter((q) =>
+          stats.errorQueue.includes(q.id)
+        );
+        if (errorQuestions.length > 0) {
+          startStudySession('Revisão de Erros Recentes', errorQuestions);
+          return;
+        }
+      }
+
+      // Default: sessão do edital geral
+      startStudySession('Sessão Geral do Edital (10 Questões)', allQuestions);
+    },
+    [filaDoDia, stats, startStudySession]
+  );
+
+  // Iniciar sessão de um tópico ou matéria específica
+  const handleStartTopicSession = useCallback(
+    (categoryOrMateria: CategoryType | string) => {
+      const allQuestions = questionsData as Question[];
+      const normTarget = normalizeText(categoryOrMateria);
+
+      const catQuestions = allQuestions.filter((q) => {
+        const normCat = normalizeText(q.category);
+        const normMat = q.materia ? normalizeText(q.materia) : '';
+        const fallbackMat = MATERIA_FALLBACK[q.category]
+          ? normalizeText(MATERIA_FALLBACK[q.category])
+          : '';
+
+        if (normCat === normTarget || normMat === normTarget || fallbackMat === normTarget) {
+          return true;
+        }
+        if (normCat.includes(normTarget) || normMat.includes(normTarget)) {
+          return true;
+        }
+        return false;
+      });
+
+      const questoesFinais = catQuestions.length > 0 ? catQuestions : allQuestions;
+      const tituloSessao = `${categoryOrMateria.split(' ')[0]} · Treino Focado (${questoesFinais.length}q)`;
+      startStudySession(tituloSessao, questoesFinais);
     },
     [startStudySession]
   );
@@ -906,6 +937,8 @@ export default function App() {
                   }
                 }}
                 onIrParaMural={() => setIsMuralOpen(true)}
+                onTreinarPontosCegos={handleStartBlindSpotSession}
+                onTreinarErros={handleStartErrorSession}
                 onToggleTheme={toggleTheme}
                 tokens={tokens}
                 isDark={isDark}
@@ -921,6 +954,16 @@ export default function App() {
                 onIniciarTreinoDia={handleIniciarTreinoDia}
                 onTreinarTopico={(category) => handleStartTopicSession(category)}
                 onIniciarSimulado={() => setActiveTab('simulado')}
+                colors={legacyColors}
+                isDark={isDark}
+              />
+            )}
+
+            {activeTab === 'materias' && (
+              <MateriasScreen
+                questions={questionsData as Question[]}
+                stats={stats}
+                onTreinarTopico={(categoryOrMateria) => handleStartTopicSession(categoryOrMateria)}
                 colors={legacyColors}
                 isDark={isDark}
               />
@@ -1007,8 +1050,39 @@ export default function App() {
                   fontWeight: activeTab === 'estudar' ? '600' : '500',
                 },
               ]}
+              numberOfLines={1}
             >
               Trilha
+            </Text>
+          </TouchableOpacity>
+
+          {/* TAB 2: MATÉRIAS (ESCOLHER POR MATÉRIA & EDITAL) */}
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              setActiveTab('materias');
+            }}
+            activeOpacity={0.85}
+            style={styles.tabBarItem}
+          >
+            <View style={styles.tabIconWrapper}>
+              <Ionicons
+                name={activeTab === 'materias' ? 'book' : 'book-outline'}
+                size={22}
+                color={activeTab === 'materias' ? tokens.primary : tokens.textMuted}
+              />
+            </View>
+            <Text
+              style={[
+                styles.tabBarLabel,
+                {
+                  color: activeTab === 'materias' ? tokens.primary : tokens.textMuted,
+                  fontWeight: activeTab === 'materias' ? '600' : '500',
+                },
+              ]}
+              numberOfLines={1}
+            >
+              Matérias
             </Text>
           </TouchableOpacity>
 
@@ -1036,12 +1110,13 @@ export default function App() {
                   fontWeight: activeTab === 'inicio' ? '600' : '500',
                 },
               ]}
+              numberOfLines={1}
             >
               Painel
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 3: SIMULADOS */}
+          {/* TAB 4: SIMULADOS */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1065,12 +1140,13 @@ export default function App() {
                   fontWeight: activeTab === 'simulado' ? '600' : '500',
                 },
               ]}
+              numberOfLines={1}
             >
               Simulados
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 4: PROGRESSO */}
+          {/* TAB 5: PROGRESSO */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1097,12 +1173,13 @@ export default function App() {
                   fontWeight: activeTab === 'progresso' ? '600' : '500',
                 },
               ]}
+              numberOfLines={1}
             >
               Progresso
             </Text>
           </TouchableOpacity>
 
-          {/* TAB 5: PERFIL */}
+          {/* TAB 6: PERFIL */}
           <TouchableOpacity
             onPress={() => {
               triggerLightHaptic();
@@ -1126,6 +1203,7 @@ export default function App() {
                   fontWeight: activeTab === 'perfil' ? '600' : '500',
                 },
               ]}
+              numberOfLines={1}
             >
               Perfil
             </Text>
@@ -1264,8 +1342,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabBarLabel: {
-    fontSize: 11,
+    fontSize: 10,
     marginTop: 2,
+    textAlign: 'center',
   },
   tabBadgeDot: {
     position: 'absolute',

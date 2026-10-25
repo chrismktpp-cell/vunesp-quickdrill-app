@@ -16,15 +16,10 @@ import type {
   Question,
   UserStats,
   CategoryType,
-  EditalTopico,
-  RevisaoSRS,
 } from '../types/schema';
-import editalPadrao from '../data/edital.json';
 import { PLANO_7_DIAS, DiaRoteiro } from '../data/planoEstudosRoteiro';
 import {
   calcularStatusTrilha,
-  obterDiaRoteiro,
-  StatusDiaTrilha,
 } from '../services/trilhaService';
 import { triggerLightHaptic, triggerSuccessHaptic } from '../utils/haptics';
 import { aprovaFoxColors } from '../theme/aprovafox';
@@ -33,7 +28,7 @@ interface TrilhaConhecimentoScreenProps {
   questions: Question[];
   stats: UserStats;
   onIniciarTreinoDia: (diaRoteiro: DiaRoteiro) => void;
-  onTreinarTopico?: (category: CategoryType) => void;
+  onTreinarTopico?: (category: CategoryType | string) => void;
   onIniciarSimulado?: () => void;
   colors: {
     bg: string;
@@ -66,18 +61,11 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
   colors,
   isDark,
 }) => {
-  // Alternador de visão entre o Ciclo de 7 Dias (PDF) e o Edital Completo
-  const [secaoAtiva, setSecaoAtiva] = useState<'ciclo7dias' | 'edital'>('ciclo7dias');
-
-  // Estado dos modais
+  // Estado do modal de detalhes do dia do plano
   const [selectedDia, setSelectedDia] = useState<DiaRoteiro | null>(null);
-  const [selectedTopico, setSelectedTopico] = useState<EditalTopico | null>(null);
 
   // Status do Ciclo de 7 Dias
   const statusGeral = useMemo(() => calcularStatusTrilha(stats), [stats]);
-
-  // Tópicos do Edital Geral
-  const topicosEdital = editalPadrao as EditalTopico[];
 
   const screenWidth = Dimensions.get('window').width;
   const centerX = screenWidth / 2;
@@ -85,7 +73,6 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
   const VERTICAL_STEP = 115;
 
   const totalHeightCiclo = PLANO_7_DIAS.length * VERTICAL_STEP + 80;
-  const totalHeightEdital = (topicosEdital.length + 1) * VERTICAL_STEP + 80;
 
   // Handlers para o Ciclo de 7 Dias
   const handleOpenDia = (dia: DiaRoteiro) => {
@@ -99,22 +86,6 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
     const diaParaTreinar = selectedDia;
     setSelectedDia(null);
     onIniciarTreinoDia(diaParaTreinar);
-  };
-
-  // Handlers para o Edital Geral
-  const handleOpenTopico = (topico: EditalTopico) => {
-    triggerLightHaptic();
-    setSelectedTopico(topico);
-  };
-
-  const handleTreinarTopicoDoModal = () => {
-    if (!selectedTopico) return;
-    triggerSuccessHaptic();
-    const cat = selectedTopico.category;
-    setSelectedTopico(null);
-    if (onTreinarTopico) {
-      onTreinarTopico(cat);
-    }
   };
 
   const handleAbrirVideoaula = async (url: string) => {
@@ -138,102 +109,27 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
       ]}
       showsVerticalScrollIndicator={false}
     >
-      {/* 1. SELETOR DE SEÇÃO ESTILO DUOLINGO */}
-      <View
-        style={[
-          styles.sectionToggleBar,
-          {
-            backgroundColor: isDark ? '#141d34' : '#e2e8f0',
-            borderColor: isDark ? '#243254' : '#cbd5e1',
-          },
-        ]}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            triggerLightHaptic();
-            setSecaoAtiva('ciclo7dias');
-          }}
-          activeOpacity={0.85}
-          style={[
-            styles.sectionToggleBtn,
-            secaoAtiva === 'ciclo7dias' && {
-              backgroundColor: aprovaFoxColors.violet,
-            },
-          ]}
-        >
-          <Ionicons
-            name="calendar"
-            size={16}
-            color={secaoAtiva === 'ciclo7dias' ? '#ffffff' : colors.textMuted}
-          />
-          <Text
-            style={[
-              styles.sectionToggleBtnText,
-              { color: secaoAtiva === 'ciclo7dias' ? '#ffffff' : colors.textMuted },
-            ]}
-          >
-            Ciclo 7 Dias (Plano)
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            triggerLightHaptic();
-            setSecaoAtiva('edital');
-          }}
-          activeOpacity={0.85}
-          style={[
-            styles.sectionToggleBtn,
-            secaoAtiva === 'edital' && {
-              backgroundColor: '#58cc02',
-            },
-          ]}
-        >
-          <Ionicons
-            name="book"
-            size={16}
-            color={secaoAtiva === 'edital' ? '#ffffff' : colors.textMuted}
-          />
-          <Text
-            style={[
-              styles.sectionToggleBtnText,
-              { color: secaoAtiva === 'edital' ? '#ffffff' : colors.textMuted },
-            ]}
-          >
-            Edital Completo
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* 2. BANNER DE UNIDADE ESTILO DUOLINGO */}
+      {/* 1. BANNER DE UNIDADE ESTILO DUOLINGO */}
       <View
         style={[
           styles.unitBanner,
           {
-            backgroundColor:
-              secaoAtiva === 'ciclo7dias' ? aprovaFoxColors.violet : '#58cc02',
-            borderBottomColor:
-              secaoAtiva === 'ciclo7dias' ? '#4f33c7' : '#46a302',
+            backgroundColor: aprovaFoxColors.violet,
+            borderBottomColor: '#4f33c7',
           },
         ]}
       >
         <View style={styles.unitBannerContent}>
           <View style={styles.unitTagRow}>
             <Text style={styles.unitTagText}>
-              {secaoAtiva === 'ciclo7dias'
-                ? 'SEÇÃO 1 · PLANO DE ESTUDOS VUNESP'
-                : 'SEÇÃO 2 · EDITAL AGENTE PATRIMONIAL'}
+              SEÇÃO 1 · PLANO DE ESTUDOS VUNESP
             </Text>
           </View>
           <Text style={styles.unitTitleText}>
-            {secaoAtiva === 'ciclo7dias'
-              ? 'Blindagem Cirúrgica dos 15 Pontos'
-              : 'Trilha Completa de Conteúdos'}
+            Blindagem Cirúrgica dos 15 Pontos
           </Text>
           <Text style={styles.unitSubText}>
-            {secaoAtiva === 'ciclo7dias'
-              ? `${statusGeral.diasConcluidos} de 7 Dias Concluídos (${statusGeral.percentualCiclo}%)`
-              : `${topicosEdital.length} Tópicos do Edital Oficial`}
+            {`${statusGeral.diasConcluidos} de 7 Dias Concluídos (${statusGeral.percentualCiclo}%)`}
           </Text>
         </View>
 
@@ -243,19 +139,15 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
             style={[
               styles.unitProgressFill,
               {
-                width:
-                  secaoAtiva === 'ciclo7dias'
-                    ? `${Math.max(5, statusGeral.percentualCiclo)}%`
-                    : '40%',
+                width: `${Math.max(5, statusGeral.percentualCiclo)}%`,
               },
             ]}
           />
         </View>
       </View>
 
-      {/* 3. A TRILHA SINUOSA S-CURVE ESTILO DUOLINGO (CICLO DE 7 DIAS) */}
-      {secaoAtiva === 'ciclo7dias' ? (
-        <View style={[styles.pathContainer, { height: totalHeightCiclo }]}>
+      {/* 2. A TRILHA SINUOSA S-CURVE ESTILO DUOLINGO (CICLO DE 7 DIAS) */}
+      <View style={[styles.pathContainer, { height: totalHeightCiclo }]}>
           {/* Conectores SVG Curvos Bezier */}
           <Svg
             width={screenWidth}
@@ -354,8 +246,10 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
               >
                 {/* BALÃO FLUTUANTE ESTILO DUOLINGO NO NÓ ATUAL */}
                 {isCurrent && (
-                  <View style={styles.floatingCallout}>
-                    <Text style={styles.floatingCalloutText}>COMEÇAR 👆</Text>
+                  <View style={styles.floatingCallout} pointerEvents="none">
+                    <Text style={styles.floatingCalloutText} numberOfLines={1}>
+                      COMEÇAR
+                    </Text>
                     <View style={styles.floatingCalloutTriangle} />
                   </View>
                 )}
@@ -448,156 +342,7 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
             );
           })}
         </View>
-      ) : (
-        /* 4. A TRILHA SINUOSA S-CURVE DO EDITAL COMPLETO */
-        <View style={[styles.pathContainer, { height: totalHeightEdital }]}>
-          <Svg
-            width={screenWidth}
-            height={totalHeightEdital}
-            style={StyleSheet.absoluteFill}
-            pointerEvents="none"
-          >
-            {topicosEdital.map((item, idx) => {
-              const x1 = centerX + X_OFFSETS[idx % X_OFFSETS.length];
-              const y1 = idx * VERTICAL_STEP + 45;
-              const nextIdx = idx + 1;
-              const x2 =
-                nextIdx === topicosEdital.length
-                  ? centerX
-                  : centerX + X_OFFSETS[nextIdx % X_OFFSETS.length];
-              const y2 = nextIdx * VERTICAL_STEP + 45;
-
-              const midY = (y1 + y2) / 2;
-              const pathD = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
-
-              return (
-                <SvgPath
-                  key={`line-edital-${item.id}`}
-                  d={pathD}
-                  stroke={isDark ? '#243254' : '#cbd5e1'}
-                  strokeWidth={8}
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              );
-            })}
-          </Svg>
-
-          {topicosEdital.map((topico, idx) => {
-            const posX = centerX + X_OFFSETS[idx % X_OFFSETS.length] - NODE_SIZE / 2;
-            const posY = idx * VERTICAL_STEP + 10;
-            const isFirst = idx === 0;
-
-            return (
-              <View
-                key={`node-edital-${topico.id}`}
-                style={[
-                  styles.nodePositioner,
-                  {
-                    left: posX,
-                    top: posY,
-                    width: NODE_SIZE,
-                  },
-                ]}
-              >
-                {isFirst && (
-                  <View style={styles.floatingCallout}>
-                    <Text style={styles.floatingCalloutText}>PRATICAR 👆</Text>
-                    <View style={styles.floatingCalloutTriangle} />
-                  </View>
-                )}
-
-                <TouchableOpacity
-                  onPress={() => handleOpenTopico(topico)}
-                  activeOpacity={0.85}
-                  style={[
-                    styles.nodeButtonOuter,
-                    {
-                      backgroundColor: '#46a302',
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.nodeButtonInner,
-                      {
-                        backgroundColor: '#58cc02',
-                      },
-                    ]}
-                  >
-                    <Ionicons name="book-outline" size={30} color="#ffffff" />
-                  </View>
-                </TouchableOpacity>
-
-                <View style={styles.nodeLabelBox}>
-                  <Text
-                    style={[
-                      styles.nodeLabelText,
-                      { color: isDark ? '#f1f5f9' : '#1e293b' },
-                    ]}
-                    numberOfLines={2}
-                  >
-                    {topico.nome.split('&')[0].trim()}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
-
-          {/* NÓ CHEFÃO FINAL DO EDITAL */}
-          <View
-            style={[
-              styles.nodePositioner,
-              {
-                left: centerX - NODE_SIZE / 2,
-                top: topicosEdital.length * VERTICAL_STEP + 10,
-                width: NODE_SIZE,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                if (onIniciarSimulado) onIniciarSimulado();
-              }}
-              activeOpacity={0.85}
-              style={[
-                styles.nodeButtonOuter,
-                {
-                  backgroundColor: '#d98b1e',
-                  width: 84,
-                  height: 84,
-                  borderRadius: 42,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.nodeButtonInner,
-                  {
-                    backgroundColor: '#ffb547',
-                    borderRadius: 42,
-                  },
-                ]}
-              >
-                <Ionicons name="trophy" size={36} color="#ffffff" />
-              </View>
-            </TouchableOpacity>
-
-            <View style={styles.nodeLabelBox}>
-              <Text
-                style={[
-                  styles.nodeLabelText,
-                  { color: isDark ? '#ffb547' : '#d98b1e', fontWeight: '800' },
-                ]}
-              >
-                Simulado Real VUNESP
-              </Text>
-            </View>
-          </View>
-        </View>
-      )}
-
-      {/* 5. MODAL BOTTOM SHEET DUOLINGO (DETALHES DO DIA DO PLANO) */}
+      {/* 3. MODAL BOTTOM SHEET DUOLINGO (DETALHES DO DIA DO PLANO) */}
       <Modal
         visible={!!selectedDia}
         transparent
@@ -789,91 +534,6 @@ export const TrilhaConhecimentoScreen: React.FC<TrilhaConhecimentoScreenProps> =
           </View>
         </View>
       </Modal>
-
-      {/* 6. MODAL BOTTOM SHEET DUOLINGO (DETALHES DO TÓPICO DO EDITAL) */}
-      <Modal
-        visible={!!selectedTopico}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setSelectedTopico(null)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View
-            style={[
-              styles.modalSheet,
-              { backgroundColor: isDark ? '#141d34' : '#ffffff' },
-            ]}
-          >
-            {selectedTopico && (
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.sheetHeader}>
-                  <View
-                    style={[
-                      styles.sheetBadge,
-                      { backgroundColor: '#58cc02' },
-                    ]}
-                  >
-                    <Text style={styles.sheetBadgeText}>
-                      {selectedTopico.materia.toUpperCase()}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => setSelectedTopico(null)}
-                    style={styles.sheetCloseBtn}
-                  >
-                    <Ionicons name="close" size={24} color={colors.textMuted} />
-                  </TouchableOpacity>
-                </View>
-
-                <Text style={[styles.sheetTitle, { color: colors.text }]}>
-                  {selectedTopico.nome}
-                </Text>
-                <Text style={[styles.sheetFoco, { color: colors.textMuted }]}>
-                  {selectedTopico.descricao}
-                </Text>
-
-                <View
-                  style={[
-                    styles.shieldCard,
-                    {
-                      backgroundColor: isDark ? '#1c2438' : '#eff6ff',
-                      borderColor: '#58cc02',
-                    },
-                  ]}
-                >
-                  <Text style={[styles.shieldTitle, { color: '#58cc02' }]}>
-                    📜 Base Legal & Incidência no Edital
-                  </Text>
-                  <Text style={[styles.ruleText, { color: colors.text }]}>
-                    {selectedTopico.artigosLei}
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={handleTreinarTopicoDoModal}
-                  activeOpacity={0.85}
-                  style={[
-                    styles.duoStartButtonOuter,
-                    { backgroundColor: '#46a302' },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.duoStartButtonInner,
-                      { backgroundColor: '#58cc02' },
-                    ]}
-                  >
-                    <Ionicons name="flash-sharp" size={20} color="#ffffff" />
-                    <Text style={styles.duoStartButtonText}>
-                      TREINAR QUESTÕES DESTE TÓPICO
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </ScrollView>
-            )}
-          </View>
-        </View>
-      </Modal>
     </ScrollView>
   );
 };
@@ -959,35 +619,41 @@ const styles = StyleSheet.create({
   },
   floatingCallout: {
     position: 'absolute',
-    top: -36,
+    top: -46,
+    alignSelf: 'center',
     backgroundColor: '#58cc02',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    zIndex: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 20,
+    zIndex: 30,
+    minWidth: 108,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#ffffff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
   },
   floatingCalloutText: {
     color: '#ffffff',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '900',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   floatingCalloutTriangle: {
     position: 'absolute',
-    bottom: -6,
+    bottom: -7,
     alignSelf: 'center',
     width: 0,
     height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderTopWidth: 6,
+    borderLeftWidth: 7,
+    borderRightWidth: 7,
+    borderTopWidth: 7,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: '#58cc02',
@@ -1170,5 +836,161 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
     letterSpacing: 0.5,
+  },
+  materiasContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 40,
+    gap: 12,
+  },
+  materiaPillScroll: {
+    gap: 8,
+    paddingBottom: 12,
+  },
+  materiaPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1.5,
+  },
+  materiaPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  sectionSubtitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+    marginBottom: 4,
+  },
+  materiaCardBox: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 14,
+    gap: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  materiaCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  materiaIconBubble: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  materiaCardTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  materiaCardTag: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  taxaBadgeSmall: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  taxaBadgeSmallText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  materiaProgressTrack: {
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  materiaProgressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  materiaCardFooterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+  },
+  materiaStatsText: {
+    fontSize: 12,
+  },
+  materiaTrainButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+  },
+  materiaTrainButtonText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  topicoCardBox: {
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 14,
+    gap: 8,
+  },
+  topicoCardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  topicoMateriaTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  topicoMateriaTagText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  pesoTag: {},
+  pesoTagText: {
+    fontSize: 11,
+  },
+  topicoCardTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  topicoCardDesc: {
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  topicoLeiRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  topicoLeiText: {
+    fontSize: 11,
+    fontWeight: '600',
+    flex: 1,
+  },
+  treinarTopicoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 4,
+  },
+  treinarTopicoBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
   },
 });

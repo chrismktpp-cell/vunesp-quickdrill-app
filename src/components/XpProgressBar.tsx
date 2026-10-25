@@ -6,27 +6,41 @@ import { calcularNivel } from '../services/gamificationService';
 
 export interface XpProgressBarProps {
   xp: number;
+  isDark?: boolean;
+  tokens?: any;
 }
 
-export const XpProgressBar: React.FC<XpProgressBarProps> = ({ xp }) => {
+export const XpProgressBar: React.FC<XpProgressBarProps> = ({
+  xp,
+  isDark = true,
+  tokens,
+}) => {
   const nivelInfo = calcularNivel(xp);
 
+  const cardBg = tokens?.cardBg || (isDark ? aprovaFoxColors.surface : '#ffffff');
+  const cardBorder = tokens?.cardBorder || (isDark ? aprovaFoxColors.border : '#e2e8f0');
+  const textColor = tokens?.textPrimary || (isDark ? aprovaFoxColors.text : '#0f172a');
+  const textMuted = tokens?.textMuted || (isDark ? aprovaFoxColors.textMuted : '#64748b');
+  const trackBg = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0';
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
       <View style={styles.header}>
         <View style={styles.nivelBadge}>
           <Ionicons name="sparkles" size={14} color={aprovaFoxColors.amber} />
           <Text style={styles.nivelBadgeText}>Nível {nivelInfo.nivel}</Text>
         </View>
 
-        <Text style={styles.tituloNivel}>{nivelInfo.titulo}</Text>
+        <Text style={[styles.tituloNivel, { color: textColor }]} numberOfLines={1}>
+          {nivelInfo.titulo}
+        </Text>
 
         <Text style={styles.xpText}>
           {xp} XP
         </Text>
       </View>
 
-      <View style={styles.track}>
+      <View style={[styles.track, { backgroundColor: trackBg }]}>
         <View
           style={[
             styles.fill,
@@ -36,10 +50,10 @@ export const XpProgressBar: React.FC<XpProgressBarProps> = ({ xp }) => {
       </View>
 
       <View style={styles.footerRow}>
-        <Text style={styles.subtext}>
+        <Text style={[styles.subtext, { color: textMuted }]}>
           {nivelInfo.xpNoNivel} / {nivelInfo.xpProximoNivel - nivelInfo.xpInicioNivel} XP no nível
         </Text>
-        <Text style={styles.subtext}>
+        <Text style={[styles.subtext, { color: textMuted }]}>
           Faltam {nivelInfo.xpParaUpar} XP para o próximo nível
         </Text>
       </View>

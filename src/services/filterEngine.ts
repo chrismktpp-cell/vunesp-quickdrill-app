@@ -1,4 +1,5 @@
 import type { Question, CategoryType, Dificuldade, UserStats, RevisaoSRS } from '../types/schema';
+import { estaPendenteParaRevisao } from './srsEngine';
 
 export interface QuestionFilters {
   category?: CategoryType | 'all';
@@ -72,7 +73,7 @@ export function filtrarQuestoes(
   questoes: Question[],
   filtros: QuestionFilters,
   stats: UserStats,
-  srsMap: Record<string, RevisaoSRS> = {},
+  srsMap: Record<string, RevisaoSRS> = stats?.revisoesSRS || {},
   dataReferencia: number = Date.now()
 ): Question[] {
   // Cria Sets para lookup O(1) se filtrando por erros ou pontos cegos
@@ -120,8 +121,7 @@ export function filtrarQuestoes(
       } else if (filtros.statusEstudo === 'pontos_cegos') {
         if (!blindSpotSet?.has(q.id)) return false;
       } else if (filtros.statusEstudo === 'pendentes_srs') {
-        const srs = srsMap[q.id];
-        if (!srs || srs.proximaRevisao > dataReferencia) return false;
+        if (!estaPendenteParaRevisao(srsMap[q.id], dataReferencia)) return false;
       } else if (filtros.statusEstudo === 'dominadas') {
         const srs = srsMap[q.id];
         if (!srs || srs.status !== 'dominado') return false;

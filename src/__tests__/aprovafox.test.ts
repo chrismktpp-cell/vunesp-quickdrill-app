@@ -225,6 +225,15 @@ describe('AprovaFox - Sistema de Aprendizagem, Gamificação e Integridade Ofici
     const recPontoCego = obterProximaAtividadeRecomendada(allQuestions, statsComPontoCego);
     expect(recPontoCego.tipo).toBe('ponto_cego');
     expect(recPontoCego.questoes[0].id).toBe(allQuestions[0].id);
+
+    // Com erros recentes: prioridade 3
+    const statsComErros: UserStats = {
+      ...mockStats,
+      errorQueue: [allQuestions[1].id],
+    };
+    const recErros = obterProximaAtividadeRecomendada(allQuestions, statsComErros);
+    expect(recErros.tipo).toBe('revisao_erros');
+    expect(recErros.questoes[0].id).toBe(allQuestions[1].id);
   });
 
   // 10. Persistência sem regressão

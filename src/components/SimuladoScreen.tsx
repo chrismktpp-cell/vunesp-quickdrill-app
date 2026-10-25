@@ -89,6 +89,36 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
   const [errosEnviadosParaSRS, setErrosEnviadosParaSRS] = useState<boolean>(false);
   const [activeSimuladoRecuperado, setActiveSimuladoRecuperado] = useState<ActiveSimuladoData | null>(null);
 
+  // Modo Lápis (riscar/descartar alternativas incorretas)
+  const [isLapisActive, setIsLapisActive] = useState<boolean>(false);
+  const [descartadasPorQuestao, setDescartadasPorQuestao] = useState<Record<string, number[]>>({});
+
+  const handleToggleDiscardSimulado = (qId: string, optIdx: number) => {
+    triggerLightHaptic();
+    setDescartadasPorQuestao((prev) => {
+      const current = prev[qId] || [];
+      const updated = current.includes(optIdx)
+        ? current.filter((i) => i !== optIdx)
+        : [...current, optIdx];
+      return { ...prev, [qId]: updated };
+    });
+  };
+
+  const handleOptionPressSimulado = (qId: string, optIdx: number) => {
+    if (isLapisActive) {
+      handleToggleDiscardSimulado(qId, optIdx);
+    } else {
+      setDescartadasPorQuestao((prev) => {
+        const current = prev[qId] || [];
+        if (current.includes(optIdx)) {
+          return { ...prev, [qId]: current.filter((i) => i !== optIdx) };
+        }
+        return prev;
+      });
+      handleSelectOption(qId, optIdx);
+    }
+  };
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
   const totalDurationSecondsRef = useRef<number>(0);
@@ -708,16 +738,50 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
               { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
             ]}
           >
-            {/* Categoria */}
+            {/* Categoria + Lápis */}
             <View style={styles.catBadgeRow}>
-              <View style={[styles.catBadge, { backgroundColor: catColors.soft }]}>
-                <Text style={[styles.catBadgeText, { color: catColors.badgeText }]}>
-                  {currentQ.category}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                <View style={[styles.catBadge, { backgroundColor: catColors.soft }]}>
+                  <Text style={[styles.catBadgeText, { color: catColors.badgeText }]}>
+                    {currentQ.category}
+                  </Text>
+                </View>
+                <Text style={[styles.subtopicText, { color: colors.textMuted }]} numberOfLines={1}>
+                  {currentQ.subtopic}
                 </Text>
               </View>
-              <Text style={[styles.subtopicText, { color: colors.textMuted }]}>
-                {currentQ.subtopic}
-              </Text>
+
+              {/* Botão de Lápis para Riscar Alternativas */}
+              <TouchableOpacity
+                onPress={() => {
+                  triggerLightHaptic();
+                  setIsLapisActive((p) => !p);
+                }}
+                activeOpacity={0.8}
+                style={[
+                  styles.lapisButton,
+                  isLapisActive && {
+                    backgroundColor: isDark ? 'rgba(255, 181, 71, 0.22)' : '#fef3c7',
+                    borderColor: '#f59e0b',
+                  },
+                ]}
+                accessibilityLabel="Ativar modo lápis para riscar alternativas"
+              >
+                <Ionicons
+                  name={isLapisActive ? 'pencil' : 'pencil-outline'}
+                  size={14}
+                  color={isLapisActive ? '#f59e0b' : colors.textMuted}
+                />
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: isLapisActive ? '#f59e0b' : colors.textMuted,
+                    fontWeight: isLapisActive ? '700' : '500',
+                  }}
+                >
+                  {isLapisActive ? 'Riscar Ativo' : 'Lápis'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {/* Enunciado */}
@@ -725,22 +789,35 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
               {currentQ.statement}
             </Text>
 
-            {/* Alternativas */}
+            {/* Alternativas com Suporte a Lápis/Descarte */}
             <View style={styles.optionsList}>
               {getDeterministicOptionOrder(currentQ.id, currentQ.options.length).map((originalIdx, displayIdx) => {
                 const isSelected = respAtual?.selectedOptionIndex === originalIdx;
                 const letter = String.fromCharCode(65 + displayIdx); // A, B, C...
                 const option = currentQ.options[originalIdx];
+                const descartadas = descartadasPorQuestao[currentQ.id] || [];
+                const isDiscarded = descartadas.includes(originalIdx);
 
                 return (
                   <TouchableOpacity
                     key={originalIdx}
-                    onPress={() => handleSelectOption(currentQ.id, originalIdx)}
+                    onPress={() => handleOptionPressSimulado(currentQ.id, originalIdx)}
+                    activeOpacity={0.85}
                     style={[
                       styles.optionButton,
                       {
-                        backgroundColor: isSelected ? (isDark ? '#1e3a8a' : '#dbeafe') : colors.subtle,
-                        borderColor: isSelected ? colors.primary : colors.cardBorder,
+                        backgroundColor: isDiscarded
+                          ? (isDark ? 'rgba(15, 23, 42, 0.4)' : '#f1f5f9')
+                          : isSelected
+                          ? (isDark ? '#1e3a8a' : '#dbeafe')
+                          : colors.subtle,
+                        borderColor: isDiscarded
+                          ? (isDark ? 'rgba(255, 255, 255, 0.08)' : '#cbd5e1')
+                          : isSelected
+                          ? colors.primary
+                          : colors.cardBorder,
+                        borderStyle: isDiscarded ? 'dashed' : 'solid',
+                        opacity: isDiscarded ? 0.6 : 1,
                       },
                     ]}
                   >
@@ -750,6 +827,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
                         {
                           backgroundColor: isSelected ? colors.primary : colors.cardBg,
                           borderColor: isSelected ? colors.primary : colors.cardBorder,
+                          opacity: isDiscarded ? 0.5 : 1,
                         },
                       ]}
                     >
@@ -757,6 +835,7 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
                         style={[
                           styles.letterText,
                           { color: isSelected ? '#ffffff' : colors.text },
+                          isDiscarded && { textDecorationLine: 'line-through' },
                         ]}
                       >
                         {letter}
@@ -765,11 +844,39 @@ export const SimuladoScreen: React.FC<SimuladoScreenProps> = ({
                     <Text
                       style={[
                         styles.optionLabel,
-                        { color: colors.text, fontWeight: isSelected ? '700' : '500' },
+                        {
+                          color: isDiscarded ? colors.textMuted : colors.text,
+                          fontWeight: isSelected ? '700' : '500',
+                          textDecorationLine: isDiscarded ? 'line-through' : 'none',
+                          flex: 1,
+                        },
                       ]}
                     >
                       {option}
                     </Text>
+
+                    {/* Botão de Lápis Direto na Linha */}
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleToggleDiscardSimulado(currentQ.id, originalIdx);
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      style={[
+                        styles.inlineLapisBtn,
+                        isDiscarded && {
+                          backgroundColor: isDark ? 'rgba(255, 181, 71, 0.22)' : '#fef3c7',
+                          borderColor: '#f59e0b',
+                        },
+                      ]}
+                      accessibilityLabel={`Riscar alternativa ${letter}`}
+                    >
+                      <Ionicons
+                        name={isDiscarded ? 'pencil' : 'pencil-outline'}
+                        size={15}
+                        color={isDiscarded ? '#f59e0b' : colors.textMuted}
+                      />
+                    </TouchableOpacity>
                   </TouchableOpacity>
                 );
               })}
@@ -1359,8 +1466,28 @@ const styles = StyleSheet.create({
   catBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 8,
     marginBottom: 12,
+  },
+  lapisButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  inlineLapisBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   catBadge: {
     paddingHorizontal: 8,
