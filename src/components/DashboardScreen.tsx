@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Svg, { Polygon, Line, Circle as SvgCircle, Text as SvgText } from 'react-native-svg';
 import type {
   Question,
   UserStats,
@@ -274,6 +275,93 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     return { diff: 0, text: 'Estável vs anterior', color: colors.textMuted };
   }, [simuladosHistorico, colors.emerald, colors.rose, colors.textMuted]);
 
+  // Dados do Gráfico de Radar das 4 Matérias do Edital
+  const radarMaterias = useMemo(() => {
+    // 1. Língua Portuguesa
+    const lpCats = categories.filter((c) =>
+      c.toLowerCase().includes('crase') ||
+      c.toLowerCase().includes('sujeito') ||
+      c.toLowerCase().includes('portug') ||
+      c.toLowerCase().includes('concordância')
+    );
+    let lpTotal = 0, lpCorrect = 0;
+    lpCats.forEach((c) => {
+      const st = categoryStats[c];
+      if (st) {
+        lpTotal += st.total;
+        lpCorrect += st.correct;
+      }
+    });
+    const lpScore = lpTotal > 0 ? Math.round((lpCorrect / lpTotal) * 100) : (coberturaGeral.porMateria['Língua Portuguesa']?.percentualCobertura || 0);
+
+    // 2. Matemática
+    const matCats = categories.filter((c) =>
+      c.toLowerCase().includes('matemática') ||
+      c.toLowerCase().includes('medida') ||
+      c.toLowerCase().includes('geometria') ||
+      c.toLowerCase().includes('regra de três')
+    );
+    let matTotal = 0, matCorrect = 0;
+    matCats.forEach((c) => {
+      const st = categoryStats[c];
+      if (st) {
+        matTotal += st.total;
+        matCorrect += st.correct;
+      }
+    });
+    const matScore = matTotal > 0 ? Math.round((matCorrect / matTotal) * 100) : (coberturaGeral.porMateria['Matemática']?.percentualCobertura || 0);
+
+    // 3. Conhecimentos Específicos & Patrimônio
+    const espCats = categories.filter((c) =>
+      c.toLowerCase().includes('patrimônio') ||
+      c.toLowerCase().includes('vigilância') ||
+      c.toLowerCase().includes('guarda') ||
+      c.toLowerCase().includes('incêndio') ||
+      c.toLowerCase().includes('ética')
+    );
+    let espTotal = 0, espCorrect = 0;
+    espCats.forEach((c) => {
+      const st = categoryStats[c];
+      if (st) {
+        espTotal += st.total;
+        espCorrect += st.correct;
+      }
+    });
+    const espScore = espTotal > 0 ? Math.round((espCorrect / espTotal) * 100) : (coberturaGeral.porMateria['Conhecimentos Específicos']?.percentualCobertura || 0);
+
+    // 4. Direito Administrativo & Legislação
+    const dirCats = categories.filter((c) =>
+      c.toLowerCase().includes('direito') ||
+      c.toLowerCase().includes('administrativo') ||
+      c.toLowerCase().includes('regime jurídico') ||
+      c.toLowerCase().includes('legislação')
+    );
+    let dirTotal = 0, dirCorrect = 0;
+    dirCats.forEach((c) => {
+      const st = categoryStats[c];
+      if (st) {
+        dirTotal += st.total;
+        dirCorrect += st.correct;
+      }
+    });
+    const dirScore = dirTotal > 0 ? Math.round((dirCorrect / dirTotal) * 100) : (coberturaGeral.porMateria['Direito Administrativo']?.percentualCobertura || 0);
+
+    return [
+      { nome: 'Português', score: lpScore, catSample: lpCats[0] || categories[0], icon: 'book' },
+      { nome: 'Matemática', score: matScore, catSample: matCats[0] || categories[1], icon: 'calculator' },
+      { nome: 'Específicos', score: espScore, catSample: espCats[0] || categories[2], icon: 'shield' },
+      { nome: 'Legislação', score: dirScore, catSample: dirCats[0] || categories[3], icon: 'ribbon' },
+    ];
+  }, [categories, categoryStats, coberturaGeral]);
+
+  const strongestMateria = useMemo(() => {
+    return [...radarMaterias].sort((a, b) => b.score - a.score)[0];
+  }, [radarMaterias]);
+
+  const weakestMateria = useMemo(() => {
+    return [...radarMaterias].sort((a, b) => a.score - b.score)[0];
+  }, [radarMaterias]);
+
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       {/* ================= 1. BANNER FILA DO DIA (AÇÃO IMEDIATA) ================= */}
@@ -405,6 +493,207 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
             {stats.errorQueue.length} no banco de erros
           </Text>
         </View>
+      </View>
+
+      {/* ================= 2.5. GRÁFICO DE RADAR DO EDITAL (TEIA DE DOMÍNIO) ================= */}
+      <View style={styles.radarSectionHeader}>
+        <View style={styles.sectionTitleRow}>
+          <Ionicons name="scan" size={18} color="#7657F6" />
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Radar Estratégico do Edital
+          </Text>
+        </View>
+        <Text style={[styles.sectionSubTitle, { color: colors.textMuted }]}>
+          Teia de domínio nas 4 áreas oficiais da prova VUNESP
+        </Text>
+      </View>
+
+      <View
+        style={[
+          styles.radarCard,
+          { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+        ]}
+      >
+        {/* SVG DO GRÁFICO DE RADAR */}
+        <View style={styles.radarSvgContainer}>
+          {(() => {
+            const cx = 140;
+            const cy = 135;
+            const R = 85;
+
+            // Anéis de referência poligonal (25%, 50%, 75%, 100%)
+            const rings = [0.25, 0.5, 0.75, 1.0];
+
+            // Coordenadas dos 4 vértices do polígono de dados
+            const pTop = {
+              x: cx,
+              y: cy - Math.max(12, ((radarMaterias[0]?.score || 0) / 100) * R),
+            };
+            const pRight = {
+              x: cx + Math.max(12, ((radarMaterias[1]?.score || 0) / 100) * R),
+              y: cy,
+            };
+            const pBottom = {
+              x: cx,
+              y: cy + Math.max(12, ((radarMaterias[2]?.score || 0) / 100) * R),
+            };
+            const pLeft = {
+              x: cx - Math.max(12, ((radarMaterias[3]?.score || 0) / 100) * R),
+              y: cy,
+            };
+
+            const dataPoints = `${pTop.x},${pTop.y} ${pRight.x},${pRight.y} ${pBottom.x},${pBottom.y} ${pLeft.x},${pLeft.y}`;
+
+            return (
+              <Svg width={280} height={270}>
+                {/* Anéis poligonais concêntricos */}
+                {rings.map((factor, idx) => {
+                  const r = R * factor;
+                  const pts = `${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`;
+                  return (
+                    <Polygon
+                      key={`ring-${idx}`}
+                      points={pts}
+                      fill="transparent"
+                      stroke={isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}
+                      strokeWidth={factor === 0.75 ? 1.5 : 1}
+                      strokeDasharray={factor === 0.75 ? '3,3' : undefined}
+                    />
+                  );
+                })}
+
+                {/* Eixos radiais em cruz */}
+                <Line
+                  x1={cx}
+                  y1={cy - R}
+                  x2={cx}
+                  y2={cy + R}
+                  stroke={isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)'}
+                  strokeWidth={1}
+                />
+                <Line
+                  x1={cx - R}
+                  y1={cy}
+                  x2={cx + R}
+                  y2={cy}
+                  stroke={isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)'}
+                  strokeWidth={1}
+                />
+
+                {/* Polígono de Dados do Candidato */}
+                <Polygon
+                  points={dataPoints}
+                  fill="rgba(118, 87, 246, 0.28)"
+                  stroke="#7657F6"
+                  strokeWidth={2.5}
+                />
+
+                {/* Pontos nos vértices com anel */}
+                <SvgCircle cx={pTop.x} cy={pTop.y} r={4.5} fill="#7657F6" stroke="#ffffff" strokeWidth={1.5} />
+                <SvgCircle cx={pRight.x} cy={pRight.y} r={4.5} fill="#7657F6" stroke="#ffffff" strokeWidth={1.5} />
+                <SvgCircle cx={pBottom.x} cy={pBottom.y} r={4.5} fill="#7657F6" stroke="#ffffff" strokeWidth={1.5} />
+                <SvgCircle cx={pLeft.x} cy={pLeft.y} r={4.5} fill="#7657F6" stroke="#ffffff" strokeWidth={1.5} />
+
+                {/* Rótulos dos vértices */}
+                {/* Top: Português */}
+                <SvgText
+                  x={cx}
+                  y={18}
+                  fill={isDark ? '#f1f5f9' : '#1e293b'}
+                  fontSize={11}
+                  fontWeight="bold"
+                  textAnchor="middle"
+                >
+                  {`Português (${radarMaterias[0]?.score || 0}%)`}
+                </SvgText>
+
+                {/* Right: Matemática */}
+                <SvgText
+                  x={cx + R + 6}
+                  y={cy + 4}
+                  fill={isDark ? '#f1f5f9' : '#1e293b'}
+                  fontSize={11}
+                  fontWeight="bold"
+                  textAnchor="start"
+                >
+                  {`Matemática (${radarMaterias[1]?.score || 0}%)`}
+                </SvgText>
+
+                {/* Bottom: Conhecimentos Específicos */}
+                <SvgText
+                  x={cx}
+                  y={cy + R + 26}
+                  fill={isDark ? '#f1f5f9' : '#1e293b'}
+                  fontSize={11}
+                  fontWeight="bold"
+                  textAnchor="middle"
+                >
+                  {`Específicos (${radarMaterias[2]?.score || 0}%)`}
+                </SvgText>
+
+                {/* Left: Legislação */}
+                <SvgText
+                  x={cx - R - 6}
+                  y={cy + 4}
+                  fill={isDark ? '#f1f5f9' : '#1e293b'}
+                  fontSize={11}
+                  fontWeight="bold"
+                  textAnchor="end"
+                >
+                  {`Legislação (${radarMaterias[3]?.score || 0}%)`}
+                </SvgText>
+              </Svg>
+            );
+          })()}
+        </View>
+
+        {/* Diagnóstico Tático e Ação Rápida */}
+        <View style={styles.radarDiagnosticRow}>
+          {strongestMateria && (
+            <View
+              style={[
+                styles.radarPill,
+                { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: '#10b981' },
+              ]}
+            >
+              <Ionicons name="checkmark-circle" size={13} color="#10b981" />
+              <Text style={[styles.radarPillText, { color: '#10b981' }]}>
+                Ponto Mais Forte: {strongestMateria.nome} ({strongestMateria.score}%)
+              </Text>
+            </View>
+          )}
+
+          {weakestMateria && (
+            <View
+              style={[
+                styles.radarPill,
+                { backgroundColor: 'rgba(239, 68, 68, 0.12)', borderColor: '#ef4444' },
+              ]}
+            >
+              <Ionicons name="alert-circle" size={13} color="#ef4444" />
+              <Text style={[styles.radarPillText, { color: '#ef4444' }]}>
+                Foco de Atenção: {weakestMateria.nome} ({weakestMateria.score}%)
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Botão de Treino Direto no Ponto Fraco */}
+        {weakestMateria && (
+          <TouchableOpacity
+            onPress={() => {
+              triggerLightHaptic();
+              onTreinarCategoria(weakestMateria.catSample);
+            }}
+            activeOpacity={0.85}
+            style={[styles.radarActionBtn, { backgroundColor: '#7657F6' }]}
+          >
+            <Ionicons name="flash" size={15} color="#ffffff" />
+            <Text style={styles.radarActionBtnText}>
+              Treinar {weakestMateria.nome} Agora (Blindar Pontos Fracos)
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* ================= 3. PIRÂMIDE DE DOMÍNIO SRS (LEITNER) ================= */}
@@ -853,6 +1142,69 @@ const styles = StyleSheet.create({
   container: {
     padding: 14,
     paddingBottom: 40,
+  },
+  radarSectionHeader: {
+    marginTop: 18,
+    marginBottom: 8,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sectionSubTitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  radarCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  radarSvgContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 4,
+  },
+  radarDiagnosticRow: {
+    width: '100%',
+    gap: 8,
+    marginTop: 8,
+  },
+  radarPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  radarPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  radarActionBtn: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginTop: 10,
+    shadowColor: '#7657F6',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  radarActionBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '800',
   },
   actionHeroCard: {
     borderRadius: 18,
